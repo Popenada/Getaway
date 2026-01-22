@@ -1,0 +1,15 @@
+# docker-compose.yml
+version: ".1"
+
+services:
+  dev:
+    build: .
+    image: getaway1.26
+    container_name: getaway
+    stdin_open: true
+    tty: true
+    ports: 
+      - 8000:8000
+    volumes:
+      - ".:/workspace"
+    working_dir: /workspace

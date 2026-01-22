@@ -1,10 +1,13 @@
 # Dockerfile
-#to build, run "docker build -t [name]/getaway:1 ."
+#to build, run "docker compose build"
 
 FROM python:3
 
 # Set Working Directory
 WORKDIR /workspace
+
+# set environment variables
+ENV FLASK_APP=getaway.py
 
 # Install packages
 COPY requirements.txt ./
@@ -12,8 +15,4 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir --upgrade pip \
   && pip install --no-cache-dir -r requirements.txt
 
-# Default working directory inside container
-
-
-# Default shell
-CMD ["/bin/bash"]
+CMD flask run --port 8000
