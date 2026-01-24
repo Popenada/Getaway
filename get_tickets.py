@@ -10,6 +10,6 @@ url = "url"
 data = ""
 
 def query():
-    response = get_tickets.post(url, data=data)
+    response = None
 
     return response
