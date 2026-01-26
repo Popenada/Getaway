@@ -1,31 +1,41 @@
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+import React from "react";
+import { StyleSheet, TextInput, FlatList, View, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TabTwoScreen() {
+  const [query, setText] = React.useState("");
+  const [number, setNumber] = React.useState("");
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Search Screen</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/two.tsx" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <TextInput
+        style={styles.search}
+        onChangeText={setText}
+        value={query}
+        placeholder="Search Airlines"
+      />
+
+      <TextInput
+        style={styles.search}
+        onChangeText={setNumber}
+        value={number}
+        placeholder="Enter price range"
+        keyboardType="numeric"
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 20,
+    gap: 12,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  search: {
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 16,
   },
 });
