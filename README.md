@@ -79,5 +79,6 @@ If you don't want to commit your work but still want access to it later on, use 
 
 ## How to Merge Dev Branch into main
 1. MAKE SURE you have already updated your dev branch from main before continuing
-2. Create a Pull Request inside of github
-3. Im unsure how PRs work on github will update the rest of this after I PR this readme.md
+2. Push your feature branch to origin as explained above, after pushing there will be a link "Create a pull request for" that link will take you to pull request page this can also be reached by the Github website
+3. Create a Pull Request and fill out the information
+4. Im unsure how PRs work on github will update the rest of this after I PR this readme.md
