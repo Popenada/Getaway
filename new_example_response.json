@@ -2,7 +2,7 @@
     "meta": {
         "count": 3,
         "links": {
-            "self": "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=LAX&destinationLocationCode=DAL&departureDate=2026-02-02&adults=1"
+            "self": "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=LAX&destinationLocationCode=DAL&departureDate=2026-02-13&adults=1"
         }
     },
     "data": [
@@ -14,8 +14,8 @@
             "nonHomogeneous": false,
             "oneWay": false,
             "isUpsellOffer": false,
-            "lastTicketingDate": "2026-02-02",
-            "lastTicketingDateTime": "2026-02-02",
+            "lastTicketingDate": "2026-02-13",
+            "lastTicketingDateTime": "2026-02-13",
             "numberOfBookableSeats": 9,
             "itineraries": [
                 {
@@ -24,11 +24,11 @@
                         {
                             "departure": {
                                 "iataCode": "LAX",
-                                "at": "2026-02-02T21:00:00"
+                                "at": "2026-02-13T21:00:00"
                             },
                             "arrival": {
                                 "iataCode": "DAL",
-                                "at": "2026-02-02T23:50:00"
+                                "at": "2026-02-13T23:50:00"
                             },
                             "carrierCode": "6X",
                             "number": "3695",
@@ -109,8 +109,8 @@
             "nonHomogeneous": false,
             "oneWay": false,
             "isUpsellOffer": false,
-            "lastTicketingDate": "2026-02-02",
-            "lastTicketingDateTime": "2026-02-02",
+            "lastTicketingDate": "2026-02-13",
+            "lastTicketingDateTime": "2026-02-13",
             "numberOfBookableSeats": 9,
             "itineraries": [
                 {
@@ -119,11 +119,11 @@
                         {
                             "departure": {
                                 "iataCode": "LAX",
-                                "at": "2026-02-02T07:00:00"
+                                "at": "2026-02-13T07:00:00"
                             },
                             "arrival": {
                                 "iataCode": "DAL",
-                                "at": "2026-02-02T10:00:00"
+                                "at": "2026-02-13T10:00:00"
                             },
                             "carrierCode": "6X",
                             "number": "3693",
@@ -204,8 +204,8 @@
             "nonHomogeneous": false,
             "oneWay": false,
             "isUpsellOffer": false,
-            "lastTicketingDate": "2026-02-02",
-            "lastTicketingDateTime": "2026-02-02",
+            "lastTicketingDate": "2026-02-13",
+            "lastTicketingDateTime": "2026-02-13",
             "numberOfBookableSeats": 9,
             "itineraries": [
                 {
@@ -214,11 +214,11 @@
                         {
                             "departure": {
                                 "iataCode": "LAX",
-                                "at": "2026-02-02T13:00:00"
+                                "at": "2026-02-13T13:00:00"
                             },
                             "arrival": {
                                 "iataCode": "DAL",
-                                "at": "2026-02-02T18:00:00"
+                                "at": "2026-02-13T18:00:00"
                             },
                             "carrierCode": "6X",
                             "number": "3694",
