@@ -1,14 +1,15 @@
+from flask import jsonify
 import pandas as pd
 import json
-from datetime import datetime
 from typing import List, Dict, Any
+from app import app
 
 # Search request handler
 # Access api and return result
 # returns all tickets within criteria as well as all vendors. Only add best vendor link to table
 
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', None)
+#pd.set_option('display.max_columns', None)
+#pd.set_option('display.max_rows', None)
 
 def load_json_response(filepath: str) -> Dict[str, Any]:
     with open(filepath, 'r') as f:
@@ -46,17 +47,27 @@ def parse_flights(response_data: Dict[str, Any]) -> List[Dict[str, Any]]:
         flights.append(flight_obj)
     
     return flights
-
+'''
 def flights_to_dataframe(flights: List[Dict[str, Any]]) -> pd.DataFrame:
     return pd.DataFrame(flights)
 
 def pd_dataframe_to_json(df: pd.DataFrame, filepath: str) -> None:
     df.to_json(filepath, orient='records', indent=2)
-
+'''
 
 # testing
-data = load_json_response('new_example_response2.json')
+'''data = load_json_response('new_example_response2.json')
 flights = parse_flights(data)
 df = flights_to_dataframe(flights)
 pd_dataframe_to_json(df, 'flights.json')
 print(df)#[['origin', 'destination', 'outbound_airline', 'price', 'provider']])
+'''
+
+@app.route('/api/get-flights')
+def get_flights():
+    data = load_json_response('new_example_response2.json')
+    flights = parse_flights(data)
+    return jsonify(flights)
+
+if __name__ == '__main__':
+    app.run(debug=True)
