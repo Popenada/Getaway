@@ -1,5 +1,6 @@
 from app import app
 from flask import request
+import json
 
 @app.route('/')
 @app.route('/index')
@@ -15,6 +16,8 @@ def flightSearch():
     # Example url: http://localhost:5000/api/flight-search?searchid=test&departure=LAX
     # type 'flask run' into terminal and go to url to test
     
+    #user input test
+    '''
     searchid = request.args.get("searchid") # unique identifier for search session
     departureDate = request.args.get("departure") # Departure date formatted asw YYYY-MM-DD
     destination = request.args.get("destination") # Destination Airport code XYZ
@@ -29,3 +32,8 @@ def flightSearch():
         "departure": departureDate,
         "return": returnDate,
         "numAdults": adults}
+    '''
+    
+    #return example data
+    with open("flights.json") as file:
+        return json.load(file)
