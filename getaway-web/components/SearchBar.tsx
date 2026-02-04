@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DateRangePicker from "@/components/DateRangePicker"
 import { DateRange } from "react-day-picker";
+
 type SearchBarProps = {
     dateRange: DateRange | undefined
     setDateRange: (r: DateRange | undefined) => void;
@@ -21,27 +22,96 @@ type SearchBarProps = {
 export default function SearchComponent({dateRange, setDateRange, departureLocation, 
     setDepartureLocation, arrivalLocation, setArrivalLocation, travelers, setTravelers
 }: SearchBarProps) {
+    const [departureSuggestions, setDepartureSuggestions] = useState<any[]>([]);
+    const [arrivalSuggestions, setArrivalSuggestions] = useState<any[]>([]);
+
+    const fetchLocations = async (query: string) => {
+        const res = await fetch(`/api/locations?query=${query}`);
+        const data = await res.json();
+        return data;
+    }
+
     return (
         <div className="flex flex-col gap-3"> 
 
             <div className="flex gap-5 w-150">
 
-                <p className="text-sm font-medium text-black-600">
+                <div className="text-sm font-medium text-black-600">
                     Departure
                     <Input
                         value={departureLocation}
-                        onChange={(e) => setDepartureLocation(e.target.value)}
+                        onChange={async (e) => {
+                            const value = e.target.value;
+                            setDepartureLocation(value);
+
+                            if (value.length < 2) {
+                                setDepartureSuggestions([]);
+                                return;
+                            }
+
+                            const suggestions = await fetchLocations(value);
+                            setDepartureSuggestions(suggestions);
+                        }}
+
                         placeholder="Enter departure location"
+                        onBlur={() => setTimeout(() => setDepartureSuggestions([]), 100)}
                     />
-                </p>
-                <p className="text-sm font-medium text-black-600">
+
+                    {departureSuggestions.length > 0 && departureLocation.length > 1 && (
+                        <div className="absolute bg-white border w-full z-10">
+                            {departureSuggestions.map((suggestion, index) => (
+                                <div
+                                    key={`departure-${index}-${suggestion.label}`}
+                                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                                    onClick={() => {
+                                        setDepartureLocation(suggestion.label);
+                                        setDepartureSuggestions([]);
+                                    }}
+                                >
+                                    {suggestion.label}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                <div className="text-sm font-medium text-black-600">
                     Arrival
                     <Input 
                         value={arrivalLocation}
-                        onChange={(e) => setArrivalLocation(e.target.value)}
+                        onChange={async (e) => {
+                            const value = e.target.value;
+                            setArrivalLocation(value);
+
+                            if (value.length < 2) {
+                                setArrivalSuggestions([]);
+                                return;
+                            }
+
+                            const suggestions = await fetchLocations(value);
+                            setArrivalSuggestions(suggestions);
+                        }}
+
                         placeholder="Enter arrival location"
+                        onBlur={() => setTimeout(() => setArrivalSuggestions([]), 100)}
                     />
-                </p>
+
+                    {arrivalSuggestions.length > 0 && arrivalLocation.length > 1 && (
+                        <div className="absolute bg-white border w-full z-10">
+                            {arrivalSuggestions.map((suggestion, index) => (
+                                <div
+                                    key={`arrival-${index}-${suggestion.label}`}
+                                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                                    onClick={() => {
+                                        setArrivalLocation(suggestion.label);
+                                        setArrivalSuggestions([]);
+                                    }}
+                                >
+                                    {suggestion.label}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
                 
                 <Button className="h-10 px-6 mt-4">
                     Search
