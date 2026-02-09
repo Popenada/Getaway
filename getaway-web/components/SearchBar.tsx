@@ -30,10 +30,27 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
     const [departureSuggestions, setDepartureSuggestions] = useState<any[]>([]);
     const [arrivalSuggestions, setArrivalSuggestions] = useState<any[]>([]);
 
+    const [departureCode, setDepartureCode] = useState("");
+    const [arrivalCode, setArrivalCode] = useState("");
+
+    const router = useRouter();
+
     const fetchLocations = async (query: string) => {
         const res = await fetch(`/api/locations?query=${query}`);
         const data = await res.json();
         return data;
+    }
+
+    const handleSearch = async () => {
+        const params = new URLSearchParams({
+            origin: departureCode,
+            destination: arrivalCode,
+            departure: dateRange?.from ? dateRange.from.toISOString().split('T')[0] : '',
+            return: dateRange?.to ? dateRange.to.toISOString().split('T')[0] : '',
+            adults: travelers,
+        });
+
+        router.push(`/results?${params.toString()}`);
     }
 
     return (
@@ -71,6 +88,7 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
                                     onClick={() => {
                                         setDepartureLocation(suggestion.label);
                                         setDepartureSuggestions([]);
+                                        setDepartureCode(suggestion.code);
                                     }}
                                 >
                                     {suggestion.label}
@@ -109,6 +127,7 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
                                     onClick={() => {
                                         setArrivalLocation(suggestion.label);
                                         setArrivalSuggestions([]);
+                                        setArrivalCode(suggestion.code);
                                     }}
                                 >
                                     {suggestion.label}
@@ -118,7 +137,7 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
                     )}
                 </div>
                 
-                <Button className="h-10 px-6 mt-4">
+                <Button onClick={handleSearch} className="h-10 px-6 mt-4">
                     Search
                 </Button>
             </div>
