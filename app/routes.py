@@ -1,6 +1,9 @@
 from app import app
 from flask import request
-import json
+from get_tickets import query
+from json import jsonify
+from table_data import load_json_response
+from table_data import parse_flights
 
 @app.route('/')
 @app.route('/index')
@@ -17,23 +20,20 @@ def flightSearch():
     # type 'flask run' into terminal and go to url to test
     
     #user input test
-    '''
-    searchid = request.args.get("searchid") # unique identifier for search session
-    departureDate = request.args.get("departure") # Departure date formatted asw YYYY-MM-DD
-    destination = request.args.get("destination") # Destination Airport code XYZ
-    returnDate = request.args.get("return") # Return date formatted as YYY-MM-DD
-    origin = request.args.get("origin") # Origin Airport cose ABC
-    adults = request.args.get("adults") # Number of adults, int
+    inputs = {
+        "searchid" : request.args.get("searchid"),
+        "departureDate" : request.args.get("departure"), # Departure date formatted asw YYYY-MM-DD
+        "destination" : request.args.get("destination"), # Destination Airport code XYZ
+        "returnDate" : request.args.get("return"), # Return date formatted as YYYY-MM-DD
+        "origin" : request.args.get("origin"), # Origin Airport code ABC
+        "adults" : request.args.get("adults") # Number of adults, int}
+    }
     
-    return {
-        "searchid" : searchid,
-        "origin": origin,
-        "destination": destination,
-        "departure": departureDate,
-        "return": returnDate,
-        "numAdults": adults}
-    '''
+    try:
+        query(inputs)
+    except:
+        return 500
     
-    #return example data
-    with open("flights.json") as file:
-        return json.load(file)
+    data = load_json_response("%s.json" % inputs["searchid"])
+    flights = parse_flights(data)
+    return jsonify(flights)
