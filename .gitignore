@@ -1,1 +1,4 @@
 venv/
+*.png
+*.pyc
+/app/__pycache__

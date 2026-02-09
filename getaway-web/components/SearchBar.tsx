@@ -2,7 +2,11 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
+import DateRangePicker from "@/components/DateRangePicker"
+import { DateRange } from "react-day-picker";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Collapsible } from "@/components/ui/collapsible"
+import { useRouter } from "next/navigation";
 type SearchBarProps = {
     departureDate: string;
     setDepartureDate: (t: string) => void;

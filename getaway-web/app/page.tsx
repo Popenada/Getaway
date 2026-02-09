@@ -1,37 +1,61 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export default function Flights() {
-  const [flights, setFlights] = useState([]);
-  const [loading, setLoading] = useState(true);
+const DEFAULT_MIN_PRICE = 0
+const DEFAULT_MAX_PRICE = 1000
+export default function SearchTab() {
+    const [dateRange, setDateRange] = useState<DateRange | undefined>();
+    const [departureLocation, setDepartureLocation] = useState("");
+    const [arrivalLocation, setArrivalLocation] = useState("");
+    const [travelers, setTravelers] = useState("");
+    const [roundTrip, setRoundTrip] = useState(true);
+    const [preferredAirline, setPreferredAirline] = useState("");
+    const [minPrice, setMinPrice] = useState<number>(DEFAULT_MIN_PRICE);
+    const [maxPrice, setMaxPrice] = useState<number>(DEFAULT_MAX_PRICE);
+    const [nonStopOnly, setNonStopOnly] = useState(true);
+    const [advancedOpen, setAdvancedOpen] = useState(false);
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/get-flights")
-      .then((response) => response.json())
-      .then((data) => {
-        setFlights(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching flight data:", error);
-        setLoading(false);
-      });
-  }, []);
+    return (
+        <main className="p-50">
+            <h1 className="text-2xl font-bold mb-4 text-center">
+                Getaway
+            </h1>
+            <SearchComponent
+                departureLocation={departureLocation}
+                setDepartureLocation={setDepartureLocation}
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+                arrivalLocation={arrivalLocation}
+                setArrivalLocation={setArrivalLocation}
 
-  return (
-    <div>
-      <h1 style={{ fontSize: '5rem' }}>Flight Options</h1>
-      {flights.map((flight: any, index: number) => (
-        <div key={index} style={{ marginBottom: "1rem", borderBottom: "1px solid #ccc" }}>
-          <p>{flight.airline} | {flight.origin} {'->'} {flight.destination}</p>
-          <p>Departure: {flight.departure_time} | Arrival: {flight.arrival_time}</p>
-          <p>Price: {flight.price} {flight.currency} | Stops: {flight.stops}</p>
-        </div>
-      ))}
-    </div>
-  );
+                dateRange={dateRange}
+                setDateRange={setDateRange}
+
+
+                travelers={travelers}
+                setTravelers={setTravelers}
+
+                roundTrip={roundTrip}
+                setRoundTrip={setRoundTrip}
+            />
+
+            <AdvancedOptionsComponent
+                advancedOpen={advancedOpen}
+                setAdvancedOpen={setAdvancedOpen}
+                preferredAirline={preferredAirline}
+                setPreferredAirline={setPreferredAirline}
+                minPrice={minPrice}
+                setMinPrice={setMinPrice}
+                maxPrice={maxPrice}
+                setMaxPrice={setMaxPrice}
+                nonStopOnly={nonStopOnly}
+                setNonStopOnly={setNonStopOnly}
+            />
+
+            <Link href="/results">
+                <Button className="h-10 px-6 mt-4">
+                    go to Results page (testing)
+                </Button>
+            </Link>
+        </main>
+    );
 }
