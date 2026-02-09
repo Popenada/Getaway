@@ -26,7 +26,14 @@ def flightSearch():
         "destination" : request.args.get("destination"), # Destination Airport code XYZ
         "returnDate" : request.args.get("return"), # Return date formatted as YYYY-MM-DD
         "origin" : request.args.get("origin"), # Origin Airport code ABC
-        "adults" : request.args.get("adults") # Number of adults, int}
+        "adults" : request.args.get("adults"), # Number of adults, int}
+        "roundTrip" : request.args.get("roundTrip"), #bool, true = round trip
+        "range" : request.args.get("range"), #bool, true = range of dates
+        "connections" : request.args.get("connections"), #int, max number of connections
+        "includedAirlines" : request.args.get("included"), #list of strings, list contains allowed airline codes
+        "excludedAirlines" : request.args.get("excluded"), #list of strings, list contains excluded airline codes
+        "maxPrice" : request.args.get("maxPrice"), #int, maximum allowed price
+        "tripLength" : request.args.get("tripLength") #int, max number of days between departure and arrival
     }
     
     try:

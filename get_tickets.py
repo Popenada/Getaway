@@ -1,5 +1,6 @@
 import json
 from amadeus import Client, Location, ResponseError
+import time
 
 # One-Way doesn't work
 def query(data):
@@ -10,6 +11,7 @@ def query(data):
     rDate = data.get("returnDate", None)
     numAdults = data.get("adults", 1)
     roundTrip = data.get("roundTrip", True)
+    isRange = data.get("range", False)
     
     # origin & dest = "XYZ" airport codes.
     # Departure date formatted as "YYYY-MM-DD"
@@ -21,51 +23,49 @@ def query(data):
     )
     
     parameters = {
-            "currencyCode": "USD",
-            "originDestinations": [ {
-                "id": 1, 
-                "originLocationCode": origin,
-                "destinationLocationCode": destination, 
-                "departureDateTimeRange": {
-                    "date": dDate,
-                    "time": "00:00:00"
-            } }, ],
-            "travelers": [], 
-            "sources": ["GDS"],
-            "searchCriteria": {  
-                "excludeAllotments": False,
-                "addOneWayOffers": not roundTrip,
-                "maxFlightOffers": 10,
-                "allowAlternativeFareOptions": True,
-                "oneFlightOfferPerDay": False, 
-                "additionalInformation": { 
-                    "chargeableCheckedBags": False, 
-                    "brandedFares": True, 
-                    "fareRules": False 
-                },
-                "pricingOptions": { 
-                    "includedCheckedBagsOnly": True 
-                    }, 
-                "flightFilters": { 
-                    "crossBorderAllowed": True,
-                    "moreOvernightsAllowed": True,
-                    "returnToDepartureAirport": roundTrip,
-                    "railSegmentAllowed": True,
-                    "busSegmentAllowed": True,
-                    "cabinRestrictions": [ 
-                        { 
-                            "cabin": "ECONOMY",
-                            "coverage": "MOST_SEGMENTS",
-                            "originDestinationIds": [2] 
-                        }, { 
-                            "cabin": "ECONOMY",
-                            "coverage": "MOST_SEGMENTS",
-                            "originDestinationIds": [1] 
-                        } ],
-                    "connectionRestriction": { 
-                        "airportChangeAllowed": True,
-                        "technicalStopsAllowed": True,
-                        "maximumNumberOfConnections": 2
+        "currencyCode": "USD",
+        "originDestinations": [ {
+            "id": 1, 
+            "originLocationCode": origin,
+            "destinationLocationCode": destination, 
+            "departureDateTimeRange": {
+                "date": dDate,
+        } }],
+        "travelers": [], 
+        "sources": ["GDS"],
+        "searchCriteria": {  
+            "excludeAllotments": True,
+            "addOneWayOffers": not roundTrip,
+            "maxFlightOffers": 10,
+            "allowAlternativeFareOptions": True,
+            "oneFlightOfferPerDay": False, 
+            "additionalInformation": { 
+                "chargeableCheckedBags": False, 
+                "brandedFares": True, 
+                "fareRules": False 
+            },
+            "pricingOptions": { 
+                "includedCheckedBagsOnly": True 
+            }, 
+            "flightFilters": { 
+                "crossBorderAllowed": True,
+                "moreOvernightsAllowed": True,
+                "returnToDepartureAirport": roundTrip,
+                "railSegmentAllowed": True,
+                "busSegmentAllowed": True,
+                "cabinRestrictions": [ { 
+                    "cabin": "ECONOMY",
+                    "coverage": "MOST_SEGMENTS",
+                    "originDestinationIds": [1] 
+                }, { 
+                    "cabin": "ECONOMY",
+                    "coverage": "MOST_SEGMENTS",
+                    "originDestinationIds": [2] 
+                }],
+                "connectionRestriction": { 
+                    "airportChangeAllowed": True,
+                    "technicalStopsAllowed": True,
+                    "maximumNumberOfConnections": 2
             } } } }
     
     #add return leg to round trips
@@ -76,10 +76,18 @@ def query(data):
             "destinationLocationCode": origin,  
             "departureDateTimeRange": { 
                 "date": rDate, 
-                "time": "00:00:00"
         } }
         parameters["originDestinations"].append(returnTrip)
     
+    #for modify parameters for range of dates
+    if isRange:
+        date_format = "%Y-%m-%d"
+        t1 = time.mktime(time.strptime(dDate, date_format))
+        t2 = time.mktime(time.strptime(rDate, date_format))
+        days = int((t2 - t1) / 86400)
+        legs = parameters["originDestinations"]
+        legs[0]["departureDateTimeRange"]["dateWindow"] = "P%dD" %days
+        legs[1]["departureDateTimeRange"]["dateWindow"] = "M%dD" %days
     
     #add numAdults to request
     for i in range(numAdults):
@@ -88,7 +96,6 @@ def query(data):
             "travelerType": "ADULT"
         }
         parameters["travelers"].append(traveler)
-        print(parameters["travelers"])
     
     try:
         '''
@@ -119,7 +126,8 @@ args = {
     "destination": "LON",
     "departureDate": "2026-02-12",
     "returnDate": "2026-03-12",
-    "roundTrip": True
+    "roundTrip": True,
+    "range" : False
 }
 
 query(args)
