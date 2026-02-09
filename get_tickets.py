@@ -1,13 +1,15 @@
 import json
 from amadeus import Client, Location, ResponseError
 
-def query(**kwargs):
-    searchid = kwargs.get("searchid", "TEST-ID")
-    origin = kwargs.get("origin")
-    destination = kwargs.get("destination")
-    dDate = kwargs.get("departureDate")
-    rDate = kwargs.get("returnDate")
-    numAdults = kwargs.get("Adults", "1")
+# One-Way doesn't work
+def query(data):
+    searchid = data.get("searchid", "TEST-ID")
+    origin = data.get("origin")
+    destination = data.get("destination")
+    dDate = data.get("departureDate")
+    rDate = data.get("returnDate", None)
+    numAdults = data.get("adults", 1)
+    roundTrip = data.get("roundTrip", True)
     
     # origin & dest = "XYZ" airport codes.
     # Departure date formatted as "YYYY-MM-DD"
@@ -21,35 +23,19 @@ def query(**kwargs):
     parameters = {
             "currencyCode": "USD",
             "originDestinations": [ {
-                "id": 1, "originLocationCode": origin,
+                "id": 1, 
+                "originLocationCode": origin,
                 "destinationLocationCode": destination, 
                 "departureDateTimeRange": {
                     "date": dDate,
                     "time": "00:00:00"
-            } }, {
-                "id": 2,
-                "originLocationCode": destination,
-                "destinationLocationCode": origin,  
-                "departureDateTimeRange": { 
-                    "date": rDate, 
-                    "time": "00:00:00"
-                    } } ],
-            "travelers": [ { 
-                "id":  1, 
-                "travelerType": "ADULT" 
-            }, { 
-                "id": 2,
-                "travelerType": "ADULT"
-            }, { 
-                "id": 3,
-                "travelerType": "HELD_INFANT", 
-                "associatedAdultId": 1 
-                } ], 
+            } }, ],
+            "travelers": [], 
             "sources": ["GDS"],
             "searchCriteria": {  
                 "excludeAllotments": False,
-                "addOneWayOffers": False,
-                "maxFlightOffers": 10,  
+                "addOneWayOffers": not roundTrip,
+                "maxFlightOffers": 10,
                 "allowAlternativeFareOptions": True,
                 "oneFlightOfferPerDay": False, 
                 "additionalInformation": { 
@@ -63,7 +49,7 @@ def query(**kwargs):
                 "flightFilters": { 
                     "crossBorderAllowed": True,
                     "moreOvernightsAllowed": True,
-                    "returnToDepartureAirport": True,
+                    "returnToDepartureAirport": roundTrip,
                     "railSegmentAllowed": True,
                     "busSegmentAllowed": True,
                     "cabinRestrictions": [ 
@@ -81,6 +67,28 @@ def query(**kwargs):
                         "technicalStopsAllowed": True,
                         "maximumNumberOfConnections": 2
             } } } }
+    
+    #add return leg to round trips
+    if roundTrip:
+        returnTrip = {
+            "id": 2,
+            "originLocationCode": destination,
+            "destinationLocationCode": origin,  
+            "departureDateTimeRange": { 
+                "date": rDate, 
+                "time": "00:00:00"
+        } }
+        parameters["originDestinations"].append(returnTrip)
+    
+    
+    #add numAdults to request
+    for i in range(numAdults):
+        traveler = {
+            "id": i+1,
+            "travelerType": "ADULT"
+        }
+        parameters["travelers"].append(traveler)
+        print(parameters["travelers"])
     
     try:
         '''
@@ -106,4 +114,12 @@ def query(**kwargs):
 
 
 #debug
-query("TEST-SEARCH", "PAR", "LON", "2026-02-13", "2026-03-13", "1")
+args = {
+    "origin": "PAR",
+    "destination": "LON",
+    "departureDate": "2026-02-12",
+    "returnDate": "2026-03-12",
+    "roundTrip": True
+}
+
+query(args)
