@@ -2,3 +2,5 @@ venv/
 *.png
 *.pyc
 /app/__pycache__
+__pycache__/getaway.cpython-311.pyc
+app/__pycache__/__init__.cpython-314.pyc

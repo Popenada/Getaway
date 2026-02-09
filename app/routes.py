@@ -1,4 +1,9 @@
 from app import app
+from flask import request
+from get_tickets import query
+from flask import jsonify
+from table_data import load_json_response
+from table_data import parse_flights
 
 @app.route('/')
 @app.route('/index')
@@ -13,7 +18,6 @@ def flightSearch():
     # pulls parameters from url and echoes them back
     # Example url: http://localhost:5000/api/flight-search?origin=PAR&destination=LON&departure=2026-02-13&return=2026-03-13
     # type 'flask run' into terminal and go to url to test
-    
     
     #user input test
     inputs = {
