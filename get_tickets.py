@@ -4,11 +4,11 @@ import time
 
 # One-Way doesn't work
 def query(data):
-    searchid = data.get("searchid", "TEST-ID")
+    searchid = data.get("searchid")
     origin = data.get("origin")
     destination = data.get("destination")
     dDate = data.get("departureDate")
-    rDate = data.get("returnDate", None)
+    rDate = data.get("returnDate")
     numAdults = data.get("adults", 1)
     roundTrip = data.get("roundTrip", True)
     isRange = data.get("range", False)
@@ -117,7 +117,7 @@ def query(data):
         with open(f, "w") as file:
             file.write(json.dumps(response.result, indent=4))
     except ResponseError as error:
-        print(error)
+        return (origin, destination, dDate, rDate)
 
 
 #debug
