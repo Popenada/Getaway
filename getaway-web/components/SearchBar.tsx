@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DateRangePicker from "@/components/DateRangePicker"
 import { DateRange } from "react-day-picker";
-
+import { Checkbox } from "@/components/ui/checkbox";
+import { Collapsible } from "@/components/ui/collapsible"
 type SearchBarProps = {
     dateRange: DateRange | undefined
     setDateRange: (r: DateRange | undefined) => void;
@@ -17,10 +18,14 @@ type SearchBarProps = {
 
     travelers: string;
     setTravelers: (t: string) => void;
+
+    roundTrip: boolean;
+    setRoundTrip: (v: boolean) => void;
 };
 
 export default function SearchComponent({dateRange, setDateRange, departureLocation, 
-    setDepartureLocation, arrivalLocation, setArrivalLocation, travelers, setTravelers
+    setDepartureLocation, arrivalLocation, setArrivalLocation, travelers, setTravelers,
+    roundTrip, setRoundTrip
 }: SearchBarProps) {
     const [departureSuggestions, setDepartureSuggestions] = useState<any[]>([]);
     const [arrivalSuggestions, setArrivalSuggestions] = useState<any[]>([]);
@@ -118,8 +123,20 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
                 </Button>
             </div>
 
-            <div className="flex gap-5 w-80">
-                <DateRangePicker value={dateRange} onChange={setDateRange} label="Departure – Return" />
+            <div className="flex items-center gap-5 whitespace-nowrap">
+                <DateRangePicker 
+                    value={dateRange} 
+                    onChange={setDateRange} 
+                    label="Departure – Return" 
+                />
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        checked={roundTrip}
+                        onCheckedChange={(checked) => setRoundTrip(!!checked)}
+                        
+                    />
+                    <p className="text-sm font-medium">Round Trip</p>
+                </div>
             </div>
 
             <div className="flex gap-5 w-18">
