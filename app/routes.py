@@ -19,21 +19,24 @@ def flightSearch():
     # Example url: http://localhost:5000/api/flight-search?origin=PAR&destination=LON&departure=2026-02-13&return=2026-03-13
     # type 'flask run' into terminal and go to url to test
     
+    # read JSON body for POST requests first, fall back to query params
+    body = request.get_json(silent=True) or {}
+
     #user input test
     inputs = {
-        "searchid" : request.args.get("searchid", "TEST-ID"),
-        "departureDate" : request.args.get("departure"), # Departure date formatted asw YYYY-MM-DD
-        "destination" : request.args.get("destination"), # Destination Airport code XYZ
-        "returnDate" : request.args.get("return"), # Return date formatted as YYYY-MM-DD
-        "origin" : request.args.get("origin"), # Origin Airport code ABC
-        "adults" : request.args.get("adults", 1), # Number of adults, int}
-        "roundTrip" : request.args.get("roundTrip", True), #bool, true = round trip
-        "range" : request.args.get("range", False), #bool, true = range of dates
-        "connections" : request.args.get("connections"), #int, max number of connections
-        "includedAirlines" : request.args.get("included"), #list of strings, list contains allowed airline codes
-        "excludedAirlines" : request.args.get("excluded"), #list of strings, list contains excluded airline codes
-        "maxPrice" : request.args.get("maxPrice"), #int, maximum allowed price
-        "tripLength" : request.args.get("tripLength") #int, max number of days between departure and arrival
+        "searchid": body.get("searchid", request.args.get("searchid", "TEST-ID")),
+        "departureDate": body.get("departure", request.args.get("departure")),
+        "destination": body.get("destination", request.args.get("destination")),
+        "returnDate": body.get("return", request.args.get("return")),
+        "origin": body.get("origin", request.args.get("origin")),
+        "adults": int(body.get("adults", request.args.get("adults", 1))),
+        "roundTrip": body.get("roundTrip", request.args.get("roundTrip", True)),
+        "range": body.get("range", request.args.get("range", False)),
+        "connections": body.get("connections", request.args.get("connections")),
+        "includedAirlines": body.get("included", request.args.get("included")),
+        "excludedAirlines": body.get("excluded", request.args.get("excluded")),
+        "maxPrice": body.get("maxPrice", request.args.get("maxPrice")),
+        "tripLength": body.get("tripLength", request.args.get("tripLength"))
     }
     
     print(inputs["origin"], inputs["destination"], inputs["departureDate"], inputs["returnDate"])

@@ -5,14 +5,18 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import DateGrid from "@/components/DateGrid";
 
-type Flight = {
+type Leg = {
 	origin: string;
 	destination: string;
-	detparture_time: string;
+	departure_time: string;
 	arrival_time: string;
 	stops: number;
 	duration: string;
 	airline: string;
+};
+
+type Flight = {
+	legs: Leg[];
 	price: string;
 	currency: string;
 	cabin: string;
@@ -48,9 +52,10 @@ export default function ResultsPage() {
 	}, [searchParams]);
 
 	const pricesByDate = flights.reduce((acc: { date: string; price: number }[], flight) => {
-		const date = flight.detparture_time.split('T')[0];
-		const price = parseFloat(flight.price);
-		
+		if (!flight.legs || flight.legs.length === 0) return acc;
+		const date = flight.legs[0].departure_time.split('T')[0];
+		const price = parseFloat(flight.price as unknown as string);
+
 		const existingDate = acc.find(item => item.date === date);
 		if (existingDate) {
 			if (price < existingDate.price) {
@@ -63,11 +68,11 @@ export default function ResultsPage() {
 	}, []).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
 	const selectedFlights = selectedDate 
-		? flights.filter(flight => flight.detparture_time.split('T')[0] === selectedDate)
+		? flights.filter(flight => flight.legs && flight.legs[0].departure_time.split('T')[0] === selectedDate)
 		: [];
 
-	const origin = flights.length > 0 ? flights[0].origin : '';
-	const destination = flights.length > 0 ? flights[0].destination : '';
+	const origin = flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].origin : '';
+	const destination = flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].destination : '';
 
 	const handleSelectDate = (date: string) => {
 		setSelectedDate(selectedDate === date ? null : date);
@@ -101,14 +106,19 @@ export default function ResultsPage() {
 							<div key={idx} className="border rounded-lg p-4">
 								<div className="flex justify-between items-start">
 									<div>
-										<p className="font-semibold">{flight.airline}</p>
+										<p className="font-semibold">{flight.legs.map(l => l.airline).join(' / ')}</p>
 										<p className="text-sm text-gray-600">{flight.cabin}</p>
 									</div>
-									<p className="text-lg font-bold">${flight.price}</p>
+									<p className="text-lg font-bold">${parseFloat(flight.price as unknown as string).toFixed(2)}</p>
 								</div>
-								<div className="mt-3 text-sm text-gray-700">
-									<p>{new Date(flight.detparture_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} → {new Date(flight.arrival_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
-									<p>Duration: {flight.duration} • Stops: {flight.stops}</p>
+								<div className="mt-3 text-sm text-gray-700 space-y-2">
+									{flight.legs.map((leg, j) => (
+										<div key={j}>
+											<p className="font-medium">{leg.origin} → {leg.destination} • {leg.airline}</p>
+											<p>{new Date(leg.departure_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} → {new Date(leg.arrival_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+											<p className="text-xs text-gray-600">Duration: {leg.duration} • Stops: {leg.stops}</p>
+										</div>
+									))}
 								</div>
 							</div>
 						))}
