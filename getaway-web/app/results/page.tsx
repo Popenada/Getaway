@@ -115,7 +115,7 @@ export default function ResultsPage() {
 									{flight.legs.map((leg, j) => (
 										<div key={j}>
 											<p className="font-medium">{leg.origin} → {leg.destination} • {leg.airline}</p>
-											<p>{new Date(leg.departure_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} → {new Date(leg.arrival_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+											<p>{leg.departure_time.split('T')[0]} {new Date(leg.departure_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} → {leg.arrival_time.split('T')[0]} {new Date(leg.arrival_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
 											<p className="text-xs text-gray-600">Duration: {leg.duration} • Stops: {leg.stops}</p>
 										</div>
 									))}
