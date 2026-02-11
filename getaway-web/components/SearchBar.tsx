@@ -6,6 +6,7 @@ import DateRangePicker from "@/components/DateRangePicker"
 import { DateRange } from "react-day-picker";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible } from "@/components/ui/collapsible"
+import { useRouter } from "next/navigation";
 type SearchBarProps = {
     dateRange: DateRange | undefined
     setDateRange: (r: DateRange | undefined) => void;
