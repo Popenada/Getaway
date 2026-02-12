@@ -1,82 +1,133 @@
-import requests
-import pandas as pd
 import json
-from datetime import datetime
-from typing import List, Dict, Any
+from amadeus import Client, Location, ResponseError
+import time
 
-# Search request handler
-# Access api and return result
-# https://rapidapi.com/apiheya/api/tripadvisor16
-# returns all tickets within criteria as well as all vendors. Only add best vendor link to table
-
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', None)
-
-url = "url"
-data = ""
-
-def load_json_response(filepath: str) -> Dict[str, Any]:
-    with open(filepath, 'r') as f:
-        return json.load(f)
-
-def parse_flights(response_data: Dict[str, Any]) -> List[Dict[str, Any]]:
-    flights = []
+# One-Way doesn't work
+def query(data):
+    searchid = data.get("searchid")
+    origin = data.get("origin")
+    destination = data.get("destination")
+    dDate = data.get("departureDate")
+    rDate = data.get("returnDate")
+    numAdults = data.get("adults", 1)
+    roundTrip = data.get("roundTrip", True)
+    isRange = data.get("range", False)
     
-    if 'data' not in response_data or 'flights' not in response_data['data']:
-        return flights
+    # origin & dest = "XYZ" airport codes.
+    # Departure date formatted as "YYYY-MM-DD"
+    # numAdults is int formatted as string "X"
     
-    for flight in response_data['data']['flights']:
-        # extract outbound segment (first leg)
-        outbound_seg = flight['segments'][0]
-        outbound_leg = outbound_seg['legs'][0]
-        
-        # extract return segment (second leg) if it exists
-        return_leg = None
-        if len(flight['segments']) > 1:
-            return_seg = flight['segments'][1]
-            return_leg = return_seg['legs'][0]
-        
-        # get best purchase link
-        best_price = None
-        provider = None
-        if flight.get('purchaseLinks'):
-            best_link = flight['purchaseLinks'][0]
-            best_price = best_link.get('totalPrice')
-            if best_link.get('partnerSuppliedProvider'):
-                provider = best_link['partnerSuppliedProvider'].get('displayName')
-        
-        flight_obj = {
-            'outbound_airline': outbound_leg['marketingCarrier']['displayName'],
-            'outbound_flight_number': outbound_leg['flightNumber'],
-            'outbound_departure': outbound_leg['departureDateTime'],
-            'outbound_arrival': outbound_leg['arrivalDateTime'],
-            'outbound_stops': outbound_leg['numStops'],
-            'outbound_duration_km': outbound_leg['distanceInKM'],
-            'return_airline': return_leg['marketingCarrier']['displayName'] if return_leg else None,
-            'return_flight_number': return_leg['flightNumber'] if return_leg else None,
-            'return_departure': return_leg['departureDateTime'] if return_leg else None,
-            'return_arrival': return_leg['arrivalDateTime'] if return_leg else None,
-            'return_stops': return_leg['numStops'] if return_leg else None,
-            'price': best_price,
-            'currency': flight['purchaseLinks'][0]['currency'] if flight.get('purchaseLinks') else 'Unknown',
-            'provider': provider,
-            'class': outbound_leg['classOfService'],
-            'origin': outbound_leg['originStationCode'],
-            'destination': outbound_leg['destinationStationCode']
+    amadeus = Client(
+        client_id='6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt',
+        client_secret='nKCQ8UrGPVORjjIa'
+    )
+    
+    parameters = {
+        "currencyCode": "USD",
+        "originDestinations": [ {
+            "id": 1, 
+            "originLocationCode": origin,
+            "destinationLocationCode": destination, 
+            "departureDateTimeRange": {
+                "date": dDate,
+        } }],
+        "travelers": [], 
+        "sources": ["GDS"],
+        "searchCriteria": {  
+            "excludeAllotments": True,
+            "addOneWayOffers": not roundTrip,
+            "maxFlightOffers": 10,
+            "allowAlternativeFareOptions": True,
+            "oneFlightOfferPerDay": False, 
+            "additionalInformation": { 
+                "chargeableCheckedBags": False, 
+                "brandedFares": True, 
+                "fareRules": False 
+            },
+            "pricingOptions": { 
+                "includedCheckedBagsOnly": True 
+            }, 
+            "flightFilters": { 
+                "crossBorderAllowed": True,
+                "moreOvernightsAllowed": True,
+                "returnToDepartureAirport": roundTrip,
+                "railSegmentAllowed": True,
+                "busSegmentAllowed": True,
+                "cabinRestrictions": [ { 
+                    "cabin": "ECONOMY",
+                    "coverage": "MOST_SEGMENTS",
+                    "originDestinationIds": [1] 
+                }, { 
+                    "cabin": "ECONOMY",
+                    "coverage": "MOST_SEGMENTS",
+                    "originDestinationIds": [2] 
+                }],
+                "connectionRestriction": { 
+                    "airportChangeAllowed": True,
+                    "technicalStopsAllowed": True,
+                    "maximumNumberOfConnections": 2
+            } } } }
+    
+    #add return leg to round trips
+    if roundTrip:
+        returnTrip = {
+            "id": 2,
+            "originLocationCode": destination,
+            "destinationLocationCode": origin,  
+            "departureDateTimeRange": { 
+                "date": rDate, 
+        } }
+        parameters["originDestinations"].append(returnTrip)
+    
+    #for modify parameters for range of dates
+    if isRange:
+        date_format = "%Y-%m-%d"
+        t1 = time.mktime(time.strptime(dDate, date_format))
+        t2 = time.mktime(time.strptime(rDate, date_format))
+        days = int((t2 - t1) / 86400)
+        legs = parameters["originDestinations"]
+        legs[0]["departureDateTimeRange"]["dateWindow"] = "P%dD" %days
+        legs[1]["departureDateTimeRange"]["dateWindow"] = "M%dD" %days
+    
+    #add numAdults to request
+    for i in range(numAdults):
+        traveler = {
+            "id": i+1,
+            "travelerType": "ADULT"
         }
-        flights.append(flight_obj)
+        parameters["travelers"].append(traveler)
     
-    return flights
+    try:
+        '''
+        response = amadeus.shopping.flight_offers_search.get(
+            originLocationCode = origin,
+            destinationLocationCode=destination,
+            departureDate = dDate,
+            adults = numAdults,
+            returnDate = rDate
+        )
+        '''
+    
+        response = amadeus.shopping.flight_offers_search.post(parameters)
+        
+        with open("post_response.json", "w") as file:
+            file.write(json.dumps(response.result, indent=4))
+        
+        f = "%s.json" %searchid
+        with open(f, "w") as file:
+            file.write(json.dumps(response.result, indent=4))
+    except ResponseError as error:
+        return (origin, destination, dDate, rDate)
 
-def flights_to_dataframe(flights: List[Dict[str, Any]]) -> pd.DataFrame:
-    return pd.DataFrame(flights)
 
-def query():
-    response = None
-    return response
+#debug
+args = {
+    "origin": "PAR",
+    "destination": "LON",
+    "departureDate": "2026-02-12",
+    "returnDate": "2026-03-12",
+    "roundTrip": True,
+    "range" : False
+}
 
-# testing
-data = load_json_response('example_response.json')
-flights = parse_flights(data)
-df = flights_to_dataframe(flights)
-print(df)#[['origin', 'destination', 'outbound_airline', 'price', 'provider']])
+query(args)

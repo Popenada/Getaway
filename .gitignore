@@ -1,1 +1,8 @@
 venv/
+*.png
+*.pyc
+*.json
+**/.venv/
+
+None.json
+post_response.json
