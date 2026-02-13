@@ -16,7 +16,7 @@ export function sortData<T>(
   data: T[],
   key: keyof T,
   type: 'number' | 'string' | 'date',
-  order: 'asc' | 'dsc' = 'asc'
+  order: 'asc' | 'dsc' = 'asc',
 ): T[] {
   return [...data].sort((a, b) => {
     const valA = a[key] as any;
