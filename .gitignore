@@ -2,3 +2,10 @@ venv/
 *.png
 *.pyc
 *.json
+**/.venv/
+**/devtools/
+**/devtests/
+*.env
+*.env.local
+None.json
+post_response.json
