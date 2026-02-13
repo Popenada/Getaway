@@ -21,7 +21,7 @@ export default function SortControl({ options, value, onChange }: SortControlPro
         value={value} 
         onValueChange={onChange}
       >
-        <SelectTrigger className="w-[180px] bg-white">
+        <SelectTrigger className="w-fit bg-white">
           <SelectValue placeholder="Select sort" />
         </SelectTrigger>
         <SelectContent
