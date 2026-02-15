@@ -6,6 +6,14 @@ const amadeus = new Amadeus({
     clientSecret: process.env.AMADEUS_API_SECRET!,
 });
 
+function firstLetterUpper(str: string) {
+    return str
+        .toLowerCase()
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
+
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("query");
@@ -22,7 +30,7 @@ export async function GET(request: Request) {
         });
 
         const results = response.data.map((location: any) => ({
-            label: `${location.name} (${location.iataCode})`,
+            label: `${firstLetterUpper(location.name)} (${location.iataCode})`,
             code: location.iataCode,
             city: location.address?.cityName,
             country: location.address?.countryName,
