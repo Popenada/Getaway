@@ -1,17 +1,24 @@
 import json
 from amadeus import Client, Location, ResponseError
-import time
-
+from datetime import datetime, date, timedelta
+from generate_range import getRange
 # One-Way doesn't work
-def query(data):
+def ticket_query(data):
     searchid = data.get("searchid")
-    origin = data.get("origin")
-    destination = data.get("destination")
+    origins = data.get("origins")
+    destinations = data.get("destinations")
     dDate = data.get("departureDate")
     rDate = data.get("returnDate")
-    numAdults = data.get("adults", 1)
-    roundTrip = data.get("roundTrip", True)
-    isRange = data.get("range", False)
+    numAdults = data.get("adults")
+    roundTrip = data.get("roundTrip")
+    isRange = data.get("range")
+    maxPrice = data.get("maxPrice")
+    nonstop = data.get("nonstop")
+    included = data.get("included")
+    excluded = data.get("excluded")
+    tripLength = data.get("tripLength")
+    departureWindow = data.get("departureWindow", 0)
+    returnWindow = data.get("returnWindow", 0)
     
     # origin & dest = "XYZ" airport codes.
     # Departure date formatted as "YYYY-MM-DD"
@@ -26,8 +33,10 @@ def query(data):
         "currencyCode": "USD",
         "originDestinations": [ {
             "id": 1, 
-            "originLocationCode": origin,
-            "destinationLocationCode": destination, 
+            "originLocationCode": origins[0],
+            "destinationLocationCode": destinations[0], 
+            "alternativeOriginsCodes": origins[1:],
+            "alternativeDesinationsCodes": destinations[1:],
             "departureDateTimeRange": {
                 "date": dDate,
         } }],
@@ -35,8 +44,7 @@ def query(data):
         "sources": ["GDS"],
         "searchCriteria": {  
             "excludeAllotments": True,
-            "addOneWayOffers": not roundTrip,
-            "maxFlightOffers": 10,
+            "maxFlightOffers": 2,
             "allowAlternativeFareOptions": True,
             "oneFlightOfferPerDay": False, 
             "additionalInformation": { 
@@ -57,77 +65,145 @@ def query(data):
                     "cabin": "ECONOMY",
                     "coverage": "MOST_SEGMENTS",
                     "originDestinationIds": [1] 
-                }, { 
-                    "cabin": "ECONOMY",
-                    "coverage": "MOST_SEGMENTS",
-                    "originDestinationIds": [2] 
-                }],
+                }, ],
                 "connectionRestriction": { 
                     "airportChangeAllowed": True,
-                    "technicalStopsAllowed": True,
-                    "maximumNumberOfConnections": 2
+                    "technicalStopsAllowed": True
             } } } }
+    
+    #set maximum allowed price
+    if maxPrice:
+        parameters["searchCriteria"]["maxPrice"] = maxPrice
+    
+    #allow nonstop flights
+    if nonstop:
+        parameters["searchCriteria"]["flightFilters"]["connectionRestriction"]["maximumNumberOfConnections"] = 0
+    
+    #exclude selected airlines
+    if excluded:
+        parameters["searchCriteria"]["flightFilters"]["airlineRestrictions"]["excludedAirlineCodes"] = excluded
+    
+    if included:
+        parameters["searchCriteria"]["flightFilters"]["airlineRestrictions"]["includedAirlineCodes"] = included
     
     #add return leg to round trips
     if roundTrip:
         returnTrip = {
             "id": 2,
-            "originLocationCode": destination,
-            "destinationLocationCode": origin,  
+            "originLocationCode": destinations[0],
+            "destinationLocationCode": origins[0],
+            "alternativeOriginsCodes": destinations[1:],
+            "alternativeDestinationsCodes": origins[1:],
             "departureDateTimeRange": { 
                 "date": rDate, 
         } }
+        returnCabin = { 
+                    "cabin": "ECONOMY",
+                    "coverage": "MOST_SEGMENTS",
+                    "originDestinationIds": [2] 
+                }
+        
         parameters["originDestinations"].append(returnTrip)
+        parameters["searchCriteria"]["flightFilters"]["cabinCriteria"].append(returnCabin)
     
     #for modify parameters for range of dates
-    if isRange:
-        date_format = "%Y-%m-%d"
-        t1 = time.mktime(time.strptime(dDate, date_format))
-        t2 = time.mktime(time.strptime(rDate, date_format))
-        days = int((t2 - t1) / 86400)
-        legs = parameters["originDestinations"]
-        legs[0]["departureDateTimeRange"]["dateWindow"] = "P%dD" %days
-        legs[1]["departureDateTimeRange"]["dateWindow"] = "M%dD" %days
+    if departureWindow:
+        parameters["originDestinations"][0]["departureDateTimeRange"]["dateWindow"] = "I%dD" % departureWindow
+        
+    if returnWindow:
+        parameters["originDestinations"][1]["departureDateTimeRange"]["dateWindow"] = "I%dD" % returnWindow
+        
     
     #add numAdults to request
     for i in range(numAdults):
         traveler = {
-            "id": i+1,
+            "id": i + 1,
             "travelerType": "ADULT"
         }
         parameters["travelers"].append(traveler)
     
-    try:
-        '''
-        response = amadeus.shopping.flight_offers_search.get(
-            originLocationCode = origin,
-            destinationLocationCode=destination,
-            departureDate = dDate,
-            adults = numAdults,
-            returnDate = rDate
-        )
-        '''
+    print(parameters)
     
-        response = amadeus.shopping.flight_offers_search.post(parameters)
+    response = {
+      "meta": {
+        "count": 0
+      },
+      "data": []
+    }
+    
+    if isRange == "departure":
+      for date, window in getRange(dDate, rDate, departureWindow, returnWindow):
+        print(date, window)
+        parameters["originDestinations"][0]["departureDateTimeRange"]["date"] = date
+        if window > 0:
+          parameters["originDestinations"][0]["departureDateTimeRange"]["dateWindow"] = "I%dD" % window
         
-        with open("post_response.json", "w") as file:
-            file.write(json.dumps(response.result, indent=4))
+        try:
+          query = amadeus.shopping.flight_offers_search.post(parameters)
+          response["data"] = response["data"] + query.result["data"]
+          response["meta"]["count"] = len(response["data"])
+          print(response)
+          
+        except ResponseError as error:
+          print(error.description())
         
-        f = "%s.json" %searchid
-        with open(f, "w") as file:
-            file.write(json.dumps(response.result, indent=4))
-    except ResponseError as error:
-        return (origin, destination, dDate, rDate)
+    elif isRange == "return":
+      for date in getRange(rDate, dDate, returnWindow, departureWindow):
+        parameters["originDestinations"][1]["departureDateTimeRange"]["date"] = date
+        if window > 0:
+          parameters["originDestinations"][1]["departureDateTimeRange"]["dateWindow"] = "I%dD" % window
+          
+        try:
+          query = amadeus.shopping.flight_offers_search.post(parameters)
+          response["data"] += query.result
+          response["meta"]["count"] = len(response["data"])
+        except ResponseError as error:
+          print(error.description())
+          
+    else:
+    
+    
+      try:
+          '''
+          response = amadeus.shopping.flight_offers_search.get(
+              originLocationCode = origin,
+              destinationLocationCode=destination,
+              departureDate = dDate,
+              adults = numAdults,
+              returnDate = rDate
+          )
+          '''
+      
+          query = amadeus.shopping.flight_offers_search.post(parameters)
+          
+          response = query.result
+          
+          '''
+          with open("post_response.json", "w") as file:
+              file.write(json.dumps(response.result, indent=4))
+          '''
+      except ResponseError as error:
+        print(error.description())
+        return (origins, destinations, dDate, rDate)
+      
+    print(response)
+    f = "%s.json" %searchid
+    with open(f, "w") as file:
+      file.write(json.dumps(response, indent=2))
 
 
 #debug
 args = {
-    "origin": "PAR",
-    "destination": "LON",
-    "departureDate": "2026-02-12",
-    "returnDate": "2026-03-12",
-    "roundTrip": True,
-    "range" : False
+    "searchid" : "TEST-SEARCH",
+    "origins": ["PAR", "IST"],
+    "destinations": ["LON"],
+    "departureDate": "2026-03-20",
+    "returnDate": "2026-03-28",
+    "roundTrip": False,
+    "range" : "departure",
+    "nonstop" : True,
+    "maxPrice" : 1000,
+    "adults" : 1,
 }
 
-query(args)
+ticket_query(args)
