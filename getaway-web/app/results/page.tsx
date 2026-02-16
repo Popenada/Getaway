@@ -31,16 +31,37 @@ type Flight = {
 
 export default function ResultsPage() {
   const searchParams = useSearchParams();
+  const cacheKey = `flights-${searchParams.toString()}`;
 
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  //const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   // Sorting states
   const [sortKey, setSortKey] = useState("price_asc"); // tracks sort order
   
   useEffect(() => {
-		const fetchFlights = async () => {
+
+    const cached = localStorage.getItem(cacheKey);
+
+    if (cached) {
+
+      const parsed = JSON.parse(cached);
+
+      const isExpired = Date.now() - parsed.timestamp > 1000 * 60 * 30;
+
+      if (!isExpired) {
+        console.log("USING CACHED DATA");
+        setFlights(parsed.data);
+        setLoading(false);
+        return;
+      }
+    }
+
+    const fetchFlights = async () => {
+      
+      console.log("FETCHING NEW DATA");
+
 			const res = await fetch("http://localhost:5000/api/flight-search", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -57,7 +78,13 @@ export default function ResultsPage() {
 
       console.log("FRONTEND RECEIVED:", data);
 
-			setFlights(data);
+      setFlights(data);
+      
+      localStorage.setItem(cacheKey, JSON.stringify({
+        data,
+        timestamp: Date.now()
+      }));
+
 			setLoading(false);
 		};
 
