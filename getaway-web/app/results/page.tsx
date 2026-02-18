@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import DateGrid from "@/components/DateGrid";
@@ -31,6 +32,7 @@ type Flight = {
 
 export default function ResultsPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,30 +41,42 @@ export default function ResultsPage() {
   // Sorting states
   const [sortKey, setSortKey] = useState("price_asc"); // tracks sort order
   
+  const fetchFlights = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch("http://localhost:5000/api/flight-search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          origin: searchParams.get("origin"),
+          destination: searchParams.get("destination"),
+          departure: searchParams.get("departure"),
+          return: searchParams.get("return"),
+          adults: parseInt(searchParams.get("adults") || "1"),
+        }),
+      });
+
+      if (!res.ok) {
+        console.error("Backend error:", await res.text());
+        setFlights([]);
+        setLoading(false);
+        return;
+      }
+
+      const data = await res.json();
+      setFlights(data);
+    } catch (err) {
+      console.error("Fetch failed:", err);
+      setFlights([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-		const fetchFlights = async () => {
-			const res = await fetch("http://localhost:5000/api/flight-search", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					origin: searchParams.get("origin"),
-					destination: searchParams.get("destination"),
-					departure: searchParams.get("departure"),
-					return: searchParams.get("return"),
-					adults: parseInt(searchParams.get("adults") || "1"),
-				}),
-			});
-
-			const data = await res.json();
-
-      console.log("FRONTEND RECEIVED:", data);
-
-			setFlights(data);
-			setLoading(false);
-		};
-
-		fetchFlights();
-	}, [searchParams]);
+    fetchFlights();
+  }, [searchParams]);
 
   if (loading) {
     return (
@@ -153,8 +167,33 @@ export default function ResultsPage() {
           />
         )}
         {sortedFlights.length === 0 ? (
-          <div className="text-center py-20 border-2 border-dashed rounded-xl">
-            <p className="text-gray-500">No flights found for this route.</p>
+          <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-xl bg-white shadow-sm space-y-6">
+            
+            <div className="text-center space-y-2">
+              <h2 className="text-xl font-semibold text-gray-900">
+                No Flights Found
+              </h2>
+              <p className="text-gray-500 max-w-md">
+                We couldn't find any flights for your selected dates and route.
+                Try adjusting your search or retrying.
+              </p>
+            </div>
+
+            <div className="flex gap-4">
+              <Button
+                onClick={fetchFlights}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                Retry Search
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => router.push("/")}
+              >
+                Back to Search
+              </Button>
+            </div>
           </div>
         ) : (
           <Accordion type="single" collapsible className="w-full space-y-4">
