@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -32,6 +32,7 @@ type Flight = {
 export default function ResultsPage() {
   const searchParams = useSearchParams();
   const cacheKey = `flights-${searchParams.toString()}`;
+  const hasFetched = useRef(false);
 
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,10 +59,14 @@ export default function ResultsPage() {
       }
     }
 
+    if (hasFetched.current) return;
+
+    hasFetched.current = true;
+
     const fetchFlights = async () => {
       
       console.log("FETCHING NEW DATA");
-
+      
 			const res = await fetch("http://localhost:5000/api/flight-search", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
