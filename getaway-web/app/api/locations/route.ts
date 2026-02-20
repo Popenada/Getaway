@@ -14,12 +14,21 @@ function firstLetterUpper(str: string) {
         .join(" ");
 }
 
+const cache = new Map<string, any>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("query");
 
     if (!query || query.length < 2) {
         return NextResponse.json([]);
+    }
+
+    const cached = cache.get(query);
+
+    if (cached && (Date.now() - cached.timestamp < CACHE_DURATION)) {
+        return NextResponse.json(cached.data);
     }
 
     try {
@@ -37,9 +46,23 @@ export async function GET(request: Request) {
             type: location.subType,
         }));
 
+        cache.set(query, {
+            data: results,
+            timestamp: Date.now(),
+        });
+
         return NextResponse.json(results);
-    } catch (error) {
+
+    } catch (error: any) {
         console.error(error);
+
+        if (error.response?.statusCode == 429) {
+            return NextResponse.json(
+                { error: "Amadeus API rate limit exceeded" },
+                { status: 429 }
+            );
+        }
+
         return NextResponse.json(
             { error: "Failed to fetch locations" },
             { status: 500 }
