@@ -1,6 +1,19 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## Getting Started with Backend
+
+To get started with the backend create a file in the root directory `.env.local`
+In this file write, the api key and secret can be found in `getaway/get_tickets.py`
+```
+AMADEUS_API_KEY='api_key_here'
+AMADEUS_API_SECRET='api_secret_here'
+```
+With the api access set up ensure your are have a python virtual enviorment.
+This can be created in VSCode by opening any python file. Once in the file go to the bottom right corner where it shows what version of python and click it. In the dropdown at the center of the screen click `+ Create Virtual Enviorment` and follow the steps. To activate the enviorment in terminal source path/to/.venv/scripts/activate. If the requirments.txt wasn't downloaded all ready download it manually using `pip install -r requirements.txt`
+
+You can then run the flask server by running the command `python getaway-api.py` in the route directory. Note use a seperate terminal for this.
+
+## Getting Started with Frontend
 
 First, run the development server:
 

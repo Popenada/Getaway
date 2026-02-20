@@ -1,5 +1,6 @@
 import json
 from typing import List, Dict, Any
+from app import app
 
 def load_json_response(file_path: str) -> Dict[str, Any]:
     with open(file_path, 'r') as file:
@@ -12,23 +13,30 @@ def parse_flights(response_data: Dict[str, Any]) -> List[Dict[str, Any]]:
     carriers = response_data.get('dictionaries', {}).get('carriers', {})
     
     for offer in data:
-        itinerary = offer['itineraries'][0]
-        segments = itinerary['segments']
+        legs = []
         
-        first_seg = segments[0]
-        last_seg = segments[-1]
+        for itinerary in offer.get('itineraries', []):
+            segments = itinerary['segments']
+            first_seg = segments[0]
+            last_seg = segments[-1]
         
-        airline_code = first_seg['carrierCode']
-        airline_name = carriers.get(airline_code, airline_code)
+            airline_code = first_seg['carrierCode']
+            airline_name = carriers.get(airline_code, airline_code)
+            
+            leg = {
+                'origin': first_seg['departure']['iataCode'],
+                'destination': last_seg['arrival']['iataCode'],
+                'departure_time': first_seg['departure']['at'],
+                'arrival_time': last_seg['arrival']['at'],
+                'stops': len(segments) - 1,
+                'duration': itinerary['duration'],
+                'airline': airline_name
+            }
+            
+            legs.append(leg)
         
         flight_obj = {
-            'origin': first_seg['departure']['iataCode'],
-            'destination': last_seg['arrival']['iataCode'],
-            'detparture_time': first_seg['departure']['at'],
-            'arrival_time': last_seg['arrival']['at'],
-            'stops': len(segments) - 1,
-            'duration': itinerary['duration'],
-            'airline': airline_name,
+            'legs': legs,
             'price': offer['price']['total'],
             'currency': offer['price']['currency'],
             'cabin': offer['travelerPricings'][0]['fareDetailsBySegment'][0]['cabin']
