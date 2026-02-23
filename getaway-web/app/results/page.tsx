@@ -160,6 +160,23 @@ export default function ResultsPage() {
           {origin} {destination && <><ArrowRight className="mx-2 text-gray-400" /> {destination}</>}
         </h1>
         {sortedFlights.length > 0 && (
+          <div className="flex gap-4 mb-4">
+            <Button
+              onClick={fetchFlights}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              Retry Search
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => router.push("/")}
+            >
+              Back to Search
+            </Button>
+          </div>
+        )}
+        {sortedFlights.length > 0 && (
           <SortControl 
             options={sortOptions}
             value={sortKey}
