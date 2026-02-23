@@ -157,7 +157,7 @@ export default function ResultsPage() {
     <main className="p-6 min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto space-y-6">
         <h1 className="flex items-center text-3xl font-bold text-gray-900 mb-6">
-          {origin || "Flight Search"} {destination && <><ArrowRight className="mx-2 text-gray-400" /> {destination}</>}
+          {origin} {destination && <><ArrowRight className="mx-2 text-gray-400" /> {destination}</>}
         </h1>
         {sortedFlights.length > 0 && (
           <SortControl 
@@ -167,7 +167,7 @@ export default function ResultsPage() {
           />
         )}
         {sortedFlights.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-xl bg-white shadow-sm space-y-6">
+          <div className="flex flex-col items-center justify-center py-20 rounded-xl bg-white shadow-sm space-y-6">
             
             <div className="text-center space-y-2">
               <h2 className="text-xl font-semibold text-gray-900">
