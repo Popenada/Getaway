@@ -7,6 +7,7 @@ import type { SearchHistoryEntry } from "@/lib/types"
 type Props = {
     history: SearchHistoryEntry[]
     onSearchAgain: (query: SearchHistoryEntry["query"]) => void
+    ClearHistory: () => void
 }   
 
 // Take one entry of history and rendering it
@@ -21,7 +22,7 @@ function HistoryCard({ entry, onSearchAgain }: { entry: SearchHistoryEntry, onSe
 }
 
 // Function to properly format history entries using historyCard function into a history data table ui
-export function SearchHistoryPanel({ history, onSearchAgain }: Props){
+export function SearchHistoryPanel({ history, onSearchAgain, ClearHistory}: Props){
     // passing history prop into function and checking length equal 0
     if (history.length == 0){
         return null
@@ -35,6 +36,8 @@ export function SearchHistoryPanel({ history, onSearchAgain }: Props){
                     )
                 )
             }
+             <Button variant="ghost" size="sm" onClick={ClearHistory}>Clear</Button>
+
         </div>
     )
 }

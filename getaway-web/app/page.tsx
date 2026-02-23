@@ -24,7 +24,7 @@ export default function SearchTab() {
   const [maxPrice, setMaxPrice] = useState<number>(DEFAULT_MAX_PRICE);
   const [nonStopOnly, setNonStopOnly] = useState(true);
   const [advancedOpen, setAdvancedOpen] = useState(false);
-  const {history, addEntry} = useSearchHistory();
+  const {history, addEntry, clearHistory} = useSearchHistory();
 
    const handleSearchAgain = (query: SearchHistoryEntry["query"]) => {
     setDepartureLocation(query.origin);
@@ -74,9 +74,16 @@ export default function SearchTab() {
         <SearchHistoryPanel
           history={history}
           onSearchAgain={handleSearchAgain}
+          ClearHistory={clearHistory}
         />
-        </div>
         
+        </div>
+        <Button onClick={() => addEntry({
+          query: { origin: "JFK", destination: "LAX", departureDate: "2025-06-15", passengers: 2 },
+          resultCount: 8
+          })}>
+          Add fake history entry
+        </Button>
       </div>
       
         
