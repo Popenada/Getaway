@@ -42,8 +42,8 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
     const [departureSuggestions, setDepartureSuggestions] = useState<any[]>([]);
     const [arrivalSuggestions, setArrivalSuggestions] = useState<any[]>([]);
 
-    const [departureCode, setDepartureCode] = useState<any[]>([]);
-    const [arrivalCode, setArrivalCode] = useState<any[]>([]);
+    const [departureCode, setDepartureCode] = useState<string[]>([]);
+    const [arrivalCode, setArrivalCode] = useState<string[]>([]);
 
     const router = useRouter();
 
@@ -109,7 +109,7 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
                                     onClick={() => {
                                         setDepartureLocation(suggestion.label);
                                         setDepartureSuggestions([]);
-                                        setDepartureCode(suggestion.code);
+                                        setDepartureCode([suggestion.code]);
                                     }}
                                 >
                                     {suggestion.label}
@@ -148,7 +148,7 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
                                     onClick={() => {
                                         setArrivalLocation(suggestion.label);
                                         setArrivalSuggestions([]);
-                                        setArrivalCode(suggestion.code);
+                                        setArrivalCode([suggestion.code]);
                                     }}
                                 >
                                     {suggestion.label}
