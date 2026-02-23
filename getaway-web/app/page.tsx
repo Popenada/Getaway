@@ -17,11 +17,15 @@ export default function SearchTab() {
   const [arrivalLocation, setArrivalLocation] = useState("");
   const [travelers, setTravelers] = useState("");
   const [roundTrip, setRoundTrip] = useState(true);
-  const [preferredAirline, setPreferredAirline] = useState("");
+  const [includedAirline, setIncludedAirline] = useState<string[]>([]);
+  const [excludedAirline, setExcludedAirline] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState<number>(DEFAULT_MIN_PRICE);
   const [maxPrice, setMaxPrice] = useState<number>(DEFAULT_MAX_PRICE);
-  const [nonStopOnly, setNonStopOnly] = useState(true);
+  const [nonstopOnly, setNonStopOnly] = useState(true);
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [tripLength, setTripLength] = useState<number>(1);
+  const [departureWindow, setDepartureWindow] = useState<number>(0);
+  const [returnWindow, setReturnWindow] = useState<number>(0);
 
   return (
     <main className="p-50">
@@ -44,8 +48,15 @@ export default function SearchTab() {
 
         roundTrip={roundTrip}
         setRoundTrip={setRoundTrip}
-        />
 
+        includedAirline={includedAirline}
+        excludedAirline={excludedAirline}
+        nonstopOnly={nonstopOnly}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
+        departureWindow={departureWindow}
+        returnWindow={returnWindow}
+        />
       <Link href="/results">
         <Button className="h-10 px-6 mt-4">
           go to Results page (testing)
@@ -54,14 +65,22 @@ export default function SearchTab() {
       <AdvancedOptionsComponent
         advancedOpen={advancedOpen}
         setAdvancedOpen={setAdvancedOpen}
-        preferredAirline={preferredAirline}
-        setPreferredAirline={setPreferredAirline}
+        includedAirline={includedAirline}
+        setIncludedAirline={setIncludedAirline}
+        excludedAirline={excludedAirline}
+        setExcludedAirline={setExcludedAirline}
+        tripLength={tripLength}
+        setTripLength={setTripLength}
         minPrice={minPrice}
         setMinPrice={setMinPrice}
         maxPrice={maxPrice}
         setMaxPrice={setMaxPrice}
-        nonStopOnly={nonStopOnly}
-        setNonStopOnly={setNonStopOnly}
+        departureWindow={departureWindow}
+        setDepartureWindow={setDepartureWindow}
+        returnWindow={returnWindow}
+        setReturnWindow={setReturnWindow}
+        nonstopOnly={nonstopOnly}
+        setNonstopOnly={setNonStopOnly}
 
       />
     </main>

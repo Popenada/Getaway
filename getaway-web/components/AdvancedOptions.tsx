@@ -15,8 +15,11 @@ type AdvancedOptionsComponentProps = {
   advancedOpen: boolean;
   setAdvancedOpen: (v: boolean) => void;
 
-  preferredAirline: string;
-  setPreferredAirline: (t: string) => void;
+  includedAirline: string[];
+  setIncludedAirline: (v: string[]) => void;
+
+  excludedAirline: string[];
+  setExcludedAirline: (v: string[]) => void;
 
   minPrice: number;
   setMinPrice: (n: number) => void;
@@ -24,21 +27,38 @@ type AdvancedOptionsComponentProps = {
   maxPrice: number;
   setMaxPrice: (n: number) => void;
 
-  nonStopOnly: boolean;
-  setNonStopOnly: (v: boolean) => void;
+  nonstopOnly: boolean;
+  setNonstopOnly: (v: boolean) => void;
+
+  tripLength: number;
+  setTripLength: (n: number) => void;
+
+  departureWindow: number;
+  setDepartureWindow: (n: number) => void;
+  returnWindow: number;
+  setReturnWindow: (n: number) => void;
 };
 
 export default function AdvancedOptionsComponent({
   advancedOpen,
   setAdvancedOpen,
-  preferredAirline,
-  setPreferredAirline,
+  includedAirline,
+  setIncludedAirline,
+  excludedAirline,
+  setExcludedAirline,
   minPrice,
   setMinPrice,
-  nonStopOnly,
-  setNonStopOnly,
+  nonstopOnly,
+  setNonstopOnly,
   maxPrice,
   setMaxPrice,
+  tripLength,
+  setTripLength,
+  departureWindow,
+  setDepartureWindow,
+  returnWindow, 
+  setReturnWindow
+  
 }: AdvancedOptionsComponentProps) {
   return (
     <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen} className="w-full">
@@ -55,15 +75,50 @@ export default function AdvancedOptionsComponent({
       <CollapsibleContent className="mt-4">
         <div className="border rounded-md p-4 flex flex-col gap-4">
           <div className="text-sm font-medium text-black-600">
-            Preferred airline
+            Included airlines
             <Input
-              value={preferredAirline}
-              onChange={(e) => setPreferredAirline(e.target.value)}
+                    value={includedAirline.join(", ")}
+                    onChange={(e) =>
+                    setIncludedAirline(
+                    e.target.value.split(",").map(s => s.trim()).filter(Boolean)
+                )
+            }
+
               placeholder="UA, DL, AA"
               className="mt-1"
             />
           </div>
+          <div className="text-sm font-medium text-black-600">
+                Excluded airlines
+                <Input
+                    value={excludedAirline.join(", ")}
+                    onChange={(e) =>
+                    setExcludedAirline(
+                    e.target.value.split(",").map(s => s.trim()).filter(Boolean)
+                )
+            }
 
+                className="mt-1"
+                />
+          </div>
+          <div className="text-sm font-medium text-black-600">
+                <div>
+                    Trip Length (under {tripLength} hours)
+                </div>
+                
+                <Slider
+                    min={0}
+                    max={64}
+                    step={1}
+                    value={[tripLength]}
+                    onValueChange={(vals) => {
+                        setTripLength(vals[0] ?? 1);
+                    }}
+                    className="mt-2"
+                />
+                    
+                
+          </div>
           <div className="text-sm font-medium text-black-600">
             <div className="text-sm font-medium text-black-600">
             Price range (${minPrice} – ${maxPrice})
@@ -81,10 +136,29 @@ export default function AdvancedOptionsComponent({
             />
           </div>
 
+          <div className="text-sm font-medium text-black-600">
+            Departure window: {departureWindow}
+            <Slider
+                min={0}
+                max={3}
+                step={1}
+                value={[departureWindow]}
+                onValueChange={(vals) => setDepartureWindow(vals[0] ?? 0)}
+            />
+          </div>
+          <div>
+            Return window: {returnWindow}
+            <Slider
+                min={0}
+                max={3}
+                step={1}
+                onValueChange={(vals) => setReturnWindow(vals[0] ?? 0)}
+            />
+          </div>
           <div className="flex items-center gap-2">
             <Checkbox
-              checked={nonStopOnly}
-              onCheckedChange={(checked) => setNonStopOnly(!!checked)}
+              checked={nonstopOnly}
+              onCheckedChange={(checked) => setNonstopOnly(!!checked)}
             />
             <p className="text-sm font-medium">Nonstop only</p>
           </div>
@@ -93,8 +167,8 @@ export default function AdvancedOptionsComponent({
             <Button
               variant="outline"
               onClick={() => {
-                setPreferredAirline("");
-                setNonStopOnly(false);
+                setIncludedAirline([]);
+                setNonstopOnly(false);
                 setMinPrice(DEFAULT_MIN_PRICE);
                 setMaxPrice(DEFAULT_MAX_PRICE);
               }}
