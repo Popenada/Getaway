@@ -2,13 +2,15 @@
 import { useState } from "react";
 import SearchComponent from "@/components/SearchBar";
 import { Button } from "@/components/ui/button"
-import { ArrowUpIcon } from "lucide-react"
+import { ArrowUpIcon, Search } from "lucide-react"
 import DateRangePicker from "@/components/DateRangePicker";
 import { DateRange } from "react-day-picker";
 import { set } from "date-fns";
 import Link from "next/link";
 import AdvancedOptionsComponent from "@/components/AdvancedOptions";
-
+import { SearchHistoryEntry } from "@/lib/types";
+import { SearchHistoryPanel } from "@/components/SearchHistoryPanel";
+import { useSearchHistory } from "@/hooks/SearchHistory";
 const DEFAULT_MIN_PRICE = 0
 const DEFAULT_MAX_PRICE = 1000
 export default function SearchTab() {
@@ -22,48 +24,62 @@ export default function SearchTab() {
   const [maxPrice, setMaxPrice] = useState<number>(DEFAULT_MAX_PRICE);
   const [nonStopOnly, setNonStopOnly] = useState(true);
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const {history, addEntry} = useSearchHistory();
+
+   const handleSearchAgain = (query: SearchHistoryEntry["query"]) => {
+    setDepartureLocation(query.origin);
+    setArrivalLocation(query.destination);
+    setTravelers(String(query.passengers));
+  };
 
   return (
     <main className="p-50">
       <h1 className="text-2xl font-bold mb-4 text-center">
         Getaway
       </h1>
-      <SearchComponent
-        departureLocation={departureLocation}
-        setDepartureLocation={setDepartureLocation}
+      <div className="max-w-5xl mx-auto flex gap-8 items-start">
+        <div className="flex-1">
+        <SearchComponent
+          departureLocation={departureLocation}
+          setDepartureLocation={setDepartureLocation}
         
-        arrivalLocation={arrivalLocation}
-        setArrivalLocation={setArrivalLocation}
+          arrivalLocation={arrivalLocation}
+          setArrivalLocation={setArrivalLocation}
 
-        dateRange={dateRange}
-        setDateRange={setDateRange}
+          dateRange={dateRange}
+          setDateRange={setDateRange}
         
         
-        travelers={travelers}
-        setTravelers={setTravelers}
+          travelers={travelers}
+          setTravelers={setTravelers}
 
-        roundTrip={roundTrip}
-        setRoundTrip={setRoundTrip}
+          roundTrip={roundTrip}
+          setRoundTrip={setRoundTrip}
         />
+        <AdvancedOptionsComponent
+          advancedOpen={advancedOpen}
+          setAdvancedOpen={setAdvancedOpen}
+          preferredAirline={preferredAirline}
+          setPreferredAirline={setPreferredAirline}
+          minPrice={minPrice}
+          setMinPrice={setMinPrice}
+          maxPrice={maxPrice}
+          setMaxPrice={setMaxPrice}
+          nonStopOnly={nonStopOnly}
+          setNonStopOnly={setNonStopOnly}
+        />
+        </div>
 
-      <Link href="/results">
-        <Button className="h-10 px-6 mt-4">
-          go to Results page (testing)
-        </Button>
-      </Link>
-      <AdvancedOptionsComponent
-        advancedOpen={advancedOpen}
-        setAdvancedOpen={setAdvancedOpen}
-        preferredAirline={preferredAirline}
-        setPreferredAirline={setPreferredAirline}
-        minPrice={minPrice}
-        setMinPrice={setMinPrice}
-        maxPrice={maxPrice}
-        setMaxPrice={setMaxPrice}
-        nonStopOnly={nonStopOnly}
-        setNonStopOnly={setNonStopOnly}
-
-      />
+        <div className="w-80">
+        <SearchHistoryPanel
+          history={history}
+          onSearchAgain={handleSearchAgain}
+        />
+        </div>
+        
+      </div>
+      
+        
     </main>
   );
 }
