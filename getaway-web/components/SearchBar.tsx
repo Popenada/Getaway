@@ -22,17 +22,28 @@ type SearchBarProps = {
 
     roundTrip: boolean;
     setRoundTrip: (v: boolean) => void;
+
+    departureWindow: number;
+    returnWindow: number;
+
+    includedAirline: string[];
+    excludedAirline: string[];
+    nonstopOnly: boolean;
+    
+    minPrice: number;
+    maxPrice: number;
+
 };
 
 export default function SearchComponent({dateRange, setDateRange, departureLocation, 
     setDepartureLocation, arrivalLocation, setArrivalLocation, travelers, setTravelers,
-    roundTrip, setRoundTrip
+    roundTrip, setRoundTrip, includedAirline, excludedAirline, nonstopOnly, minPrice, maxPrice
 }: SearchBarProps) {
     const [departureSuggestions, setDepartureSuggestions] = useState<any[]>([]);
     const [arrivalSuggestions, setArrivalSuggestions] = useState<any[]>([]);
 
-    const [departureCode, setDepartureCode] = useState("");
-    const [arrivalCode, setArrivalCode] = useState("");
+    const [departureCode, setDepartureCode] = useState<string[]>([]);
+    const [arrivalCode, setArrivalCode] = useState<string[]>([]);
 
     const router = useRouter();
 
@@ -44,11 +55,20 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
 
     const handleSearch = async () => {
         const params = new URLSearchParams({
-            origin: departureCode,
-            destination: arrivalCode,
-            departure: dateRange?.from ? dateRange.from.toISOString().split('T')[0] : '',
-            return: dateRange?.to ? dateRange.to.toISOString().split('T')[0] : '',
-            adults: travelers,
+            departureCode: departureCode.join(","),
+            arrivalCode: arrivalCode.join(","),
+            departureDate: dateRange?.from ? dateRange.from.toISOString().split('T')[0] : '',
+            returnDate: dateRange?.to ? dateRange.to.toISOString().split('T')[0] : '',
+            travelers: travelers || "1",
+            triplength: "",
+            roundTrip: String(roundTrip),
+            includedAirline: includedAirline.join(","),
+            excludedAirline: excludedAirline.join(","),
+            nonstopOnly: String(nonstopOnly),
+            minPrice: String(minPrice),
+            maxPrice: String(maxPrice),
+            departureWindow: "0",
+            returnWindow: "0",
         });
 
         router.push(`/results?${params.toString()}`);
@@ -89,7 +109,7 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
                                     onClick={() => {
                                         setDepartureLocation(suggestion.label);
                                         setDepartureSuggestions([]);
-                                        setDepartureCode(suggestion.code);
+                                        setDepartureCode([suggestion.code]);
                                     }}
                                 >
                                     {suggestion.label}
@@ -128,7 +148,7 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
                                     onClick={() => {
                                         setArrivalLocation(suggestion.label);
                                         setArrivalSuggestions([]);
-                                        setArrivalCode(suggestion.code);
+                                        setArrivalCode([suggestion.code]);
                                     }}
                                 >
                                     {suggestion.label}

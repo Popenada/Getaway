@@ -19,10 +19,11 @@ export default function SearchTab() {
   const [arrivalLocation, setArrivalLocation] = useState("");
   const [travelers, setTravelers] = useState("");
   const [roundTrip, setRoundTrip] = useState(true);
-  const [preferredAirline, setPreferredAirline] = useState("");
+  const [includedAirline, setIncludedAirline] = useState<string[]>([]);
+  const [excludedAirline, setExcludedAirline] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState<number>(DEFAULT_MIN_PRICE);
   const [maxPrice, setMaxPrice] = useState<number>(DEFAULT_MAX_PRICE);
-  const [nonStopOnly, setNonStopOnly] = useState(true);
+  const [nonstopOnly, setNonStopOnly] = useState(true);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const {history, addEntry, clearHistory} = useSearchHistory();
 
