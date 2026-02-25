@@ -86,5 +86,5 @@ def defaultDates():
     departure = today + timedelta(days=randrange(1,4))
     returnDate = departure + timedelta(days=randrange(3,10))
     
-    #return tuple of dates
+    #return tuple of dates, 0 is departure 1 is return
     return (str(departure), str(returnDate))
