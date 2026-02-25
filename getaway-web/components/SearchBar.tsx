@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DateRangePicker from "@/components/DateRangePicker"
@@ -41,6 +41,8 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
 }: SearchBarProps) {
     const [departureSuggestions, setDepartureSuggestions] = useState<any[]>([]);
     const [arrivalSuggestions, setArrivalSuggestions] = useState<any[]>([]);
+    const departureTimeout = useRef<NodeJS.Timeout | null>(null);
+    const arrivalTimeout = useRef<NodeJS.Timeout | null>(null);
 
     const [departureCode, setDepartureCode] = useState<string[]>([]);
     const [arrivalCode, setArrivalCode] = useState<string[]>([]);
@@ -87,13 +89,19 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
                             const value = e.target.value;
                             setDepartureLocation(value);
 
+                            if (departureTimeout.current) {
+                                clearTimeout(departureTimeout.current);
+                            }
+
                             if (value.length < 2) {
                                 setDepartureSuggestions([]);
                                 return;
                             }
 
-                            const suggestions = await fetchLocations(value);
-                            setDepartureSuggestions(suggestions);
+                            departureTimeout.current = setTimeout(async () => {
+                                const suggestions = await fetchLocations(value);
+                                setDepartureSuggestions(suggestions);
+                            }, 300);
                         }}
 
                         placeholder="Enter departure location"
@@ -126,13 +134,19 @@ export default function SearchComponent({dateRange, setDateRange, departureLocat
                             const value = e.target.value;
                             setArrivalLocation(value);
 
+                            if (arrivalTimeout.current) {
+                                clearTimeout(arrivalTimeout.current);
+                            }
+
                             if (value.length < 2) {
                                 setArrivalSuggestions([]);
                                 return;
                             }
 
-                            const suggestions = await fetchLocations(value);
-                            setArrivalSuggestions(suggestions);
+                            arrivalTimeout.current = setTimeout(async () => {
+                                const suggestions = await fetchLocations(value);
+                                setArrivalSuggestions(suggestions);
+                            }, 300);
                         }}
 
                         placeholder="Enter arrival location"
