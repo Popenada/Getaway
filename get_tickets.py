@@ -122,7 +122,7 @@ def ticket_query(data):
       }
       parameters["travelers"].append(traveler)
     
-    print(parameters)
+    #print(parameters)
     
     response = {
       "meta": {
@@ -134,12 +134,14 @@ def ticket_query(data):
     
     departureRange = getRange(dDate)
     returnRange = getRange(rDate)
+    
     if returnRange == []:
       returnRange = [None]
+    
     for departure in departureRange:
       for _return in returnRange:
         
-        print(departure, _return)
+        #print(departure, _return)
         
         parameters["originDestinations"][0]["departureDateTimeRange"]["date"] = departure[0]
         
@@ -157,29 +159,31 @@ def ticket_query(data):
           query = amadeus.shopping.flight_offers_search.post(parameters)
           response["data"] = response["data"] + query.result["data"]
           response["meta"]["count"] = len(response["data"])
-          print(response)
+          #print(response)
           
         except ResponseError as error:
           response["meta"]["errors"].append(error.description())
         
         
-    print(response)
+    #print(response)
     f = "%s.json" %searchid
     with open(f, "w") as file:
       file.write(json.dumps(response, indent=2))
+    
+    return response
 
 
 #debug
 args = {
     "searchid" : "TEST-SEARCH",
-    "origins": ["PAR", "IST"],
-    "destinations": ["LON"],
-    "departureDate": ("2026-03-20","2026-03-22"),
-    "returnDate": ("2026-03-28",),
+    "origins": ["LAX"],
+    "destinations": ["NYC"],
+    "departureDate": ("2026-03-17",),
+    "returnDate": ("2026-03-24",),
     "roundTrip": True,
     "nonstop" : True,
-    "maxPrice" : 1000,
+    "maxPrice" : 2000,
     "adults" : 1,
 }
 
-ticket_query(args)
+#ticket_query(args)
