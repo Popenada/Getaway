@@ -63,6 +63,7 @@ export default function SearchComponent({ dateRange, setDateRange, departureLoca
 
   const clientCache = useRef<Map<string, any[]>>(new Map());
 
+  // autocomplete
   const fetchLocations = async (query: string) => {
     // check if any shorter prefix is cached and filter it
     for (let i = query.length; i >= 2; i--) {

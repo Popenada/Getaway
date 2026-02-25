@@ -45,10 +45,9 @@ export default function ResultsPage() {
   
   useEffect(() => {
 
+    // check cache first
     const cached = localStorage.getItem(cacheKey);
-
     if (cached) {
-
       const parsed = JSON.parse(cached);
       const isExpired = Date.now() - parsed.timestamp > CACHE_DURATION;
 
@@ -61,6 +60,7 @@ export default function ResultsPage() {
       }
     }
 
+    // check if we already fetched new data for this query in this session to avoid duplicate calls
     if (hasFetched.current) return;
     hasFetched.current = true;
 
@@ -74,11 +74,11 @@ export default function ResultsPage() {
 				body: JSON.stringify({
 					searchid: "TEST123",
 
-          departureCodes: searchParams.getAll("departureCodes"),
-          arrivalCodes: searchParams.getAll("arrivalCodes"),
+          departureCodes: searchParams.get("departureCodes")?.split(",").filter(Boolean) ?? [],
+          arrivalCodes: searchParams.get("arrivalCodes")?.split(",").filter(Boolean) ?? [],
 
-          departureDate: searchParams.getAll("departureDate"),
-          returnDate: searchParams.getAll("returnDate"),
+          departureDate: searchParams.get("departureDate")?.split(",").filter(Boolean) ?? [],
+          returnDate: searchParams.get("returnDate")?.split(",").filter(Boolean) ?? [],
 
           travelers: Number(searchParams.get("travelers") || 1),
           tripLength: Number(searchParams.get("tripLength") || 0),
@@ -245,7 +245,7 @@ export default function ResultsPage() {
                     <span className="text-xl font-bold text-green-600">
                       ${parseFloat(flight.price).toFixed(2)}
                     </span>
-                    <p className="text-xs text-grey-400">{flight.currency}</p>
+                    <p className="text-xs text-gray-400">{flight.currency}</p>
                   </div>
                 </div>
               </AccordionTrigger>
