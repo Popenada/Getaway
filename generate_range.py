@@ -20,10 +20,10 @@ def getRange(date):
             dates.append((str(startDate + delta), delta.days))
             #print(dates)
             startDate += timedelta(days=2 * delta.days + 1)
-            print(startDate)
+            #print(startDate)
             
         else:
             return dates
         
     
-print(getRange(("2024-01-01", "2024-01-12")))
+#print(getRange(("2024-01-01", "2024-01-12")))

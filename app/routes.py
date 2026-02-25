@@ -21,34 +21,55 @@ def flightSearch():
     
     # read JSON body for POST requests first, fall back to query params
     body = request.get_json(silent=True) or {}
+    
+    print('BODY:', body)
 
     #user input test
     inputs = {
-        "searchid" : body.get("searchid", request.args.get("TEST-ID")),
-        "departureDate" : tuple(body.get("departureDate", request.args.get("departureDate"))), # tuple of Departure dates, formatted asw YYYY-MM-DD
-        "destinations" : body.get("arrivalLocation", request.args.get("arrivalLocation")), # list of Destination Airport codes "XYZ"
+        "searchid" : body.get("searchid", request.args.get("searchid", "TEST-ID")),
+        
+        "origins" : body.get("departureCodes", request.args.get("departureCodes")), # list of Origin Airport codes "ABC"
+        "destinations" : body.get("arrivalCodes", request.args.get("arrivalCodes")), # list of Destination Airport codes "XYZ"
+        
+        "departureDate" : tuple(body.get("departureDate", request.args.get("departureDate"))), # tuple of Departure dates, formatted as YYYY-MM-DD
         "returnDate" : tuple(body.get("returnDate", request.args.get("returnDate"))), # tuple of Return dates, formatted as YYYY-MM-DD
-        "origins" : body.get("departureLocation", request.args.get("departureLocation")), # list of Origin Airport codes "ABC"
-        "adults" : int(body.get("travelers", request.args.get("travelers", 1))), # Number of adults, int}
+        
+        "adults" : int(body.get("travelers", request.args.get("travelers", 1))), # Number of adults, int
+        
         "roundTrip" : body.get("roundTrip", request.args.get("roundTrip", "True")) in ("true", "True", "TRUE"), #bool, true = round trip
-        "nonstop" : body.get("nonStop", request.args.get("nonStop")) in ("true", "True", "TRUE"), #bool, whether or not there are connecting flights
+        "nonstop" : body.get("nonStop", request.args.get("nonStop", "False")) in ("true", "True", "TRUE"), #bool, whether or not there are connecting flights
+        
         "included" : body.get("includedAirline", request.args.get("includedAirline")), #list of strings, list contains allowed airline codes
-        "excluded" : body.get(request.args.get("excludedAirline")), #list of strings, list contains excluded airline codes
-        "maxPrice" : int(body.get("excludedAirline", request.args.get("maxPrice", 0))), #int, maximum allowed price
-        "tripLength" : int(body.get(request.args.get("tripLength",0))), #int, max number of days between departure and arrival
-        "departureWindow" : int(body.get("tripLength", request.args.get("departureWindow",0))), #int, range of dates near selected departure, max 3
-        "returnWindow" : int(body.get("returnWindow", request.args.get("returnWindow",0))) #int, range of dates near selected arrival, max 3
+        "excluded" : body.get("excludedAirline", request.args.get("excludedAirline")), #list of strings, list contains excluded airline codes
+        
+        "maxPrice" : int(body.get("maxPrice", request.args.get("maxPrice", 999999))), #int, maximum allowed price
+        
+        "tripLength" : int(body.get("tripLength", request.args.get("tripLength", 0))), #int, max number of days between departure and arrival
+        
+        "departureWindow" : int(body.get("departureWindow", request.args.get("departureWindow", 0))), #int, range of dates near selected departure, max 3
+        "returnWindow" : int(body.get("returnWindow", request.args.get("returnWindow", 0))) #int, range of dates near selected arrival, max 3
     }
     
-    minPrice = int(body.get("minPrice", 0))
+    #minPrice = int(body.get("minPrice", 0))
     
-    print(inputs)
+    #print(inputs)
+    print(inputs["origins"], inputs["destinations"], inputs["departureDate"], inputs["returnDate"])
+    print(inputs["adults"], inputs["roundTrip"], inputs["nonstop"])
     try:
-        ticket_query(inputs)
+        print("----- API QUERIED -----")
+        
+        response = ticket_query(inputs)
     except:
         return "500"
-    print("api queried")
     
-    data = load_json_response("%s.json" % inputs["searchid"])
-    flights = parse_flights(data)
+    if not response:
+        print("----- NO RESPONSE -----")
+        return jsonify({"error": "API returned no response"})
+    
+    if response["meta"]["count"] == 0:
+        print("----- NO FLIGHTS FOUND -----")
+        return jsonify({"error": "No flights found matching criteria"})
+    
+    flights = parse_flights(response)
+    
     return jsonify(flights)
