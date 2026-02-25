@@ -40,6 +40,8 @@ type SearchBarProps = {
 
 };
 
+const DEBOUNCE_DELAY = 200; // milliseconds
+
 export default function SearchComponent({ dateRange, setDateRange, departureLocations,
   setDepartureLocations, arrivalLocations, setArrivalLocations, travelers, setTravelers,
   roundTrip, setRoundTrip, includedAirline, excludedAirline, nonstopOnly, minPrice, maxPrice
@@ -59,9 +61,28 @@ export default function SearchComponent({ dateRange, setDateRange, departureLoca
 
   const router = useRouter();
 
+  const clientCache = useRef<Map<string, any[]>>(new Map());
+
   const fetchLocations = async (query: string) => {
+    // check if any shorter prefix is cached and filter it
+    for (let i = query.length; i >= 2; i--) {
+      const prefix = query.slice(0, i);
+      if (clientCache.current.has(prefix)) {
+        const cached = clientCache.current.get(prefix)!;
+        const filtered = cached.filter(s =>
+          s.label.toLowerCase().includes(query.toLowerCase()) ||
+          s.code.toLowerCase().includes(query.toLowerCase())
+        );
+        if (filtered.length > 0) return filtered;
+        break; // cached prefix returned nothing useful, fall through to API
+      }
+    }
+
+    if (clientCache.current.has(query)) return clientCache.current.get(query)!;
+
     const res = await fetch(`/api/locations?query=${query}`);
     const data = await res.json();
+    clientCache.current.set(query, data);
     return data;
   }
 
@@ -140,7 +161,7 @@ export default function SearchComponent({ dateRange, setDateRange, departureLoca
                 departureTimeout.current = setTimeout(async () => {
                   const suggestions = await fetchLocations(value);
                   setDepartureSuggestions(suggestions);
-                }, 300);
+                }, DEBOUNCE_DELAY);
               }}
             
               placeholder={departureLocations.length === 0 ? "Enter departure location" : "Add another..."}
@@ -208,7 +229,7 @@ export default function SearchComponent({ dateRange, setDateRange, departureLoca
                 arrivalTimeout.current = setTimeout(async () => {
                   const suggestions = await fetchLocations(value);
                   setArrivalSuggestions(suggestions);
-                }, 300);
+                }, DEBOUNCE_DELAY);
               }}
             
               placeholder={arrivalLocations.length === 0 ? "Enter arrival location" : "Add another..."}
