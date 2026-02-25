@@ -29,6 +29,8 @@ type Flight = {
 	cabin: string;
 };
 
+const CACHE_DURATION = 30 * 60 * 1000; // in milliseconds (30 minutes)
+
 export default function ResultsPage() {
   const searchParams = useSearchParams();
   const cacheKey = `flights-${searchParams.toString()}`;
@@ -48,8 +50,7 @@ export default function ResultsPage() {
     if (cached) {
 
       const parsed = JSON.parse(cached);
-
-      const isExpired = Date.now() - parsed.timestamp > 1000 * 60 * 30;
+      const isExpired = Date.now() - parsed.timestamp > CACHE_DURATION;
 
       if (!isExpired) {
         console.log("USING CACHED DATA");
@@ -61,7 +62,6 @@ export default function ResultsPage() {
     }
 
     if (hasFetched.current) return;
-
     hasFetched.current = true;
 
     const fetchFlights = async () => {
