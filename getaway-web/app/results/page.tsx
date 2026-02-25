@@ -53,7 +53,8 @@ export default function ResultsPage() {
 
       if (!isExpired) {
         console.log("USING CACHED DATA");
-        setFlights(parsed.data);
+        const cachedData = Array.isArray(parsed.data) ? parsed.data : (Array.isArray(parsed) ? parsed : (parsed.data ?? []));
+        setFlights(cachedData);
         setLoading(false);
         return;
       }
@@ -71,23 +72,23 @@ export default function ResultsPage() {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					searchid: searchParams.get("searchid"),
+					searchid: "TEST123",
 
-          departureCode: searchParams.get("departureCode"),
-          arrivalCode: searchParams.get("arrivalCode"),
+          departureCodes: searchParams.getAll("departureCodes"),
+          arrivalCodes: searchParams.getAll("arrivalCodes"),
 
-          departureDate: searchParams.get("departureDate"),
-          returnDate: searchParams.get("returnDate"),
+          departureDate: searchParams.getAll("departureDate"),
+          returnDate: searchParams.getAll("returnDate"),
 
           travelers: Number(searchParams.get("travelers") || 1),
           tripLength: Number(searchParams.get("tripLength") || 0),
-          roundTrip: searchParams.get("roundTrip") === "true",
+          roundTrip: searchParams.get("roundTrip"),
 
           includedAirline: searchParams.get("includedAirline")?.split(",").filter(Boolean) ?? [],
           excludedAirline: searchParams.get("excludedAirline")?.split(",").filter(Boolean) ?? [],
 
+          nonstopOnly: searchParams.get("nonstopOnly"),
 
-          nonstopOnly: searchParams.get("nonstopOnly") === "true",
           minPrice: Number(searchParams.get("minPrice") || 0),
           maxPrice: Number(searchParams.get("maxPrice") || 0),
 
@@ -96,14 +97,16 @@ export default function ResultsPage() {
 				}),
 			});
 
-			const data = await res.json();
+      const data = await res.json();
 
       console.log("FRONTEND RECEIVED:", data);
 
-      setFlights(data);
+      const flightsData = Array.isArray(data) ? data : (data?.data ?? data?.flights ?? []);
+
+      setFlights(flightsData);
       
       localStorage.setItem(cacheKey, JSON.stringify({
-        data,
+        data: flightsData,
         timestamp: Date.now()
       }));
 

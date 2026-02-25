@@ -11,8 +11,10 @@ import AdvancedOptionsComponent from "@/components/AdvancedOptions";
 import { SearchHistoryEntry } from "@/lib/types";
 import { SearchHistoryPanel } from "@/components/SearchHistoryPanel";
 import { useSearchHistory } from "@/hooks/SearchHistory";
+
 const DEFAULT_MIN_PRICE = 0
-const DEFAULT_MAX_PRICE = 1000
+const DEFAULT_MAX_PRICE = 10000
+
 export default function SearchTab() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [departureLocation, setDepartureLocation] = useState("");
