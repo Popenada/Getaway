@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -33,27 +33,66 @@ type Flight = {
 export default function ResultsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const cacheKey = `flights-${searchParams.toString()}`;
+  const hasFetched = useRef(false);
 
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  //const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   // Sorting states
   const [sortKey, setSortKey] = useState("price_asc"); // tracks sort order
   
   const fetchFlights = async () => {
+    
+    const cached = localStorage.getItem(cacheKey);
+
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      const isExpired = Date.now() - parsed.timestamp > 1000 * 60 * 30;
+
+      if (!isExpired) {
+        console.log("USING CACHED DATA");
+        const cachedData = Array.isArray(parsed.data) ? parsed.data : (Array.isArray(parsed) ? parsed : (parsed.data ?? []));
+        setFlights(cachedData);
+        setLoading(false);
+        return;
+      }
+    }
+    
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+    
     try {
+      console.log("FETCHING NEW DATA");
       setLoading(true);
 
       const res = await fetch("http://localhost:5000/api/flight-search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          origin: searchParams.get("origin"),
-          destination: searchParams.get("destination"),
-          departure: searchParams.get("departure"),
-          return: searchParams.get("return"),
-          adults: parseInt(searchParams.get("adults") || "1"),
+          searchid: "TEST123",
+
+          departureCodes: searchParams.getAll("departureCodes"),
+          arrivalCodes: searchParams.getAll("arrivalCodes"),
+
+          departureDate: searchParams.getAll("departureDate"),
+          returnDate: searchParams.getAll("returnDate"),
+
+          travelers: Number(searchParams.get("travelers") || 1),
+          tripLength: Number(searchParams.get("tripLength") || 0),
+          roundTrip: searchParams.get("roundTrip"),
+
+          includedAirline: searchParams.get("includedAirline")?.split(",").filter(Boolean) ?? [],
+          excludedAirline: searchParams.get("excludedAirline")?.split(",").filter(Boolean) ?? [],
+
+          nonstopOnly: searchParams.get("nonstopOnly"),
+
+          minPrice: Number(searchParams.get("minPrice") || 0),
+          maxPrice: Number(searchParams.get("maxPrice") || 0),
+
+          departureWindow: Number(searchParams.get("departureWindow") || 0),
+          returnWindow: Number(searchParams.get("returnWindow") || 0),
         }),
       });
 
@@ -65,7 +104,15 @@ export default function ResultsPage() {
       }
 
       const data = await res.json();
+      
+      console.log("FRONTEND RECEIVED:", data);
       setFlights(data);
+      
+      localStorage.setItem(cacheKey, JSON.stringify({
+        data: data,
+        timestamp: Date.now()
+      }));
+      
     } catch (err) {
       console.error("Fetch failed:", err);
       setFlights([]);
