@@ -19,13 +19,16 @@ export default function SearchTab() {
   const [arrivalLocation, setArrivalLocation] = useState("");
   const [travelers, setTravelers] = useState("");
   const [roundTrip, setRoundTrip] = useState(true);
-  const [includedAirline, setIncludedAirline] = useState<string[]>([]);
-  const [excludedAirline, setExcludedAirline] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState<number>(DEFAULT_MIN_PRICE);
   const [maxPrice, setMaxPrice] = useState<number>(DEFAULT_MAX_PRICE);
   const [nonstopOnly, setNonStopOnly] = useState(true);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const {history, addEntry, clearHistory} = useSearchHistory();
+  const [departureWindow, setDepartureWindow] = useState<number>(0);
+  const [returnWindow, setReturnWindow] = useState<number>(0);
+  const [includedAirline, setIncludedAirline] = useState<string[]>([]);
+  const [excludedAirline, setExcludedAirline] = useState<string[]>([]);
+  const [tripLength, setTripLength] = useState<number>(1);
 
    const handleSearchAgain = (query: SearchHistoryEntry["query"]) => {
     setDepartureLocation(query.origin);
@@ -56,18 +59,34 @@ export default function SearchTab() {
 
           roundTrip={roundTrip}
           setRoundTrip={setRoundTrip}
+
+          departureWindow={departureWindow}
+          returnWindow={returnWindow}
+          includedAirline={includedAirline}
+          excludedAirline={excludedAirline}
+          nonstopOnly={nonstopOnly}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
         />
         <AdvancedOptionsComponent
           advancedOpen={advancedOpen}
           setAdvancedOpen={setAdvancedOpen}
-          preferredAirline={preferredAirline}
-          setPreferredAirline={setPreferredAirline}
+          includedAirline={includedAirline}
+          setIncludedAirline={setIncludedAirline}
+          excludedAirline={excludedAirline}
+          setExcludedAirline={setExcludedAirline}
           minPrice={minPrice}
           setMinPrice={setMinPrice}
           maxPrice={maxPrice}
           setMaxPrice={setMaxPrice}
-          nonStopOnly={nonStopOnly}
-          setNonStopOnly={setNonStopOnly}
+          nonstopOnly={nonstopOnly}
+          setNonstopOnly={setNonStopOnly}
+          tripLength={tripLength}
+          setTripLength={setTripLength}
+          departureWindow={departureWindow}
+          setDepartureWindow={setDepartureWindow}
+          returnWindow={returnWindow}
+          setReturnWindow={setReturnWindow}
         />
         </div>
 
