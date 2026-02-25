@@ -22,15 +22,15 @@
                             "departure": {
                                 "iataCode": "ORY",
                                 "terminal": "1",
-                                "at": "2026-02-13T07:10:00"
+                                "at": "2026-02-12T18:25:00"
                             },
                             "arrival": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-02-13T07:20:00"
+                                "at": "2026-02-12T18:35:00"
                             },
                             "carrierCode": "VY",
-                            "number": "6944",
+                            "number": "6948",
                             "aircraft": {
                                 "code": "320"
                             },
@@ -38,7 +38,7 @@
                                 "carrierCode": "VY"
                             },
                             "duration": "PT1H10M",
-                            "id": "1",
+                            "id": "3",
                             "numberOfStops": 0,
                             "blacklistedInEU": false
                         }
@@ -51,12 +51,12 @@
                             "departure": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-03-13T08:30:00"
+                                "at": "2026-03-12T08:30:00"
                             },
                             "arrival": {
                                 "iataCode": "ORY",
                                 "terminal": "3",
-                                "at": "2026-03-13T10:50:00"
+                                "at": "2026-03-12T10:50:00"
                             },
                             "carrierCode": "VY",
                             "number": "6945",
@@ -76,8 +76,8 @@
             ],
             "price": {
                 "currency": "USD",
-                "total": "165.70",
-                "base": "73.00",
+                "total": "175.90",
+                "base": "83.00",
                 "fees": [
                     {
                         "amount": "0.00",
@@ -88,7 +88,7 @@
                         "type": "TICKETING"
                     }
                 ],
-                "grandTotal": "165.70"
+                "grandTotal": "175.90"
             },
             "pricingOptions": {
                 "fareType": [
@@ -106,12 +106,12 @@
                     "travelerType": "ADULT",
                     "price": {
                         "currency": "USD",
-                        "total": "165.70",
-                        "base": "73.00"
+                        "total": "175.90",
+                        "base": "83.00"
                     },
                     "fareDetailsBySegment": [
                         {
-                            "segmentId": "1",
+                            "segmentId": "3",
                             "cabin": "ECONOMY",
                             "fareBasis": "DROPLVY",
                             "class": "D",
@@ -126,8 +126,8 @@
                         {
                             "segmentId": "6",
                             "cabin": "ECONOMY",
-                            "fareBasis": "DROPLVY",
-                            "class": "D",
+                            "fareBasis": "PROPLVY",
+                            "class": "P",
                             "includedCheckedBags": {
                                 "weight": 25,
                                 "weightUnit": "KG"
@@ -159,12 +159,12 @@
                             "departure": {
                                 "iataCode": "ORY",
                                 "terminal": "1",
-                                "at": "2026-02-13T19:15:00"
+                                "at": "2026-02-12T18:25:00"
                             },
                             "arrival": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-02-13T19:25:00"
+                                "at": "2026-02-12T18:35:00"
                             },
                             "carrierCode": "VY",
                             "number": "6948",
@@ -188,15 +188,15 @@
                             "departure": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-03-13T08:30:00"
+                                "at": "2026-03-12T19:35:00"
                             },
                             "arrival": {
                                 "iataCode": "ORY",
                                 "terminal": "3",
-                                "at": "2026-03-13T10:50:00"
+                                "at": "2026-03-12T21:55:00"
                             },
                             "carrierCode": "VY",
-                            "number": "6945",
+                            "number": "6949",
                             "aircraft": {
                                 "code": "320"
                             },
@@ -204,7 +204,7 @@
                                 "carrierCode": "VY"
                             },
                             "duration": "PT1H20M",
-                            "id": "6",
+                            "id": "8",
                             "numberOfStops": 0,
                             "blacklistedInEU": false
                         }
@@ -213,8 +213,8 @@
             ],
             "price": {
                 "currency": "USD",
-                "total": "165.70",
-                "base": "73.00",
+                "total": "178.90",
+                "base": "86.00",
                 "fees": [
                     {
                         "amount": "0.00",
@@ -225,7 +225,7 @@
                         "type": "TICKETING"
                     }
                 ],
-                "grandTotal": "165.70"
+                "grandTotal": "178.90"
             },
             "pricingOptions": {
                 "fareType": [
@@ -243,8 +243,8 @@
                     "travelerType": "ADULT",
                     "price": {
                         "currency": "USD",
-                        "total": "165.70",
-                        "base": "73.00"
+                        "total": "178.90",
+                        "base": "86.00"
                     },
                     "fareDetailsBySegment": [
                         {
@@ -261,10 +261,10 @@
                             }
                         },
                         {
-                            "segmentId": "6",
+                            "segmentId": "8",
                             "cabin": "ECONOMY",
-                            "fareBasis": "DROPLVY",
-                            "class": "D",
+                            "fareBasis": "OROPLVY",
+                            "class": "O",
                             "includedCheckedBags": {
                                 "weight": 25,
                                 "weightUnit": "KG"
@@ -290,29 +290,29 @@
             "numberOfBookableSeats": 4,
             "itineraries": [
                 {
-                    "duration": "PT1H10M",
+                    "duration": "PT1H25M",
                     "segments": [
                         {
                             "departure": {
                                 "iataCode": "ORY",
                                 "terminal": "1",
-                                "at": "2026-02-13T07:10:00"
+                                "at": "2026-02-12T14:00:00"
                             },
                             "arrival": {
-                                "iataCode": "LGW",
-                                "terminal": "S",
-                                "at": "2026-02-13T07:20:00"
+                                "iataCode": "LHR",
+                                "terminal": "4",
+                                "at": "2026-02-12T14:25:00"
                             },
                             "carrierCode": "VY",
-                            "number": "6944",
+                            "number": "8960",
                             "aircraft": {
                                 "code": "320"
                             },
                             "operating": {
                                 "carrierCode": "VY"
                             },
-                            "duration": "PT1H10M",
-                            "id": "1",
+                            "duration": "PT1H25M",
+                            "id": "5",
                             "numberOfStops": 0,
                             "blacklistedInEU": false
                         }
@@ -325,15 +325,15 @@
                             "departure": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-03-13T20:15:00"
+                                "at": "2026-03-12T08:30:00"
                             },
                             "arrival": {
                                 "iataCode": "ORY",
                                 "terminal": "3",
-                                "at": "2026-03-13T22:35:00"
+                                "at": "2026-03-12T10:50:00"
                             },
                             "carrierCode": "VY",
-                            "number": "6949",
+                            "number": "6945",
                             "aircraft": {
                                 "code": "320"
                             },
@@ -341,7 +341,7 @@
                                 "carrierCode": "VY"
                             },
                             "duration": "PT1H20M",
-                            "id": "8",
+                            "id": "6",
                             "numberOfStops": 0,
                             "blacklistedInEU": false
                         }
@@ -350,8 +350,8 @@
             ],
             "price": {
                 "currency": "USD",
-                "total": "178.70",
-                "base": "86.00",
+                "total": "183.90",
+                "base": "91.00",
                 "fees": [
                     {
                         "amount": "0.00",
@@ -362,7 +362,7 @@
                         "type": "TICKETING"
                     }
                 ],
-                "grandTotal": "178.70"
+                "grandTotal": "183.90"
             },
             "pricingOptions": {
                 "fareType": [
@@ -380,14 +380,14 @@
                     "travelerType": "ADULT",
                     "price": {
                         "currency": "USD",
-                        "total": "178.70",
-                        "base": "86.00"
+                        "total": "183.90",
+                        "base": "91.00"
                     },
                     "fareDetailsBySegment": [
                         {
-                            "segmentId": "1",
+                            "segmentId": "5",
                             "cabin": "ECONOMY",
-                            "fareBasis": "DROPLVY",
+                            "fareBasis": "DROPL2VY",
                             "class": "D",
                             "includedCheckedBags": {
                                 "weight": 25,
@@ -398,10 +398,10 @@
                             }
                         },
                         {
-                            "segmentId": "8",
+                            "segmentId": "6",
                             "cabin": "ECONOMY",
-                            "fareBasis": "OROPLVY",
-                            "class": "O",
+                            "fareBasis": "PROPLVY",
+                            "class": "P",
                             "includedCheckedBags": {
                                 "weight": 25,
                                 "weightUnit": "KG"
@@ -433,12 +433,12 @@
                             "departure": {
                                 "iataCode": "ORY",
                                 "terminal": "1",
-                                "at": "2026-02-13T19:15:00"
+                                "at": "2026-02-12T18:25:00"
                             },
                             "arrival": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-02-13T19:25:00"
+                                "at": "2026-02-12T18:35:00"
                             },
                             "carrierCode": "VY",
                             "number": "6948",
@@ -456,29 +456,29 @@
                     ]
                 },
                 {
-                    "duration": "PT1H20M",
+                    "duration": "PT1H30M",
                     "segments": [
                         {
                             "departure": {
-                                "iataCode": "LGW",
-                                "terminal": "S",
-                                "at": "2026-03-13T20:15:00"
+                                "iataCode": "LHR",
+                                "terminal": "4",
+                                "at": "2026-03-12T15:15:00"
                             },
                             "arrival": {
                                 "iataCode": "ORY",
                                 "terminal": "3",
-                                "at": "2026-03-13T22:35:00"
+                                "at": "2026-03-12T17:45:00"
                             },
                             "carrierCode": "VY",
-                            "number": "6949",
+                            "number": "8961",
                             "aircraft": {
                                 "code": "320"
                             },
                             "operating": {
                                 "carrierCode": "VY"
                             },
-                            "duration": "PT1H20M",
-                            "id": "8",
+                            "duration": "PT1H30M",
+                            "id": "10",
                             "numberOfStops": 0,
                             "blacklistedInEU": false
                         }
@@ -487,8 +487,8 @@
             ],
             "price": {
                 "currency": "USD",
-                "total": "178.70",
-                "base": "86.00",
+                "total": "187.50",
+                "base": "92.00",
                 "fees": [
                     {
                         "amount": "0.00",
@@ -499,7 +499,7 @@
                         "type": "TICKETING"
                     }
                 ],
-                "grandTotal": "178.70"
+                "grandTotal": "187.50"
             },
             "pricingOptions": {
                 "fareType": [
@@ -517,8 +517,8 @@
                     "travelerType": "ADULT",
                     "price": {
                         "currency": "USD",
-                        "total": "178.70",
-                        "base": "86.00"
+                        "total": "187.50",
+                        "base": "92.00"
                     },
                     "fareDetailsBySegment": [
                         {
@@ -535,10 +535,10 @@
                             }
                         },
                         {
-                            "segmentId": "8",
+                            "segmentId": "10",
                             "cabin": "ECONOMY",
-                            "fareBasis": "OROPLVY",
-                            "class": "O",
+                            "fareBasis": "PROPL2VY",
+                            "class": "P",
                             "includedCheckedBags": {
                                 "weight": 25,
                                 "weightUnit": "KG"
@@ -570,12 +570,12 @@
                             "departure": {
                                 "iataCode": "ORY",
                                 "terminal": "1",
-                                "at": "2026-02-13T14:00:00"
+                                "at": "2026-02-12T14:00:00"
                             },
                             "arrival": {
                                 "iataCode": "LHR",
                                 "terminal": "4",
-                                "at": "2026-02-13T14:25:00"
+                                "at": "2026-02-12T14:25:00"
                             },
                             "carrierCode": "VY",
                             "number": "8960",
@@ -599,15 +599,15 @@
                             "departure": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-03-13T08:30:00"
+                                "at": "2026-03-12T19:35:00"
                             },
                             "arrival": {
                                 "iataCode": "ORY",
                                 "terminal": "3",
-                                "at": "2026-03-13T10:50:00"
+                                "at": "2026-03-12T21:55:00"
                             },
                             "carrierCode": "VY",
-                            "number": "6945",
+                            "number": "6949",
                             "aircraft": {
                                 "code": "320"
                             },
@@ -615,7 +615,7 @@
                                 "carrierCode": "VY"
                             },
                             "duration": "PT1H20M",
-                            "id": "6",
+                            "id": "8",
                             "numberOfStops": 0,
                             "blacklistedInEU": false
                         }
@@ -624,8 +624,8 @@
             ],
             "price": {
                 "currency": "USD",
-                "total": "184.70",
-                "base": "92.00",
+                "total": "187.90",
+                "base": "95.00",
                 "fees": [
                     {
                         "amount": "0.00",
@@ -636,7 +636,7 @@
                         "type": "TICKETING"
                     }
                 ],
-                "grandTotal": "184.70"
+                "grandTotal": "187.90"
             },
             "pricingOptions": {
                 "fareType": [
@@ -654,15 +654,15 @@
                     "travelerType": "ADULT",
                     "price": {
                         "currency": "USD",
-                        "total": "184.70",
-                        "base": "92.00"
+                        "total": "187.90",
+                        "base": "95.00"
                     },
                     "fareDetailsBySegment": [
                         {
                             "segmentId": "5",
                             "cabin": "ECONOMY",
-                            "fareBasis": "PROPL2VY",
-                            "class": "P",
+                            "fareBasis": "DROPL2VY",
+                            "class": "D",
                             "includedCheckedBags": {
                                 "weight": 25,
                                 "weightUnit": "KG"
@@ -672,10 +672,10 @@
                             }
                         },
                         {
-                            "segmentId": "6",
+                            "segmentId": "8",
                             "cabin": "ECONOMY",
-                            "fareBasis": "DROPLVY",
-                            "class": "D",
+                            "fareBasis": "OROPLVY",
+                            "class": "O",
                             "includedCheckedBags": {
                                 "weight": 25,
                                 "weightUnit": "KG"
@@ -707,12 +707,12 @@
                             "departure": {
                                 "iataCode": "ORY",
                                 "terminal": "1",
-                                "at": "2026-02-13T07:10:00"
+                                "at": "2026-02-12T07:35:00"
                             },
                             "arrival": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-02-13T07:20:00"
+                                "at": "2026-02-12T07:45:00"
                             },
                             "carrierCode": "VY",
                             "number": "6944",
@@ -730,29 +730,29 @@
                     ]
                 },
                 {
-                    "duration": "PT1H30M",
+                    "duration": "PT1H20M",
                     "segments": [
                         {
                             "departure": {
-                                "iataCode": "LHR",
-                                "terminal": "4",
-                                "at": "2026-03-13T15:15:00"
+                                "iataCode": "LGW",
+                                "terminal": "S",
+                                "at": "2026-03-12T08:30:00"
                             },
                             "arrival": {
                                 "iataCode": "ORY",
                                 "terminal": "3",
-                                "at": "2026-03-13T17:45:00"
+                                "at": "2026-03-12T10:50:00"
                             },
                             "carrierCode": "VY",
-                            "number": "8961",
+                            "number": "6945",
                             "aircraft": {
                                 "code": "320"
                             },
                             "operating": {
                                 "carrierCode": "VY"
                             },
-                            "duration": "PT1H30M",
-                            "id": "10",
+                            "duration": "PT1H20M",
+                            "id": "6",
                             "numberOfStops": 0,
                             "blacklistedInEU": false
                         }
@@ -761,7 +761,7 @@
             ],
             "price": {
                 "currency": "USD",
-                "total": "191.30",
+                "total": "188.90",
                 "base": "96.00",
                 "fees": [
                     {
@@ -773,7 +773,7 @@
                         "type": "TICKETING"
                     }
                 ],
-                "grandTotal": "191.30"
+                "grandTotal": "188.90"
             },
             "pricingOptions": {
                 "fareType": [
@@ -791,15 +791,15 @@
                     "travelerType": "ADULT",
                     "price": {
                         "currency": "USD",
-                        "total": "191.30",
+                        "total": "188.90",
                         "base": "96.00"
                     },
                     "fareDetailsBySegment": [
                         {
                             "segmentId": "1",
                             "cabin": "ECONOMY",
-                            "fareBasis": "DROPLVY",
-                            "class": "D",
+                            "fareBasis": "OROPLVY",
+                            "class": "O",
                             "includedCheckedBags": {
                                 "weight": 25,
                                 "weightUnit": "KG"
@@ -809,10 +809,10 @@
                             }
                         },
                         {
-                            "segmentId": "10",
+                            "segmentId": "6",
                             "cabin": "ECONOMY",
-                            "fareBasis": "OROPL2VY",
-                            "class": "O",
+                            "fareBasis": "PROPLVY",
+                            "class": "P",
                             "includedCheckedBags": {
                                 "weight": 25,
                                 "weightUnit": "KG"
@@ -844,149 +844,12 @@
                             "departure": {
                                 "iataCode": "ORY",
                                 "terminal": "1",
-                                "at": "2026-02-13T19:15:00"
+                                "at": "2026-02-12T07:35:00"
                             },
                             "arrival": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-02-13T19:25:00"
-                            },
-                            "carrierCode": "VY",
-                            "number": "6948",
-                            "aircraft": {
-                                "code": "320"
-                            },
-                            "operating": {
-                                "carrierCode": "VY"
-                            },
-                            "duration": "PT1H10M",
-                            "id": "3",
-                            "numberOfStops": 0,
-                            "blacklistedInEU": false
-                        }
-                    ]
-                },
-                {
-                    "duration": "PT1H30M",
-                    "segments": [
-                        {
-                            "departure": {
-                                "iataCode": "LHR",
-                                "terminal": "4",
-                                "at": "2026-03-13T15:15:00"
-                            },
-                            "arrival": {
-                                "iataCode": "ORY",
-                                "terminal": "3",
-                                "at": "2026-03-13T17:45:00"
-                            },
-                            "carrierCode": "VY",
-                            "number": "8961",
-                            "aircraft": {
-                                "code": "320"
-                            },
-                            "operating": {
-                                "carrierCode": "VY"
-                            },
-                            "duration": "PT1H30M",
-                            "id": "10",
-                            "numberOfStops": 0,
-                            "blacklistedInEU": false
-                        }
-                    ]
-                }
-            ],
-            "price": {
-                "currency": "USD",
-                "total": "191.30",
-                "base": "96.00",
-                "fees": [
-                    {
-                        "amount": "0.00",
-                        "type": "SUPPLIER"
-                    },
-                    {
-                        "amount": "0.00",
-                        "type": "TICKETING"
-                    }
-                ],
-                "grandTotal": "191.30"
-            },
-            "pricingOptions": {
-                "fareType": [
-                    "PUBLISHED"
-                ],
-                "includedCheckedBagsOnly": true
-            },
-            "validatingAirlineCodes": [
-                "VY"
-            ],
-            "travelerPricings": [
-                {
-                    "travelerId": "1",
-                    "fareOption": "STANDARD",
-                    "travelerType": "ADULT",
-                    "price": {
-                        "currency": "USD",
-                        "total": "191.30",
-                        "base": "96.00"
-                    },
-                    "fareDetailsBySegment": [
-                        {
-                            "segmentId": "3",
-                            "cabin": "ECONOMY",
-                            "fareBasis": "DROPLVY",
-                            "class": "D",
-                            "includedCheckedBags": {
-                                "weight": 25,
-                                "weightUnit": "KG"
-                            },
-                            "includedCabinBags": {
-                                "quantity": 1
-                            }
-                        },
-                        {
-                            "segmentId": "10",
-                            "cabin": "ECONOMY",
-                            "fareBasis": "OROPL2VY",
-                            "class": "O",
-                            "includedCheckedBags": {
-                                "weight": 25,
-                                "weightUnit": "KG"
-                            },
-                            "includedCabinBags": {
-                                "quantity": 1
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "flight-offer",
-            "id": "8",
-            "source": "GDS",
-            "instantTicketingRequired": false,
-            "nonHomogeneous": false,
-            "oneWay": false,
-            "isUpsellOffer": false,
-            "lastTicketingDate": "2026-02-10",
-            "lastTicketingDateTime": "2026-02-10",
-            "numberOfBookableSeats": 4,
-            "itineraries": [
-                {
-                    "duration": "PT1H10M",
-                    "segments": [
-                        {
-                            "departure": {
-                                "iataCode": "ORY",
-                                "terminal": "1",
-                                "at": "2026-02-13T07:10:00"
-                            },
-                            "arrival": {
-                                "iataCode": "LGW",
-                                "terminal": "S",
-                                "at": "2026-02-13T07:20:00"
+                                "at": "2026-02-12T07:45:00"
                             },
                             "carrierCode": "IB",
                             "number": "5620",
@@ -1010,12 +873,12 @@
                             "departure": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-03-13T08:30:00"
+                                "at": "2026-03-12T08:30:00"
                             },
                             "arrival": {
                                 "iataCode": "ORY",
                                 "terminal": "3",
-                                "at": "2026-03-13T10:50:00"
+                                "at": "2026-03-12T10:50:00"
                             },
                             "carrierCode": "IB",
                             "number": "5671",
@@ -1035,7 +898,7 @@
             ],
             "price": {
                 "currency": "USD",
-                "total": "191.70",
+                "total": "191.90",
                 "base": "99.00",
                 "fees": [
                     {
@@ -1047,7 +910,7 @@
                         "type": "TICKETING"
                     }
                 ],
-                "grandTotal": "191.70"
+                "grandTotal": "191.90"
             },
             "pricingOptions": {
                 "fareType": [
@@ -1065,7 +928,7 @@
                     "travelerType": "ADULT",
                     "price": {
                         "currency": "USD",
-                        "total": "191.70",
+                        "total": "191.90",
                         "base": "99.00"
                     },
                     "fareDetailsBySegment": [
@@ -1171,7 +1034,7 @@
         },
         {
             "type": "flight-offer",
-            "id": "9",
+            "id": "8",
             "source": "GDS",
             "instantTicketingRequired": false,
             "nonHomogeneous": false,
@@ -1188,12 +1051,12 @@
                             "departure": {
                                 "iataCode": "ORY",
                                 "terminal": "1",
-                                "at": "2026-02-13T07:10:00"
+                                "at": "2026-02-12T07:35:00"
                             },
                             "arrival": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-02-13T07:20:00"
+                                "at": "2026-02-12T07:45:00"
                             },
                             "carrierCode": "IB",
                             "number": "5620",
@@ -1217,12 +1080,12 @@
                             "departure": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-03-13T20:15:00"
+                                "at": "2026-03-12T19:35:00"
                             },
                             "arrival": {
                                 "iataCode": "ORY",
                                 "terminal": "3",
-                                "at": "2026-03-13T22:35:00"
+                                "at": "2026-03-12T21:55:00"
                             },
                             "carrierCode": "IB",
                             "number": "5687",
@@ -1242,7 +1105,7 @@
             ],
             "price": {
                 "currency": "USD",
-                "total": "191.70",
+                "total": "191.90",
                 "base": "99.00",
                 "fees": [
                     {
@@ -1254,7 +1117,7 @@
                         "type": "TICKETING"
                     }
                 ],
-                "grandTotal": "191.70"
+                "grandTotal": "191.90"
             },
             "pricingOptions": {
                 "fareType": [
@@ -1272,7 +1135,7 @@
                     "travelerType": "ADULT",
                     "price": {
                         "currency": "USD",
-                        "total": "191.70",
+                        "total": "191.90",
                         "base": "99.00"
                     },
                     "fareDetailsBySegment": [
@@ -1378,7 +1241,7 @@
         },
         {
             "type": "flight-offer",
-            "id": "10",
+            "id": "9",
             "source": "GDS",
             "instantTicketingRequired": false,
             "nonHomogeneous": false,
@@ -1395,12 +1258,12 @@
                             "departure": {
                                 "iataCode": "ORY",
                                 "terminal": "1",
-                                "at": "2026-02-13T19:15:00"
+                                "at": "2026-02-12T18:25:00"
                             },
                             "arrival": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-02-13T19:25:00"
+                                "at": "2026-02-12T18:35:00"
                             },
                             "carrierCode": "IB",
                             "number": "5628",
@@ -1424,12 +1287,12 @@
                             "departure": {
                                 "iataCode": "LGW",
                                 "terminal": "S",
-                                "at": "2026-03-13T08:30:00"
+                                "at": "2026-03-12T08:30:00"
                             },
                             "arrival": {
                                 "iataCode": "ORY",
                                 "terminal": "3",
-                                "at": "2026-03-13T10:50:00"
+                                "at": "2026-03-12T10:50:00"
                             },
                             "carrierCode": "IB",
                             "number": "5671",
@@ -1449,7 +1312,7 @@
             ],
             "price": {
                 "currency": "USD",
-                "total": "191.70",
+                "total": "191.90",
                 "base": "99.00",
                 "fees": [
                     {
@@ -1461,7 +1324,7 @@
                         "type": "TICKETING"
                     }
                 ],
-                "grandTotal": "191.70"
+                "grandTotal": "191.90"
             },
             "pricingOptions": {
                 "fareType": [
@@ -1479,7 +1342,7 @@
                     "travelerType": "ADULT",
                     "price": {
                         "currency": "USD",
-                        "total": "191.70",
+                        "total": "191.90",
                         "base": "99.00"
                     },
                     "fareDetailsBySegment": [
@@ -1533,6 +1396,213 @@
                         },
                         {
                             "segmentId": "7",
+                            "cabin": "ECONOMY",
+                            "fareBasis": "ORVYN4",
+                            "brandedFare": "OPTIMA",
+                            "brandedFareLabel": "OPTIMA",
+                            "class": "O",
+                            "includedCheckedBags": {
+                                "quantity": 1
+                            },
+                            "includedCabinBags": {
+                                "quantity": 2
+                            },
+                            "amenities": [
+                                {
+                                    "description": "SECOND CHECKED BAG",
+                                    "isChargeable": true,
+                                    "amenityType": "BAGGAGE",
+                                    "amenityProvider": {
+                                        "name": "BrandedFare"
+                                    }
+                                },
+                                {
+                                    "description": "THIRD CHECKED BAG",
+                                    "isChargeable": true,
+                                    "amenityType": "BAGGAGE",
+                                    "amenityProvider": {
+                                        "name": "BrandedFare"
+                                    }
+                                },
+                                {
+                                    "description": "SNACK OR DRINK",
+                                    "isChargeable": true,
+                                    "amenityType": "MEAL",
+                                    "amenityProvider": {
+                                        "name": "BrandedFare"
+                                    }
+                                },
+                                {
+                                    "description": "WIFI CONNECTION",
+                                    "isChargeable": true,
+                                    "amenityType": "TRAVEL_SERVICES",
+                                    "amenityProvider": {
+                                        "name": "BrandedFare"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "flight-offer",
+            "id": "10",
+            "source": "GDS",
+            "instantTicketingRequired": false,
+            "nonHomogeneous": false,
+            "oneWay": false,
+            "isUpsellOffer": false,
+            "lastTicketingDate": "2026-02-10",
+            "lastTicketingDateTime": "2026-02-10",
+            "numberOfBookableSeats": 4,
+            "itineraries": [
+                {
+                    "duration": "PT1H10M",
+                    "segments": [
+                        {
+                            "departure": {
+                                "iataCode": "ORY",
+                                "terminal": "1",
+                                "at": "2026-02-12T18:25:00"
+                            },
+                            "arrival": {
+                                "iataCode": "LGW",
+                                "terminal": "S",
+                                "at": "2026-02-12T18:35:00"
+                            },
+                            "carrierCode": "IB",
+                            "number": "5628",
+                            "aircraft": {
+                                "code": "320"
+                            },
+                            "operating": {
+                                "carrierCode": "VY"
+                            },
+                            "duration": "PT1H10M",
+                            "id": "4",
+                            "numberOfStops": 0,
+                            "blacklistedInEU": false
+                        }
+                    ]
+                },
+                {
+                    "duration": "PT1H20M",
+                    "segments": [
+                        {
+                            "departure": {
+                                "iataCode": "LGW",
+                                "terminal": "S",
+                                "at": "2026-03-12T19:35:00"
+                            },
+                            "arrival": {
+                                "iataCode": "ORY",
+                                "terminal": "3",
+                                "at": "2026-03-12T21:55:00"
+                            },
+                            "carrierCode": "IB",
+                            "number": "5687",
+                            "aircraft": {
+                                "code": "320"
+                            },
+                            "operating": {
+                                "carrierCode": "VY"
+                            },
+                            "duration": "PT1H20M",
+                            "id": "9",
+                            "numberOfStops": 0,
+                            "blacklistedInEU": false
+                        }
+                    ]
+                }
+            ],
+            "price": {
+                "currency": "USD",
+                "total": "191.90",
+                "base": "99.00",
+                "fees": [
+                    {
+                        "amount": "0.00",
+                        "type": "SUPPLIER"
+                    },
+                    {
+                        "amount": "0.00",
+                        "type": "TICKETING"
+                    }
+                ],
+                "grandTotal": "191.90"
+            },
+            "pricingOptions": {
+                "fareType": [
+                    "PUBLISHED"
+                ],
+                "includedCheckedBagsOnly": true
+            },
+            "validatingAirlineCodes": [
+                "IB"
+            ],
+            "travelerPricings": [
+                {
+                    "travelerId": "1",
+                    "fareOption": "STANDARD",
+                    "travelerType": "ADULT",
+                    "price": {
+                        "currency": "USD",
+                        "total": "191.90",
+                        "base": "99.00"
+                    },
+                    "fareDetailsBySegment": [
+                        {
+                            "segmentId": "4",
+                            "cabin": "ECONOMY",
+                            "fareBasis": "ORVYN4",
+                            "brandedFare": "OPTIMA",
+                            "brandedFareLabel": "OPTIMA",
+                            "class": "O",
+                            "includedCheckedBags": {
+                                "quantity": 1
+                            },
+                            "includedCabinBags": {
+                                "quantity": 2
+                            },
+                            "amenities": [
+                                {
+                                    "description": "SECOND CHECKED BAG",
+                                    "isChargeable": true,
+                                    "amenityType": "BAGGAGE",
+                                    "amenityProvider": {
+                                        "name": "BrandedFare"
+                                    }
+                                },
+                                {
+                                    "description": "THIRD CHECKED BAG",
+                                    "isChargeable": true,
+                                    "amenityType": "BAGGAGE",
+                                    "amenityProvider": {
+                                        "name": "BrandedFare"
+                                    }
+                                },
+                                {
+                                    "description": "SNACK OR DRINK",
+                                    "isChargeable": true,
+                                    "amenityType": "MEAL",
+                                    "amenityProvider": {
+                                        "name": "BrandedFare"
+                                    }
+                                },
+                                {
+                                    "description": "WIFI CONNECTION",
+                                    "isChargeable": true,
+                                    "amenityType": "TRAVEL_SERVICES",
+                                    "amenityProvider": {
+                                        "name": "BrandedFare"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "segmentId": "9",
                             "cabin": "ECONOMY",
                             "fareBasis": "ORVYN4",
                             "brandedFare": "OPTIMA",
