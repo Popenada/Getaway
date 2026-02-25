@@ -4,6 +4,8 @@ from get_tickets import ticket_query
 from flask import jsonify
 from table_data import load_json_response
 from table_data import parse_flights
+from datetime import datetime, timedelta
+from random import randrange
 
 @app.route('/')
 @app.route('/index')
@@ -22,6 +24,8 @@ def flightSearch():
     # read JSON body for POST requests first, fall back to query params
     body = request.get_json(silent=True) or {}
     
+    default = defaultDates()
+    
     print('BODY:', body)
 
     #user input test
@@ -31,8 +35,8 @@ def flightSearch():
         "origins" : body.get("departureCodes", request.args.get("departureCodes")), # list of Origin Airport codes "ABC"
         "destinations" : body.get("arrivalCodes", request.args.get("arrivalCodes")), # list of Destination Airport codes "XYZ"
         
-        "departureDate" : tuple(body.get("departureDate", request.args.get("departureDate"))), # tuple of Departure dates, formatted as YYYY-MM-DD
-        "returnDate" : tuple(body.get("returnDate", request.args.get("returnDate"))), # tuple of Return dates, formatted as YYYY-MM-DD
+        "departureDate" : tuple(body.get("departureDate", request.args.get("departureDate", default[0]))), # tuple of Departure dates, formatted as YYYY-MM-DD
+        "returnDate" : tuple(body.get("returnDate", request.args.get("returnDate", default[1]))), # tuple of Return dates, formatted as YYYY-MM-DD
         
         "adults" : int(body.get("travelers", request.args.get("travelers", 1))), # Number of adults, int
         
@@ -73,3 +77,14 @@ def flightSearch():
     flights = parse_flights(response)
     
     return jsonify(flights)
+
+
+#generate default dates
+def defaultDates():
+    dateFormat = "%Y-%m-%d"
+    today = datetime.today().date()
+    departure = today + timedelta(days=randrange(1,4))
+    returnDate = departure + timedelta(days=randrange(3,10))
+    
+    #return tuple of dates
+    return (str(departure), str(returnDate))
