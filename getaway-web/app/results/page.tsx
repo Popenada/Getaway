@@ -135,8 +135,8 @@ export default function ResultsPage() {
     );
   }
 
-  const origin = flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].origin : '';
-	const destination = flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].destination : '';
+  const origin = searchParams.get("departureCodes")?.split(",").filter(Boolean) ?? []; //flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].origin : '';
+	const destination = searchParams.get("arrivalCodes")?.split(",").filter(Boolean) ?? []; //flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].destination : '';
 
   // Old implementation code grouping flights by date, leave in for future refrence
   // 
@@ -206,7 +206,8 @@ export default function ResultsPage() {
     <main className="p-6 min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto space-y-6">
         <h1 className="flex items-center text-3xl font-bold text-gray-900 mb-6">
-          {origin} {destination && <><ArrowRight className="mx-2 text-gray-400" /> {destination}</>}
+          {origin.join(", ") || "Flight Search"}
+          {destination.length > 0 && <><ArrowRight className="mx-2 text-gray-400" />{destination.join(", ")}</>}
         </h1>
         {sortedFlights.length > 0 && (
           <div className="flex gap-4 mb-4">

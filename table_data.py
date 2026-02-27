@@ -6,7 +6,7 @@ def load_json_response(file_path: str) -> Dict[str, Any]:
     with open(file_path, 'r') as file:
         return json.load(file)
 
-def parse_flights(response_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+def parse_flights(searchid: str, response_data: Dict[str, Any]) -> List[Dict[str, Any]]:
     flights = []
     
     data = response_data.get('data', [])
@@ -17,23 +17,23 @@ def parse_flights(response_data: Dict[str, Any]) -> List[Dict[str, Any]]:
         
         for itinerary in offer.get('itineraries', []):
             segments = itinerary['segments']
-            first_seg = segments[0]
-            last_seg = segments[-1]
-        
-            airline_code = first_seg['carrierCode']
-            airline_name = carriers.get(airline_code, airline_code)
             
-            leg = {
-                'origin': first_seg['departure']['iataCode'],
-                'destination': last_seg['arrival']['iataCode'],
-                'departure_time': first_seg['departure']['at'],
-                'arrival_time': last_seg['arrival']['at'],
-                'stops': len(segments) - 1,
-                'duration': itinerary['duration'],
-                'airline': airline_name
-            }
-            
-            legs.append(leg)
+            for segment in segments:
+                airline_code = segment['carrierCode']
+                airline_name = carriers.get(airline_code, airline_code)
+    
+                leg = {
+                    'origin': segment['departure']['iataCode'],
+                    'destination': segment['arrival']['iataCode'],
+                    'departure_time': segment['departure']['at'],
+                    'arrival_time': segment['arrival']['at'],
+                    'stops': 0 if segment['numberOfStops'] == 0 else segment['numberOfStops'],
+                    'duration': segment['duration'],
+                    'airline': airline_name,
+                    'flight_number': f"{segment['carrierCode']}{segment['number']}"
+                }
+                
+                legs.append(leg)
         
         flight_obj = {
             'legs': legs,
@@ -43,5 +43,9 @@ def parse_flights(response_data: Dict[str, Any]) -> List[Dict[str, Any]]:
         }
         
         flights.append(flight_obj)
+    
+    f = "%s-parsed.json" %searchid
+    with open(f, "w") as file:
+        file.write(json.dumps(flights, indent=2))
     
     return flights
