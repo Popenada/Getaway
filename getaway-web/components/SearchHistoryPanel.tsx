@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button"
-import { format } from "date-fns"
+import { format, parse } from "date-fns"
 import type { SearchHistoryEntry } from "@/lib/types"
 
 type Props = {
@@ -10,12 +10,18 @@ type Props = {
     ClearHistory: () => void
 }   
 
+function formatDate(date: string){
+    const d = parse(date, "yyyy-MM-dd", new Date());
+    return format(d, "MM d");
+}
 // Take one entry of history and rendering it
 function HistoryCard({ entry, onSearchAgain }: { entry: SearchHistoryEntry, onSearchAgain: Props["onSearchAgain"] }) {
     return (
         <div className="...">
             <span>{entry.query.origin} → {entry.query.destination}</span>
-            <span>{format(new Date(entry.query.departureDate), ' MMM d')}</span>
+            <span>
+             {entry.query.departureDate ? formatDate(entry.query.departureDate) : ""}
+            </span>
             <Button onClick={() => onSearchAgain(entry.query)}>Search again</Button>
         </div>
     )
