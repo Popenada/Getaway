@@ -11,6 +11,8 @@ services:
       - FLASK_DEBUG=1
     env_file:
       - .env.local
+    networks:
+      - getaway-network
   
   frontend:
     build: ./getaway-web
@@ -23,3 +25,8 @@ services:
       - NEXT_PUBLIC_API_URL=http://backend:5000
     depends_on:
       - backend
+    networks:
+      - getaway-network
+networks:
+  getaway-network:
+    driver: bridge
