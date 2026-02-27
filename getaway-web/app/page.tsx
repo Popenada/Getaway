@@ -36,6 +36,11 @@ export default function SearchTab() {
     setDepartureLocations([{ label: query.origin, code: query.origin }]);
     setArrivalLocations([{ label: query.destination, code: query.destination }]);
     setTravelers(String(query.passengers));
+
+    setDateRange({
+      from: new Date(query.departureDate),
+      to: query.returnDate ? new Date(query.returnDate) : undefined,
+    });
   };
 
   return (
