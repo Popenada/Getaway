@@ -1,8 +1,4 @@
 services:
-  # load proper docker image
-  app:
-    image: ${DOCKERHUB_USERNAME}/my-app:${IMAGE_TAG:-latest}
-
   #python backend
   backend:
     build: .
