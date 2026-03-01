@@ -1,15 +1,32 @@
-# docker-compose.yml
-version: ".1"
-
 services:
-  dev:
+  #python backend
+  backend:
     build: .
-    image: getaway1.26
-    container_name: getaway
-    stdin_open: true
-    tty: true
     ports: 
-      - 8000:8000
+      - "5000:5000"
     volumes:
-      - ".:/workspace"
-    working_dir: /workspace
+      - .:/app
+    environment:
+      - FLASK_APP=run.py
+      - FLASK_DEBUG=1
+    env_file:
+      - .env.local
+    networks:
+      - getaway-network
+  
+  frontend:
+    build: ./getaway-web
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./getaway-web:/app
+      - /app/node_modules
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:5000
+    depends_on:
+      - backend
+    networks:
+      - getaway-network
+networks:
+  getaway-network:
+    driver: bridge
