@@ -27,7 +27,8 @@ type Flight = {
 	legs: Leg[];
 	price: string;
 	currency: string;
-	cabin: string;
+  cabin: string;
+  booking_url?: string;
 };
 
 const CACHE_DURATION = 30 * 60 * 1000; // in milliseconds (30 minutes)
@@ -284,9 +285,9 @@ export default function ResultsPage() {
                     {flight.legs.length > 0 ? 
                     <span className="flex items-center gap-1">
                       {new Date(flight.total_departure).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-                      {flight.legs.length > 2 ?
+                      {flight.legs.length > 1 ?
                         <div className="flex items-center w-fit border-2 border-gray-200 rounded-lg p-1 bg-gray-200">
-                          {flight.legs.length - 2} stops
+                          {flight.legs.length / 2 - 1} stop{flight.legs.length / 2 - 1 > 1 ? "s" : ""}
                         </div> :
                         <ArrowRight className="w-4 h-4"/>
                       }
@@ -319,6 +320,21 @@ export default function ResultsPage() {
                       </div>
                     </div>
                   ))}
+
+                  {/* booking link button */}
+                  {flight.booking_url && (
+                    <a
+                      href={flight.booking_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-2 self-start"
+                    >
+                      <Button variant="outline" className="text-sm">
+                        Book on Google Flights
+                      </Button>
+                  </a>
+                  )}
                 </div>
               </AccordionContent>
             </AccordionItem>
