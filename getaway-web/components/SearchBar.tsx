@@ -232,18 +232,20 @@ export default function SearchComponent({
           label="Depart — Return"
         />
       </FieldWrapper>
-
-      <FieldWrapper label="Travelers">
-        <Input
-          type="number"
-          min={1}
-          max={8}
-          value={travelers}
-          onChange={(e) => setTravelers(e.target.value)}
-          placeholder="1"
-          className="border-0 bg-transparent p-0 h-auto text-[15px] text-[#1a1714] placeholder:text-[#b8b3ad] placeholder:font-light focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none w-16"
-        />
-      </FieldWrapper>
+        <div className="w-[120] shrink-0">
+          <FieldWrapper label="Travelers">
+            <Input
+              type="number"
+              min={1}
+              max={8}
+              value={travelers}
+              onChange={(e) => setTravelers(e.target.value)}
+              placeholder="1"
+              className="border-0 bg-transparent p-0 h-auto text-[15px] text-[#1a1714] placeholder:text-[#b8b3ad] placeholder:font-light focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none w-16"
+            />
+          </FieldWrapper>
+        </div>
+      
 
       <button
         type="button"

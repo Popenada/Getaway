@@ -2,7 +2,7 @@
 
 import { format, parse } from "date-fns";
 import type { SearchHistoryEntry } from "@/lib/types";
-
+import { Plane, ArrowRight } from "lucide-react"
 type Props = {
   history: SearchHistoryEntry[];
   onSearchAgain: (query: SearchHistoryEntry["query"]) => void;
@@ -36,7 +36,7 @@ function HistoryCard({
         className="w-9 h-9 rounded-xl flex items-center justify-center text-base shrink-0"
         style={{ background: "rgba(196,113,74,0.10)", color: "#c4714a" }}
       >
-        ✈
+        <Plane size ={16}/>
       </div>
 
       <div className="flex flex-col flex-1 min-w-0">
@@ -65,7 +65,7 @@ function HistoryCard({
         }}
         title="Search again"
       >
-        ↗
+        <ArrowRight />
       </button>
     </div>
   );

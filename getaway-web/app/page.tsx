@@ -91,7 +91,7 @@ export default function SearchTab() {
               className="flex gap-1 rounded-full p-0.5 w-fit mb-5"
               style={{ background: "#e8e0d4" }}
             >
-              {["Round trip", "One way", "Multi-city"].map((type) => (
+              {["Round trip", "One way"].map((type) => (
                 <button
                   key={type}
                   onClick={() => setRoundTrip(type === "Round trip")}
