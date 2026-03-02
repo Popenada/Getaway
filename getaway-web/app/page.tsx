@@ -95,6 +95,9 @@ export default function SearchTab() {
           returnWindow={returnWindow}
           setReturnWindow={setReturnWindow}
         />
+        <Link href="/discovery">
+          <button>Go to Getaway</button>
+        </Link>
         </div>
 
         <div className="w-80">
