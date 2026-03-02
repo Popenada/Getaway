@@ -1,18 +1,20 @@
 # Dockerfile
-#to build, run "docker compose build"
 
-FROM python:3
+# python slim image
+FROM python:3.14.3-slim
 
-# Set Working Directory
-WORKDIR /workspace
+# working dir
+WORKDIR /app
 
-# set environment variables
-ENV FLASK_APP=getaway.py
-
-# Install packages
-COPY requirements.txt ./
+# save requirments for cache
+COPY requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade pip \
   && pip install --no-cache-dir -r requirements.txt
 
-CMD flask run --port 8000
+COPY . .
+
+EXPOSE 5000
+
+# start the application
+CMD ["python", "run.py"]
