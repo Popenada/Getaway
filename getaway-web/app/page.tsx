@@ -9,7 +9,7 @@ import AdvancedOptionsComponent from "@/components/AdvancedOptions";
 import { SearchHistoryPanel } from "@/components/SearchHistoryPanel";
 import { useSearchHistory } from "@/hooks/SearchHistory";
 import { SearchHistoryEntry } from "@/lib/types";
-
+import Header from "@/components/Header"
 const DEFAULT_MIN_PRICE = 0;
 const DEFAULT_MAX_PRICE = 10000;
 
@@ -45,56 +45,7 @@ export default function SearchTab() {
     <div className="getaway-bg relative min-h-screen">
       <div className="relative z-10 flex flex-col min-h-screen">
 
-        <header className="flex items-center justify-between px-10 py-6 animate-fade-down">
-          <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded-[10px] flex items-center justify-center text-white text-base"
-              style={{ background: "linear-gradient(135deg, #c4714a, #a85a38)" }}
-            >
-              <svg viewBox="0 0 28 28" width="20" height="20" fill="none">
-                <circle cx="14" cy="14" r="12" stroke="white" strokeWidth="1.5" />
-                <text
-                  x="14" y="19"
-                  textAnchor="middle"
-                  fontFamily="Georgia, serif"
-                  fontSize="14"
-                  fontWeight="400"
-                  fill="white"
-                >G</text>
-                <circle cx="23" cy="5" r="2.5" fill="white" opacity="0.7" />
-              </svg>
-            </div>
-            <span
-              className="text-xl font-semibold tracking-wide"
-              style={{ fontFamily: "var(--font-cormorant), Georgia, serif" }}
-            >
-              Getaway
-            </span>
-          </div>
-
-          <nav
-            className="flex gap-1 rounded-full px-1 py-1 backdrop-blur-md"
-            style={{
-              background: "rgba(255,255,255,0.5)",
-              border: "1px solid rgba(26,23,20,0.08)",
-            }}
-          >
-            {["Search", "Trips", "FAQ"].map((item) => (
-              <Link
-                key={item}
-                href={item === "Search" ? "/" : `/${item.toLowerCase()}`}
-                className="text-[13px] font-medium px-4 py-1.5 rounded-full transition-all duration-200"
-                style={
-                  item === "Search"
-                    ? { background: "#1a1714", color: "#fdfcf9" }
-                    : { color: "#6b6560" }
-                }
-              >
-                {item}
-              </Link>
-            ))}
-          </nav>
-        </header>
+        <Header/>
 
         <main className="flex-1 flex flex-col items-center px-10 pt-8 pb-16">
 
@@ -120,7 +71,6 @@ export default function SearchTab() {
             <em style={{ color: "#c4714a" }}>escape.</em>
           </h1>
 
-          {/* Subtitle */}
           <p
             className="text-center text-[15px] font-light leading-relaxed max-w-md mb-12 animate-fade-up-3"
             style={{ color: "#6b6560" }}
@@ -129,7 +79,7 @@ export default function SearchTab() {
           </p>
 
           <div
-            className="w-full max-w-2xl rounded-3xl p-7 mb-4 animate-fade-up-4"
+            className="w-full max-w-5xl rounded-3xl p-7 mb-4 animate-fade-up-4"
             style={{
               background: "rgba(253,252,249,0.75)",
               border: "1px solid rgba(255,255,255,0.85)",
@@ -178,26 +128,6 @@ export default function SearchTab() {
                 maxPrice={maxPrice}
               />
 
-              <Link href="/results">
-                <button
-                  className="flex items-center gap-2 px-6 h-full rounded-2xl text-[14px] font-medium text-white tracking-wide transition-all duration-200 cursor-pointer shrink-0"
-                  style={{
-                    background: "linear-gradient(135deg, #c4714a, #a85a38)",
-                    boxShadow: "0 4px 20px rgba(196,113,74,0.35)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-1px)";
-                    e.currentTarget.style.boxShadow = "0 8px 28px rgba(196,113,74,0.45)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 4px 20px rgba(196,113,74,0.35)";
-                  }}
-                >
-                  <Search size={15} strokeWidth={2.5} />
-                  Search
-                </button>
-              </Link>
             </div>
 
             <div className="mt-3">
