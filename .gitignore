@@ -9,3 +9,8 @@ venv/
 *.env.local
 None.json
 post_response.json
+
+# Remove testing files
+TEST*.json
+
+**/__pycache__/
