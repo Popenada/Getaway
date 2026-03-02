@@ -34,9 +34,10 @@ def parse_flights(searchid: str, response_data: Dict[str, Any]) -> List[Dict[str
         origin_iata = first_segment['departure']['iataCode']
         dest_iata = last_segment['departure']['iataCode']
         dep_time = first_segment['departure']['at']
-        ret_time = last_segment['departure']['at']
+        if len(itineraries) > 1: ret_time = last_segment['departure']['at']
+        else: ret_time = None
         
-        for itinerary in offer.get('itineraries', []):
+        for itinerary in itineraries:
             for segment in itinerary['segments']:
                 airline_code = segment['carrierCode']
                 legs.append({
