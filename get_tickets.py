@@ -26,7 +26,8 @@ def ticket_query(data):
     
   amadeus = Client(
     client_id='6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt',
-    client_secret='nKCQ8UrGPVORjjIa'
+    client_secret='nKCQ8UrGPVORjjIa',
+    hostname='production'
   )
     
   parameters = {
