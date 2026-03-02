@@ -7,10 +7,14 @@ def load_json_response(file_path: str) -> Dict[str, Any]:
     with open(file_path, 'r') as file:
         return json.load(file)
 
-def build_google_flights_url(origin, destination, departure_time) -> str:
-    date = departure_time.split('T')[0]
+def build_google_flights_url(origin, destination, departure_time, return_time=None) -> str:
+    dep_date = departure_time.split('T')[0]
+    ret_date = return_time.split('T')[0] if return_time else None
     
-    query = f"flights from {origin} to {destination} on {date}"
+    query = f"flights from {origin} to {destination} on {dep_date}"
+    if ret_date:
+        query += f" returning {ret_date}"
+    
     encoded_query = urllib.parse.quote(query)
     
     return f"https://www.google.com/flights?q={encoded_query}"
@@ -30,6 +34,7 @@ def parse_flights(searchid: str, response_data: Dict[str, Any]) -> List[Dict[str
         origin_iata = first_segment['departure']['iataCode']
         dest_iata = last_segment['departure']['iataCode']
         dep_time = first_segment['departure']['at']
+        ret_time = last_segment['departure']['at']
         
         for itinerary in offer.get('itineraries', []):
             for segment in itinerary['segments']:
@@ -50,7 +55,7 @@ def parse_flights(searchid: str, response_data: Dict[str, Any]) -> List[Dict[str
             'price': offer['price']['total'],
             'currency': offer['price']['currency'],
             'cabin': offer['travelerPricings'][0]['fareDetailsBySegment'][0]['cabin'],
-            'booking_url': build_google_flights_url(origin_iata, dest_iata, dep_time)
+            'booking_url': build_google_flights_url(origin_iata, dest_iata, dep_time, ret_time)
         }
         
         flights.append(flight_obj)
@@ -63,6 +68,6 @@ def parse_flights(searchid: str, response_data: Dict[str, Any]) -> List[Dict[str
 
 '''
 if __name__ == '__main__':
-    data = load_json_response('TEST-SEARCH.json')
+    data = load_json_response('TEST123.json')
     parse_flights('TEST123', data)
 '''
