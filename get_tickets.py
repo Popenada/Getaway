@@ -23,10 +23,10 @@ def ticket_query(data):
     # origin & dest = "XYZ" airport codes.
     # Departure date formatted as "YYYY-MM-DD"
     # numAdults is int formatted as string "X"
-    
+  
   amadeus = Client(
     client_id='6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt',
-    client_secret='nKCQ8UrGPVORjjIa'
+    client_secret='nKCQ8UrGPVORjjIa',
   )
     
   parameters = {
@@ -36,7 +36,7 @@ def ticket_query(data):
       "originLocationCode": origins[0],
       "destinationLocationCode": destinations[0], 
       "alternativeOriginsCodes": origins[1:],
-      "alternativeDesinationsCodes": destinations[1:],
+      "alternativeDestinationsCodes": destinations[1:],
       "departureDateTimeRange": {
         "date": dDate,
       } }],
@@ -44,7 +44,7 @@ def ticket_query(data):
       "sources": ["GDS"],
       "searchCriteria": {  
         "excludeAllotments": True,
-        "maxFlightOffers": 1,
+        "maxFlightOffers": 50,
         "allowAlternativeFareOptions": True,
         "oneFlightOfferPerDay": False, 
         "additionalInformation": { 
