@@ -64,12 +64,12 @@ def flightSearch():
     
     if not response:
         print("----- NO RESPONSE -----")
-        return jsonify({"error": "API returned no response"})
+        return jsonify([])
     
     if response["meta"]["count"] == 0:
         print("----- NO FLIGHTS FOUND -----")
-        return jsonify({"error": "No flights found matching criteria"})
+        return jsonify([])
     
-    flights = parse_flights(response)
+    flights = parse_flights(inputs["searchid"], response)
     
     return jsonify(flights)
