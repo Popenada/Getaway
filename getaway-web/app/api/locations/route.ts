@@ -15,7 +15,7 @@ function firstLetterUpper(str: string) {
 }
 
 const cache = new Map<string, any>();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 5 * 60 * 1000; // in milliseconds (5 minutes)
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);

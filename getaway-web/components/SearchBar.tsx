@@ -66,7 +66,7 @@ export default function SearchComponent({ dateRange, setDateRange, departureLoca
   setDepartureLocations, arrivalLocations, setArrivalLocations, travelers, setTravelers,
   roundTrip, setRoundTrip, includedAirline, excludedAirline, nonstopOnly, minPrice, maxPrice
 }: SearchBarProps) {
-const DEBOUNCE_DELAY = 200; 
+  const DEBOUNCE_DELAY = 200; 
   const [departureSuggestions, setDepartureSuggestions] = useState<any[]>([]);
   const [arrivalSuggestions, setArrivalSuggestions] = useState<any[]>([]);
   const [departureInput, setDepartureInput] = useState("");
