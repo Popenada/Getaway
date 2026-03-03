@@ -15,8 +15,8 @@ const DEFAULT_MAX_PRICE = 10000;
 
 export default function SearchTab() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
-  const [departureLocation, setDepartureLocation] = useState("");
-  const [arrivalLocation, setArrivalLocation] = useState("");
+  const [departureLocations, setDepartureLocations] = useState<Array<{ label: string; code: string }>>([]);
+  const [arrivalLocations, setArrivalLocations] = useState<Array<{ label: string; code: string }>>([]);
   const [travelers, setTravelers] = useState("");
   const [roundTrip, setRoundTrip] = useState(true);
   const [minPrice, setMinPrice] = useState<number>(DEFAULT_MIN_PRICE);
@@ -32,8 +32,8 @@ export default function SearchTab() {
   const { history, addEntry, clearHistory } = useSearchHistory();
 
   const handleSearchAgain = (query: SearchHistoryEntry["query"]) => {
-    setDepartureLocation(query.origin);
-    setArrivalLocation(query.destination);
+    setDepartureLocations([{ label: query.origin, code: query.origin }]);
+    setArrivalLocations([{ label: query.destination, code: query.destination }]);
     setTravelers(String(query.passengers));
     setDateRange({
       from: new Date(query.departureDate),
@@ -109,10 +109,10 @@ export default function SearchTab() {
 
             <div className="flex gap-2 items-stretch">
               <SearchComponent
-                departureLocation={departureLocation}
-                setDepartureLocation={setDepartureLocation}
-                arrivalLocation={arrivalLocation}
-                setArrivalLocation={setArrivalLocation}
+                departureLocations={departureLocations}
+                setDepartureLocations={setDepartureLocations}
+                arrivalLocations={arrivalLocations}
+                setArrivalLocations={setArrivalLocations}
                 dateRange={dateRange}
                 setDateRange={setDateRange}
                 travelers={travelers}
