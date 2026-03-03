@@ -190,7 +190,7 @@ const DEBOUNCE_DELAY = 200;
 
         {departureSuggestions.length > 0 && departureInput.length > 1 && (
           <div
-            className="absolute top-full left-0 right-0 mt-1 rounded-2xl overflow-hidden z-20 py-1"
+            className="absolute top-full left-0 right-0 mt-1 rounded-2xl overflow-y-auto max-h-40 z-[120] py-1"
             style={{
               background: "#fdfcf9",
               border: "1px solid rgba(26,23,20,0.08)",
@@ -299,7 +299,7 @@ const DEBOUNCE_DELAY = 200;
 
         {arrivalSuggestions.length > 0 && arrivalInput.length > 1 && (
           <div
-            className="absolute top-full left-0 right-0 mt-1 rounded-2xl overflow-hidden z-20 py-1"
+            className="absolute top-full left-0 right-0 mt-1 rounded-2xl overflow-y-auto max-h-40 z-[120] py-1"
             style={{
               background: "#fdfcf9",
               border: "1px solid rgba(26,23,20,0.08)",
