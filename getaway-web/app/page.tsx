@@ -28,7 +28,7 @@ export default function SearchTab() {
   const [returnWindow, setReturnWindow] = useState<number>(0);
   const [includedAirline, setIncludedAirline] = useState<string[]>([]);
   const [excludedAirline, setExcludedAirline] = useState<string[]>([]);
-  const [tripLength, setTripLength] = useState<number>(1);
+  const [tripLength, setTripLength] = useState<number>(0);
 
   const { history, addEntry, clearHistory } = useSearchHistory();
 
@@ -41,7 +41,7 @@ export default function SearchTab() {
     });
     setTravelers(String(query.passengers));
     setRoundTrip(Boolean(query.roundTrip));
-    setTripLength(query.tripLength || 1);
+    setTripLength(query.tripLength || 0);
     setIncludedAirline(query.includedAirline || []);
     setExcludedAirline(query.excludedAirline || []);
     setNonStopOnly(Boolean(query.nonstopOnly));
