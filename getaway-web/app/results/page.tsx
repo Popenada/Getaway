@@ -14,6 +14,8 @@ import { ArrowRight } from "lucide-react";
 import { sortData } from "@/lib/sortUtils";
 import { Leg, Flight } from "@/lib/types"
 
+const CACHE_DURATION = 30 * 60 * 1000; // in milliseconds (30 minutes)
+
 export default function ResultsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -28,12 +30,11 @@ export default function ResultsPage() {
   const [sortKey, setSortKey] = useState("price_asc"); // tracks sort order
   
   const fetchFlights = async () => {
-    
+    // check cache first
     const cached = localStorage.getItem(cacheKey);
-
     if (cached) {
       const parsed = JSON.parse(cached);
-      const isExpired = Date.now() - parsed.timestamp > 1000 * 60 * 30;
+      const isExpired = Date.now() - parsed.timestamp > CACHE_DURATION;
 
       if (!isExpired) {
         console.log("USING CACHED DATA");
@@ -43,7 +44,8 @@ export default function ResultsPage() {
         return;
       }
     }
-    
+
+    // check if we already fetched new data for this query in this session to avoid duplicate calls
     if (hasFetched.current) return;
     hasFetched.current = true;
     
@@ -57,11 +59,11 @@ export default function ResultsPage() {
         body: JSON.stringify({
           searchid: "TEST123",
 
-          departureCodes: searchParams.getAll("departureCodes"),
-          arrivalCodes: searchParams.getAll("arrivalCodes"),
+          departureCodes: searchParams.get("departureCodes")?.split(",").filter(Boolean) ?? [],
+          arrivalCodes: searchParams.get("arrivalCodes")?.split(",").filter(Boolean) ?? [],
 
-          departureDate: searchParams.getAll("departureDate"),
-          returnDate: searchParams.getAll("returnDate"),
+          departureDate: searchParams.get("departureDate")?.split(",").filter(Boolean) ?? [],
+          returnDate: searchParams.get("returnDate")?.split(",").filter(Boolean) ?? [],
 
           travelers: Number(searchParams.get("travelers") || 1),
           tripLength: Number(searchParams.get("tripLength") || 0),
@@ -117,8 +119,8 @@ export default function ResultsPage() {
     );
   }
 
-  const origin = flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].origin : '';
-	const destination = flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].destination : '';
+  const origin = searchParams.get("departureCodes")?.split(",").filter(Boolean) ?? []; //flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].origin : '';
+	const destination = searchParams.get("arrivalCodes")?.split(",").filter(Boolean) ?? []; //flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].destination : '';
 
   // Old implementation code grouping flights by date, leave in for future refrence
   // 
@@ -188,7 +190,8 @@ export default function ResultsPage() {
     <main className="p-6 min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto space-y-6">
         <h1 className="flex items-center text-3xl font-bold text-gray-900 mb-6">
-          {origin} {destination && <><ArrowRight className="mx-2 text-gray-400" /> {destination}</>}
+          {origin.join(", ") || "Flight Search"}
+          {destination.length > 0 && <><ArrowRight className="mx-2 text-gray-400" />{destination.join(", ")}</>}
         </h1>
         {sortedFlights.length > 0 && (
           <div className="flex gap-4 mb-4">
@@ -280,7 +283,7 @@ export default function ResultsPage() {
                     <span className="text-xl font-bold text-green-600">
                       ${parseFloat(flight.price).toFixed(2)}
                     </span>
-                    <p className="text-xs text-grey-400">{flight.currency}</p>
+                    <p className="text-xs text-gray-400">{flight.currency}</p>
                   </div>
                 </div>
               </AccordionTrigger>
