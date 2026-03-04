@@ -14,7 +14,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between px-10 py-6 backdrop-blur border-b">
-      <Link href="/GetawayDiscover" className="flex items-center gap-3">
+      <Link href="/discovery" className="flex items-center gap-3">
         <div
           className="w-9 h-9 rounded-[10px] flex items-center justify-center text-white text-base"
           style={{ background: "linear-gradient(135deg, #c4714a, #a85a38)" }}

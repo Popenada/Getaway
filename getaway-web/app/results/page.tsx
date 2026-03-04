@@ -12,23 +12,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ArrowRight } from "lucide-react";
 
 import { sortData } from "@/lib/sortUtils";
-
-type Leg = {
-	origin: string;
-	destination: string;
-	departure_time: string;
-	arrival_time: string;
-	stops: number;
-	duration: string;
-	airline: string;
-};
-
-type Flight = {
-	legs: Leg[];
-	price: string;
-	currency: string;
-	cabin: string;
-};
+import { Leg, Flight } from "@/lib/types"
 
 const CACHE_DURATION = 30 * 60 * 1000; // in milliseconds (30 minutes)
 
