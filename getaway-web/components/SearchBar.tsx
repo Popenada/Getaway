@@ -11,13 +11,10 @@ import { ArrowRight } from "lucide-react";
 type SearchBarProps = {
   dateRange: DateRange | undefined;
   setDateRange: (r: DateRange | undefined) => void;
-
   departureLocations: Array<{ label: string; code: string }>;
   setDepartureLocations: (l: Array<{ label: string; code: string }>) => void;
-
   arrivalLocations: Array<{ label: string; code: string }>;
   setArrivalLocations: (l: Array<{ label: string; code: string }>) => void;
-
   travelers: string;
   setTravelers: (t: string) => void;
   roundTrip: boolean;
@@ -104,18 +101,15 @@ export default function SearchComponent({ dateRange, setDateRange, departureLoca
     return data;
   }
 
+  // when user clicks search
   const handleSearch = () => {
     const params = new URLSearchParams({
-
+      departureLabels: departureLocations.map(loc => loc.label).join("|"),
+      arrivalLabels: arrivalLocations.map(loc => loc.label).join("|"),
       departureCodes: departureLocations.map(loc => loc.code).join(","),
       arrivalCodes: arrivalLocations.map(loc => loc.code).join(","),
-
-      departureDate: dateRange?.from
-        ? dateRange.from.toISOString().split("T")[0]
-        : "",
-      returnDate: dateRange?.to
-        ? dateRange.to.toISOString().split("T")[0]
-        : "",
+      departureDate: dateRange?.from?dateRange.from.toISOString().split("T")[0] : "",
+      returnDate: dateRange?.to?dateRange.to.toISOString().split("T")[0] : "",
       travelers: travelers || "1",
       triplength: "",
       roundTrip: String(roundTrip),

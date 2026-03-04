@@ -36,8 +36,8 @@ def flightSearch():
         
         "adults" : int(body.get("travelers", request.args.get("travelers", 1))), # Number of adults, int
         
-        "roundTrip" : body.get("roundTrip", request.args.get("roundTrip", "True")) in ("true", "True", "TRUE"), #bool, true = round trip
-        "nonstop" : body.get("nonStop", request.args.get("nonStop", "False")) in ("true", "True", "TRUE"), #bool, whether or not there are connecting flights
+        "roundTrip" : str(body.get("roundTrip", request.args.get("roundTrip", "True"))).lower() in ("true", "1"), #bool, true = round trip
+        "nonstop" : str(body.get("nonstopOnly", request.args.get("nonstopOnly", "False"))).lower() in ("true", "1"), #bool, whether or not there are connecting flights
         
         "included" : body.get("includedAirline", request.args.get("includedAirline")), #list of strings, list contains allowed airline codes
         "excluded" : body.get("excludedAirline", request.args.get("excludedAirline")), #list of strings, list contains excluded airline codes

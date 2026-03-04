@@ -3,11 +3,20 @@ export type SearchHistoryEntry = {
   id: string;
   timestamp: number;
   query: {
-    origin: string;
-    destination: string;
+    origins: Array<{ label: string; code: string }>;
+    destinations: Array<{ label: string; code: string }>;
     departureDate: string;
     returnDate?: string;
     passengers: number;
+    roundTrip?: boolean;
+    tripLength?: number;
+    includedAirline?: string[];
+    excludedAirline?: string[];
+    nonstopOnly?: boolean;
+    minPrice?: number;
+    maxPrice?: number;
+    departureWindow?: number;
+    returnWindow?: number;
   };
   resultCount: number;
 };
