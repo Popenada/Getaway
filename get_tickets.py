@@ -2,8 +2,8 @@ import json
 from amadeus import Client, Location, ResponseError
 from datetime import datetime, date, timedelta
 from generate_range import getRange
-# One-Way doesn't work
-def ticket_query(data):
+
+def ticket_query(amadeus, data):
   searchid = data.get("searchid")
   origins = data.get("origins")
   destinations = data.get("destinations")
@@ -19,15 +19,11 @@ def ticket_query(data):
   tripLength = data.get("tripLength")
   departureWindow = data.get("departureWindow", 0)
   returnWindow = data.get("returnWindow", 0)
+  maxResults = data.get("maxResults")
     
     # origin & dest = "XYZ" airport codes.
     # Departure date formatted as "YYYY-MM-DD"
     # numAdults is int formatted as string "X"
-    
-  amadeus = Client(
-    client_id='6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt',
-    client_secret='nKCQ8UrGPVORjjIa'
-  )
     
   parameters = {
     "currencyCode": "USD",
@@ -44,7 +40,6 @@ def ticket_query(data):
       "sources": ["GDS"],
       "searchCriteria": {  
         "excludeAllotments": True,
-        "maxFlightOffers": 1,
         "allowAlternativeFareOptions": True,
         "oneFlightOfferPerDay": False, 
         "additionalInformation": { 
@@ -112,6 +107,9 @@ def ticket_query(data):
         
     if returnWindow:
       parameters["originDestinations"][1]["departureDateTimeRange"]["dateWindow"] = "I%dD" % returnWindow
+      
+    if maxResults:
+      parameters["searchCriteria"]["maxFlightOffers"] = maxResults
         
     
     #add numAdults to request
@@ -174,10 +172,15 @@ def ticket_query(data):
 
 
 #debug
+amadeus = Client(
+        client_id='6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt',
+        client_secret='nKCQ8UrGPVORjjIa'
+    )
+
 args = {
     "searchid" : "TEST-SEARCH",
     "origins": ["LAX"],
-    "destinations": ["NYC"],
+    "destinations": ["LON"],
     "departureDate": ("2026-03-17",),
     "returnDate": ("2026-03-24",),
     "roundTrip": True,
@@ -186,4 +189,4 @@ args = {
     "adults" : 1,
 }
 
-#ticket_query(args)
+ticket_query(amadeus, args)

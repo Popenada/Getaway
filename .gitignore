@@ -2,6 +2,7 @@ venv/
 *.png
 *.pyc
 *.json
+!destinations.json
 **/.venv/
 **/devtools/
 **/devtests/
