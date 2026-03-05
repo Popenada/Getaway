@@ -271,7 +271,7 @@ export default function ResultsPage() {
                       {new Date(flight.total_departure).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
                       {flight.legs.length > 2 ?
                         <div className="flex items-center w-fit border-2 border-gray-200 rounded-lg p-1 bg-gray-200">
-                          {flight.legs.length - 2 } stops
+                          {flight.legs.length - 2} stops
                         </div> :
                         <ArrowRight className="w-4 h-4"/>
                       }
