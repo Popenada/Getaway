@@ -83,16 +83,17 @@ export default function ResultsPage() {
           returnDate: searchParams.get("returnDate")?.split(",").filter(Boolean) ?? [],
 
           travelers: Number(searchParams.get("travelers") || 1),
-          tripLength: Number(searchParams.get("tripLength") || 0),
+
           roundTrip: searchParams.get("roundTrip"),
+          nonStop: searchParams.get("nonstopOnly"),
 
           includedAirline: searchParams.get("includedAirline")?.split(",").filter(Boolean) ?? [],
           excludedAirline: searchParams.get("excludedAirline")?.split(",").filter(Boolean) ?? [],
 
-          nonstopOnly: searchParams.get("nonstopOnly"),
-
           minPrice: Number(searchParams.get("minPrice") || 0),
           maxPrice: Number(searchParams.get("maxPrice") || 0),
+
+          tripLength: Number(searchParams.get("tripLength") || 0),
 
           departureWindow: Number(searchParams.get("departureWindow") || 0),
           returnWindow: Number(searchParams.get("returnWindow") || 0),
