@@ -112,7 +112,7 @@ export default function SearchTab() {
           query: { origin: "JFK", destination: "LAX", departureDate: "2025-06-15", passengers: 2 },
           resultCount: 8
           })}>
-          Add fake histoasdasdry entry
+          Add fake history entry
         </Button>
       </div>
       

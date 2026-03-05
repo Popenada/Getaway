@@ -44,7 +44,7 @@ def ticket_query(data):
       "sources": ["GDS"],
       "searchCriteria": {  
         "excludeAllotments": True,
-        "maxFlightOffers": 1,
+        "maxFlightOffers": 10,
         "allowAlternativeFareOptions": True,
         "oneFlightOfferPerDay": False, 
         "additionalInformation": { 
