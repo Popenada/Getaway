@@ -305,7 +305,7 @@ export default function ResultsPage() {
                     </div>
                   ))}
 
-                  {/* booking link button */}
+                  {/* booking link button, this is temporary, if it conflicts, just remove it */}
                   {flight.booking_url && (
                     <a
                       href={flight.booking_url}
