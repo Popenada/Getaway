@@ -95,7 +95,7 @@ export default function SearchComponent({ dateRange, setDateRange, departureLoca
 
     if (clientCache.current.has(query)) return clientCache.current.get(query)!;
 
-    const res = await fetch(`/api/locations?query=${query}`);
+    const res = await fetch(`http://localhost:5000/api/locations?query=${query}`);
     const data = await res.json();
     clientCache.current.set(query, data);
     return data;

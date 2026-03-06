@@ -2,8 +2,8 @@ from app import app
 from flask import request
 from get_tickets import ticket_query
 from flask import jsonify
-from table_data import load_json_response
 from table_data import parse_flights
+from autocomplete import get_locations
 
 @app.route('/')
 @app.route('/index')
@@ -73,3 +73,9 @@ def flightSearch():
     flights = parse_flights(inputs["searchid"], response)
     
     return jsonify(flights)
+
+@app.route('/api/locations', methods=["GET"])
+def getLocations():
+    query = request.args.get("query", "")
+    
+    return get_locations(query)
