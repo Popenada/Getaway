@@ -37,6 +37,7 @@ export default function FAQPage() {
               blank flight search, fill out your departure airport(s) and arrival
               airport(s) in their respective boxes. Then, fill out the departure and
               arrival dates in the calendar below, and input the number of travelers.
+              
               For more advanced options, you can click the "Advanced options" button
               to search for preferred airlines, price ranges, and more.
             </AccordionContent>
