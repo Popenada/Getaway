@@ -320,6 +320,21 @@ export default function ResultsPage() {
                       </div>
                     </div>
                   ))}
+
+                  {/* booking link button, this is temporary, if it conflicts, just remove it */}
+                  {flight.booking_url && (
+                    <a
+                      href={flight.booking_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-2 self-start"
+                    >
+                      <Button variant="outline" className="text-sm">
+                        Book on Google Flights
+                      </Button>
+                  </a>
+                  )}
                 </div>
               </AccordionContent>
             </AccordionItem>
