@@ -12,7 +12,6 @@ def generate_env():
     with open(filename, "r") as f:
         content = f.read()
 
-    # Extracting IDs using Regex
     client_id = re.search(r"client_id=['\"]([^'\"]+)['\"]", content)
     client_secret = re.search(r"client_secret=['\"]([^'\"]+)['\"]", content)
 
@@ -23,27 +22,35 @@ def generate_env():
         )
         with open(".env.local", "w") as env_file:
             env_file.write(env_content)
-        print("Success: .env.local generated with Amadeus credentials.")
+        print("Success: .env.local generated.")
     else:
-        print("Error: Could not find client_id or client_secret in the file.")
+        print("Error: Could not find keys")
+
+def list_docker_images():
+    print("\n--- Local Docker Images ---")
+    subprocess.run(["docker", "images"])
 
 def manage_docker():
     while True:
-        print("\n[1] Start (docker compose up)\n[2] Build (docker compose up --build)\n[3] Stop (docker compose down)\n[4] view logs (docker compose logs -f <service>)\n[5] generate .env.local\n[6] exit")
+        print("\nIf issues make sure docker desktop is running, and you have a .env.local\n[1] Start (docker compose up):\n[2] Stop (docker compose down):\n[3] Build (docker compose up --build)\n[4] View logs (docker compose logs -f \"service-name\"):\n[5] List Images (docker images):\n[6] Generate .env.local\n[7] Exit")
         choice = input("Select an option: ")
 
         if choice == '1':
-            subprocess.run(["docker", "compose", "up", "-d"])
+            print("To see logs in a new terminal run, \"docker compose logs -f backend\" or frontend")
+            subprocess.run(["docker", "compose", "up","-d"])
         elif choice == '2':
-            subprocess.run(["docker", "compose", "up", "--build", "-d"])
-        elif choice == '3':
             subprocess.run(["docker", "compose", "down"])
+        elif choice == '3':
+            print("To see logs in a new terminal run, \"docker compose logs -f backend\" or frontend")
+            subprocess.run(["docker", "compose", "up", "--build","-d"])
         elif choice == '4':
-            service = input("Enter service name: ")
+            service = input("Enter service name (backend, frontend): ")
             subprocess.call(["docker", "compose", "logs", "-f", service])
         elif choice == '5':
-            generate_env()
+            list_docker_images()
         elif choice == '6':
+            generate_env()
+        elif choice == '7':
             sys.exit()
         else:
             print("Invalid selection.")
