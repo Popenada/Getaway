@@ -85,7 +85,7 @@ function SavedFlightCard({
   onRemove: () => void;
 }) {
   const firstLeg = flight.legs[0];
-  const lastLeg = flight.legs[flight.legs.length - 1];
+  const lastLeg = flight.legs[0]?.destination;;
 
   return (
     <div
@@ -114,7 +114,7 @@ function SavedFlightCard({
             </span>
             <span style={{ color: "#c4714a" }}>→</span>
             <span className="text-[17px] font-bold" style={{ color: "#1a1714" }}>
-              {lastLeg.destination}
+              {lastLeg}
             </span>
           </div>
 
