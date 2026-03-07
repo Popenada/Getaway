@@ -4,13 +4,13 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-
+import Header from "@/components/Header"
 import { Button } from "@/components/ui/button";
 import DateGrid from "@/components/DateGrid";
 import SortControl, { SortOption } from "@/components/SortControl";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ArrowRight } from "lucide-react";
-
+import useSavedFlights from "@/hooks/SavedFlights"
 import { sortData } from "@/lib/sortUtils";
 import { Leg, Flight } from "@/lib/types"
 
@@ -28,6 +28,10 @@ export default function ResultsPage() {
 
   // Sorting states
   const [sortKey, setSortKey] = useState("price_asc"); // tracks sort order
+  
+  // Initialization of hook for saved flights
+  const {saved, saveFlights, removeFlights, isSaved } = useSavedFlights();
+
   
   const fetchFlights = async () => {
     // check cache first
@@ -187,8 +191,11 @@ export default function ResultsPage() {
   )
 
   return (
-    <main className="p-6 min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto space-y-6">
+    <div className="getaway-bg relative min-h-screen">
+      <div className="relative z-10 flex flex-col min-h-screen">
+    <main className="flex-1 p-6">
+      <Header/>
+        <div className="max-w-5xl mx-auto space-y-6">
         <h1 className="flex items-center text-3xl font-bold text-gray-900 mb-6">
           {origin.join(", ") || "Flight Search"}
           {destination.length > 0 && <><ArrowRight className="mx-2 text-gray-400" />{destination.join(", ")}</>}
@@ -204,6 +211,11 @@ export default function ResultsPage() {
 
             <Button
               variant="outline"
+              className="text-white"
+              style={{
+                background: "linear-gradient(135deg, #c4714a, #a85a38)",
+                boxShadow: "0 4px 20px rgba(196,113,74,0.35)",
+              }}
               onClick={() => router.push("/")}
             >
               Back to Search
@@ -248,12 +260,31 @@ export default function ResultsPage() {
           </div>
         ) : (
           <Accordion type="single" collapsible className="w-full space-y-4">
-          {sortedFlights.map((flight, idx) => (
+          {sortedFlights.map((flight, idx ) => {
+            const savedEntry = saved.find(
+            (s) =>
+            s.legs[0]?.departure_time === flight.legs[0]?.departure_time &&
+            s.legs[0]?.origin === flight.legs[0]?.origin &&
+            s.legs[0]?.destination === flight.legs[0]?.destination &&
+            s.price === flight.price
+          );
+          const alreadySaved = Boolean(savedEntry);
+            return (
             <AccordionItem
               key={"flight-"+idx}
               value={`item-${idx}`}
               className="border rounded-lg bg-white px-4 shadow-sm"
+              
             >
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (alreadySaved) removeFlights(savedEntry!.id);
+                  else saveFlights({ id: crypto.randomUUID(), ...flight });
+                }}
+              >
+                {alreadySaved ? "Saved" : "Save"}
+              </Button>
               <AccordionTrigger className="hover:no-underline py-4">
                 <div className="flex justify-between items-center w-full pr-4">
                   <div className="flex flex-col items-start gap-1">
@@ -306,10 +337,13 @@ export default function ResultsPage() {
                 </div>
               </AccordionContent>
             </AccordionItem>
-          ))}
+              );
+            })}
           </Accordion>
         )}
       </div>
     </main>
+    </div>
+    </div>
   );
 }
