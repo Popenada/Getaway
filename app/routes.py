@@ -106,15 +106,18 @@ def flightSearch():
     return jsonify(flights)
 
 
-@app.route("/api/getaway", methods=["GET"])
+@app.route("/api/getaway", methods=["POST"])
 def getawaySearch():
     # function for getaway requests
     # required input structure: location: (float, float) Pair of latitude and longitude
     # Find Nearest Airport (departure)->Get destinations->Make query->Format results
     # ->sort formatted results by price, return Results
-    #body = request.get_json(silent=True) or {}
-    longitude = float(request.args.get("longitude"))
-    latitude = float(request.args.get("latitude"))
+    body = request.get_json(silent=True) or {}
+
+    print("BODY:", body)
+
+    longitude = float(body.get("longitude"))
+    latitude = float(body.get("latitude"))
     print(type(latitude), type(longitude))
 
     if not isinstance(longitude, float):
