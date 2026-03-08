@@ -5,6 +5,7 @@ from flask import jsonify
 from table_data import parse_flights
 from amadeus import Client
 from getaway_request import getaway
+from json import dumps
 
 amadeus = Client(
     client_id="6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt", client_secret="nKCQ8UrGPVORjjIa"
@@ -114,11 +115,31 @@ def getawaySearch():
     #body = request.get_json(silent=True) or {}
     longitude = float(request.args.get("longitude"))
     latitude = float(request.args.get("latitude"))
-    print(longitude, latitude)
+    print(type(latitude), type(longitude))
+
+    if not isinstance(longitude, float):
+        print("Error: Bad longitude input")
+        return jsonify("Error: Bad Longitude Input")
     
-    getaways = getaway(amadeus, longitude, latitude)["getaways"]
-    print(len(getaways))
+    if not isinstance(latitude, float):
+        print("Error: Bad latitude Input")
+        return jsonify("Error: Bad latitude input")
+    
+    getaways = getaway(amadeus, latitude, longitude)
+    
+    if not isinstance(getaways, list):
+        print("Error: bad structure")
+        return jsonify("Error: bad structure -", getaways)
+        
+    if len(getaways) == 0:
+        print("Error: No results returned")
+        return jsonify("Error: No results returned")
+    
     for i in range(len(getaways)):
         getaways[i] = sorted(parse_flights(getaways[i]), key=lambda x: x["price"])
     
+    with open("GETAWAY-TEST.json", "w") as file:
+        file.write(dumps(getaways, indent=2))
+      
     return jsonify(getaways)
+

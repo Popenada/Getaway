@@ -25,18 +25,24 @@ def getaway(amadeus, lat, long):
     Get semirandom destination codes
     '''
     
+    #destination.json contains a list of curated destinations. The list is not final and should be added upon
     with open("destinations.json", "r") as file:
         destinations_list = json.load(file)
-        destinations = sample(destinations_list, k=4).remove(airport)
-        if len(destinations) > 3:
+        destinations = sample(destinations_list, k=4)
+        
+        #If the origin location is selected from the list, remove it
+        if airport in destinations:
+            destinations.remove(airport)
+        else:
             destinations.pop()
     
     '''
     For each destination, find cheapest dates from origin
     '''
     
-    results = {"getaways": []}
+    results = []
     for destination in destinations:
+        print(destination)
         #Choose a random date of departure within 2 weeks to 1 month
         departure = datetime.today().date() + timedelta(days=choice(range(10,25)))
         
@@ -56,18 +62,20 @@ def getaway(amadeus, lat, long):
                 "adults" : 1,
                 "departureWindow": 3,
                 "returnWindow": 3,
-                "maxResults": 30
+                "maxResults": 50
                 }
             response = ticket_query(amadeus, params)
-            results["getaways"].append(response)
+            results.append(response)
             
         except ResponseError as error:
             return "getFlights", error
     
+    #return results
     return results
     
 amadeus = Client(
     client_id='6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt',
     client_secret='nKCQ8UrGPVORjjIa'
 )
+
 print(getaway(amadeus, 34.0549, -118.2426)) #coordinates for LA

@@ -8,5 +8,10 @@
     "CAN",
     "DEL",
     "AMS",
-    "CDG"
+    "CDG",
+    "FCO",
+    "CIA",
+    "IST",
+    "EZE",
+    "BZE"
 ]
