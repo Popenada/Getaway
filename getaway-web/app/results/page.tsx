@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import DateGrid from "@/components/DateGrid";
@@ -11,26 +12,13 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ArrowRight } from "lucide-react";
 
 import { sortData } from "@/lib/sortUtils";
+import { Leg, Flight } from "@/lib/types"
 
-type Leg = {
-	origin: string;
-	destination: string;
-	departure_time: string;
-	arrival_time: string;
-	stops: number;
-	duration: string;
-	airline: string;
-};
-
-type Flight = {
-	legs: Leg[];
-	price: string;
-	currency: string;
-	cabin: string;
-};
+const CACHE_DURATION = 30 * 60 * 1000; // in milliseconds (30 minutes)
 
 export default function ResultsPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const cacheKey = `flights-${searchParams.toString()}`;
   const hasFetched = useRef(false);
 
@@ -41,15 +29,12 @@ export default function ResultsPage() {
   // Sorting states
   const [sortKey, setSortKey] = useState("price_asc"); // tracks sort order
   
-  useEffect(() => {
-
+  const fetchFlights = async () => {
+    // check cache first
     const cached = localStorage.getItem(cacheKey);
-
     if (cached) {
-
       const parsed = JSON.parse(cached);
-
-      const isExpired = Date.now() - parsed.timestamp > 1000 * 60 * 30;
+      const isExpired = Date.now() - parsed.timestamp > CACHE_DURATION;
 
       if (!isExpired) {
         console.log("USING CACHED DATA");
@@ -60,25 +45,25 @@ export default function ResultsPage() {
       }
     }
 
+    // check if we already fetched new data for this query in this session to avoid duplicate calls
     if (hasFetched.current) return;
-
     hasFetched.current = true;
-
-    const fetchFlights = async () => {
-      
+    
+    try {
       console.log("FETCHING NEW DATA");
-      
-			const res = await fetch("http://localhost:5000/api/flight-search", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					searchid: "TEST123",
+      setLoading(true);
 
-          departureCodes: searchParams.getAll("departureCodes"),
-          arrivalCodes: searchParams.getAll("arrivalCodes"),
+      const res = await fetch("http://localhost:5000/api/flight-search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          searchid: "TEST123",
 
-          departureDate: searchParams.getAll("departureDate"),
-          returnDate: searchParams.getAll("returnDate"),
+          departureCodes: searchParams.get("departureCodes")?.split(",").filter(Boolean) ?? [],
+          arrivalCodes: searchParams.get("arrivalCodes")?.split(",").filter(Boolean) ?? [],
+
+          departureDate: searchParams.get("departureDate")?.split(",").filter(Boolean) ?? [],
+          returnDate: searchParams.get("returnDate")?.split(",").filter(Boolean) ?? [],
 
           travelers: Number(searchParams.get("travelers") || 1),
           tripLength: Number(searchParams.get("tripLength") || 0),
@@ -94,27 +79,37 @@ export default function ResultsPage() {
 
           departureWindow: Number(searchParams.get("departureWindow") || 0),
           returnWindow: Number(searchParams.get("returnWindow") || 0),
-				}),
-			});
+        }),
+      });
+
+      if (!res.ok) {
+        console.error("Backend error:", await res.text());
+        setFlights([]);
+        setLoading(false);
+        return;
+      }
 
       const data = await res.json();
-
+      
       console.log("FRONTEND RECEIVED:", data);
-
-      const flightsData = Array.isArray(data) ? data : (data?.data ?? data?.flights ?? []);
-
-      setFlights(flightsData);
+      setFlights(data);
       
       localStorage.setItem(cacheKey, JSON.stringify({
-        data: flightsData,
+        data: data,
         timestamp: Date.now()
       }));
+      
+    } catch (err) {
+      console.error("Fetch failed:", err);
+      setFlights([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-			setLoading(false);
-		};
-
-		fetchFlights();
-	}, [searchParams]);
+  useEffect(() => {
+    fetchFlights();
+  }, [searchParams]);
 
   if (loading) {
     return (
@@ -124,8 +119,8 @@ export default function ResultsPage() {
     );
   }
 
-  const origin = flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].origin : '';
-	const destination = flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].destination : '';
+  const origin = searchParams.get("departureCodes")?.split(",").filter(Boolean) ?? []; //flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].origin : '';
+	const destination = searchParams.get("arrivalCodes")?.split(",").filter(Boolean) ?? []; //flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].destination : '';
 
   // Old implementation code grouping flights by date, leave in for future refrence
   // 
@@ -195,8 +190,26 @@ export default function ResultsPage() {
     <main className="p-6 min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto space-y-6">
         <h1 className="flex items-center text-3xl font-bold text-gray-900 mb-6">
-          {origin || "Flight Search"} {destination && <><ArrowRight className="mx-2 text-gray-400" /> {destination}</>}
+          {origin.join(", ") || "Flight Search"}
+          {destination.length > 0 && <><ArrowRight className="mx-2 text-gray-400" />{destination.join(", ")}</>}
         </h1>
+        {sortedFlights.length > 0 && (
+          <div className="flex gap-4 mb-4">
+            <Button
+              onClick={fetchFlights}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              Retry Search
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => router.push("/")}
+            >
+              Back to Search
+            </Button>
+          </div>
+        )}
         {sortedFlights.length > 0 && (
           <SortControl 
             options={sortOptions}
@@ -205,8 +218,33 @@ export default function ResultsPage() {
           />
         )}
         {sortedFlights.length === 0 ? (
-          <div className="text-center py-20 border-2 border-dashed rounded-xl">
-            <p className="text-gray-500">No flights found for this route.</p>
+          <div className="flex flex-col items-center justify-center py-20 rounded-xl bg-white shadow-sm space-y-6">
+            
+            <div className="text-center space-y-2">
+              <h2 className="text-xl font-semibold text-gray-900">
+                No Flights Found
+              </h2>
+              <p className="text-gray-500 max-w-md">
+                We couldn't find any flights for your selected dates and route.
+                Try adjusting your search or retrying.
+              </p>
+            </div>
+
+            <div className="flex gap-4">
+              <Button
+                onClick={fetchFlights}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                Retry Search
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => router.push("/")}
+              >
+                Back to Search
+              </Button>
+            </div>
           </div>
         ) : (
           <Accordion type="single" collapsible className="w-full space-y-4">
@@ -245,7 +283,7 @@ export default function ResultsPage() {
                     <span className="text-xl font-bold text-green-600">
                       ${parseFloat(flight.price).toFixed(2)}
                     </span>
-                    <p className="text-xs text-grey-400">{flight.currency}</p>
+                    <p className="text-xs text-gray-400">{flight.currency}</p>
                   </div>
                 </div>
               </AccordionTrigger>
