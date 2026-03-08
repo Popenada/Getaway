@@ -118,6 +118,7 @@ def getawaySearch():
 
     longitude = float(body.get("longitude"))
     latitude = float(body.get("latitude"))
+    rate_limit = int(body.get("rateLimit", -1))
     print(type(latitude), type(longitude))
 
     if not isinstance(longitude, float):
@@ -140,6 +141,13 @@ def getawaySearch():
     
     for i in range(len(getaways)):
         getaways[i] = sorted(parse_flights(getaways[i]), key=lambda x: x["price"])
+        
+        #limit number of objects in each list
+        if rate_limit >= 0:
+            limit = len(getaways[i]) - rate_limit
+            #get list without the last limit elements
+            getaways[i] = getaways[i][:-limit]
+        
     
     with open("GETAWAY-TEST.json", "w") as file:
         file.write(dumps(getaways, indent=2))
