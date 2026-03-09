@@ -7,7 +7,7 @@ def load_json_response(file_path: str) -> Dict[str, Any]:
     with open(file_path, 'r') as file:
         return json.load(file)
 
-def build_google_flights_url(origin, destination, departure_time, return_time=None) -> str:
+def build_google_flights_url(origin, destination, departure_time, return_time=None, cabin_clss=None, adults=1) -> str:
     dep_date = departure_time.split('T')[0]
     ret_date = return_time.split('T')[0] if return_time else None
     
@@ -15,11 +15,15 @@ def build_google_flights_url(origin, destination, departure_time, return_time=No
     if ret_date:
         query += f" returning {ret_date}"
     
+    query += f" with {adults} adult{'s' if adults > 1 else ''}"
+    if cabin_clss:
+        query += f" in {cabin_clss} class"
+
     encoded_query = urllib.parse.quote(query)
     
     return f"https://www.google.com/flights?q={encoded_query}"
 
-def parse_flights(searchid: str, response_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+def parse_flights(searchid: str, adults: int, response_data: Dict[str, Any]) -> List[Dict[str, Any]]:
     flights = []
     data = response_data.get('data', [])
     carriers = response_data.get('dictionaries', {}).get('carriers', {})
@@ -56,7 +60,14 @@ def parse_flights(searchid: str, response_data: Dict[str, Any]) -> List[Dict[str
             'price': offer['price']['total'],
             'currency': offer['price']['currency'],
             'cabin': offer['travelerPricings'][0]['fareDetailsBySegment'][0]['cabin'],
-            'booking_url': build_google_flights_url(origin_iata, dest_iata, dep_time, ret_time)
+            'booking_url': build_google_flights_url(
+                origin_iata, 
+                dest_iata, 
+                dep_time, 
+                ret_time,
+                cabin_clss=offer['travelerPricings'][0]['fareDetailsBySegment'][0]['cabin'],
+                adults=adults
+                )
         }
         
         flights.append(flight_obj)
@@ -67,8 +78,7 @@ def parse_flights(searchid: str, response_data: Dict[str, Any]) -> List[Dict[str
     
     return flights
 
-'''
+
 if __name__ == '__main__':
     data = load_json_response('TEST123.json')
-    parse_flights('TEST123', data)
-'''
+    parse_flights('TEST123', 2, data)
