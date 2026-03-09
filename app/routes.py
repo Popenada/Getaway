@@ -3,6 +3,7 @@ from flask import request
 from get_tickets import ticket_query
 from flask import jsonify
 from table_data import parse_flights
+from autocomplete import get_locations
 from amadeus import Client
 from getaway_request import getaway
 from json import dumps
@@ -48,13 +49,11 @@ def flightSearch():
         "adults": int(
             body.get("travelers", request.args.get("travelers", 1))
         ),  # Number of adults, int
-        "roundTrip": body.get("roundTrip", request.args.get("roundTrip", "True"))
-        in ("true", "True", "TRUE"),  # bool, true = round trip
-        "nonstop": body.get("nonStop", request.args.get("nonStop", "False"))
-        in (
-            "true",
-            "True",
-            "TRUE",
+        "roundTrip": str(body.get("roundTrip", request.args.get("roundTrip", "True"))).lower()
+        in ("true", "1"
+        ),  # bool, true = round trip
+        "nonstop": str(body.get("nonStop", request.args.get("nonStop", "False"))).lower()
+        in ("true", "1"
         ),  # bool, whether or not there are connecting flights
         "included": body.get(
             "includedAirline", request.args.get("includedAirline")
@@ -105,6 +104,11 @@ def flightSearch():
 
     return jsonify(flights)
 
+@app.route('/api/locations', methods=["GET"])
+def getLocations():
+    query = request.args.get("query", "")
+    
+    return get_locations(query)
 
 @app.route("/api/getaway", methods=["POST"])
 def getawaySearch():

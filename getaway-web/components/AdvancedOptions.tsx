@@ -157,7 +157,7 @@ export default function AdvancedOptionsComponent({
             <OptionLabel>Max trip length</OptionLabel>
             <div className="flex items-center justify-between mb-3">
               <span className="text-[13px]" style={{ color: "#1a1714" }}>
-                {tripLength === 0 ? "Any" : `Under ${tripLength}h`}
+                {tripLength === 0 ? "Any" : `Under ${tripLength} day${tripLength > 1 ? "s" : ""}`}
               </span>
             </div>
             <Slider

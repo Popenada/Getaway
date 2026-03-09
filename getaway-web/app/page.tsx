@@ -10,6 +10,7 @@ import { SearchHistoryPanel } from "@/components/SearchHistoryPanel";
 import { useSearchHistory } from "@/hooks/SearchHistory";
 import { SearchHistoryEntry } from "@/lib/types";
 import Header from "@/components/Header"
+import { set } from "date-fns";
 const DEFAULT_MIN_PRICE = 0;
 const DEFAULT_MAX_PRICE = 10000;
 
@@ -27,18 +28,27 @@ export default function SearchTab() {
   const [returnWindow, setReturnWindow] = useState<number>(0);
   const [includedAirline, setIncludedAirline] = useState<string[]>([]);
   const [excludedAirline, setExcludedAirline] = useState<string[]>([]);
-  const [tripLength, setTripLength] = useState<number>(1);
+  const [tripLength, setTripLength] = useState<number>(0);
 
   const { history, addEntry, clearHistory } = useSearchHistory();
 
   const handleSearchAgain = (query: SearchHistoryEntry["query"]) => {
-    setDepartureLocations([{ label: query.origin, code: query.origin }]);
-    setArrivalLocations([{ label: query.destination, code: query.destination }]);
-    setTravelers(String(query.passengers));
+    setDepartureLocations(query.origins);
+    setArrivalLocations(query.destinations);
     setDateRange({
       from: new Date(query.departureDate),
       to: query.returnDate ? new Date(query.returnDate) : undefined,
     });
+    setTravelers(String(query.passengers));
+    setRoundTrip(Boolean(query.roundTrip));
+    setTripLength(query.tripLength || 0);
+    setIncludedAirline(query.includedAirline || []);
+    setExcludedAirline(query.excludedAirline || []);
+    setNonStopOnly(Boolean(query.nonstopOnly));
+    setMinPrice(query.minPrice || DEFAULT_MIN_PRICE);
+    setMaxPrice(query.maxPrice || DEFAULT_MAX_PRICE);
+    setDepartureWindow(query.departureWindow || 0);
+    setReturnWindow(query.returnWindow || 0);
   };
 
   return (
