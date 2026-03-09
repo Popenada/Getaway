@@ -109,13 +109,14 @@ def flightSearch():
 @app.route("/api/getaway", methods=["POST"])
 def getawaySearch():
     # function for getaway requests
-    # required input structure: location: (float, float) Pair of latitude and longitude
+    # required input structure: searchID string, float longitude, float latitude
     # Find Nearest Airport (departure)->Get destinations->Make query->Format results
     # ->sort formatted results by price, return Results
     body = request.get_json(silent=True) or {}
 
     print("BODY:", body)
 
+    searchId = body.get("searchId")
     longitude = float(body.get("longitude"))
     latitude = float(body.get("latitude"))
     rate_limit = int(body.get("rateLimit", -1))
@@ -140,7 +141,7 @@ def getawaySearch():
         return jsonify("Error: No results returned")
     
     for i in range(len(getaways)):
-        getaways[i] = sorted(parse_flights(getaways[i]), key=lambda x: x["price"])
+        getaways[i] = sorted(parse_flights(searchId, getaways[i]), key=lambda x: x["price"])
         
         #limit number of objects in each list
         if rate_limit >= 0:
