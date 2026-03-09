@@ -72,10 +72,11 @@ def getaway(amadeus, lat, long):
     
     #return results
     return results
-    
+'''
 amadeus = Client(
     client_id='6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt',
     client_secret='nKCQ8UrGPVORjjIa'
 )
 
 print(getaway(amadeus, 34.0549, -118.2426)) #coordinates for LA
+'''
