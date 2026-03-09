@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import DateGrid from "@/components/DateGrid";
+import SortControl, { SortOption } from "@/components/SortControl";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ArrowRight } from "lucide-react";
 
-
-import SortControl, { SortOption } from "@/components/SortControl";
-import { FlightAccordion } from "@/components/FlightAccordion";
 import { sortData } from "@/lib/sortUtils";
 import { Leg, Flight } from "@/lib/types"
 
@@ -23,10 +24,11 @@ export default function ResultsPage() {
 
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
+  //const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   // Sorting states
   const [sortKey, setSortKey] = useState("price_asc"); // tracks sort order
-
+  
   const fetchFlights = async () => {
     // check cache first
     const cached = localStorage.getItem(cacheKey);
@@ -46,7 +48,7 @@ export default function ResultsPage() {
     // check if we already fetched new data for this query in this session to avoid duplicate calls
     if (hasFetched.current) return;
     hasFetched.current = true;
-
+    
     try {
       console.log("FETCHING NEW DATA");
       setLoading(true);
@@ -88,15 +90,15 @@ export default function ResultsPage() {
       }
 
       const data = await res.json();
-
+      
       console.log("FRONTEND RECEIVED:", data);
       setFlights(data);
-
+      
       localStorage.setItem(cacheKey, JSON.stringify({
         data: data,
         timestamp: Date.now()
       }));
-
+      
     } catch (err) {
       console.error("Fetch failed:", err);
       setFlights([]);
@@ -144,6 +146,14 @@ export default function ResultsPage() {
     total_arrival: flight.legs.at(-1)?.arrival_time ?? "",
   }))
 
+  const formatDuration = (isoDuration: string) => {
+    return isoDuration
+      .replace('PT','')
+      .replace('H',' hr ')
+      .replace('M',' min')
+      .toLowerCase();
+  }
+  
   const sortOptions: SortOption[] = [
     { label: "Price (Lowest)", value: "price_asc" },
     { label: "Price (Highest)", value: "price_dsc" },
@@ -151,7 +161,7 @@ export default function ResultsPage() {
     { label: "Date Departure (Latest)", value: "date_dep_dsc" },
     { label: "Date Arrival (Earliest)", value: "date_arr_asc" },
     { label: "Date Arrival (Latest)", value: "date_arr_dsc" },
-
+    
   ];
 
   const sortConfig = {
@@ -164,11 +174,11 @@ export default function ResultsPage() {
   } as const;
 
   const activeConfig = sortConfig[sortKey as keyof typeof sortConfig] || sortConfig.price_asc;
-  const activeSortField =
+  const activeSortField = 
     activeConfig.key === "date_dep" ? "total_departure" :
-      activeConfig.key === "date_arr" ? "total_arrival" :
-        "price";
-
+    activeConfig.key === "date_arr" ? "total_arrival" :
+    "price";
+  
   const sortedFlights = sortData(
     formattedFlights,
     activeSortField as any,
@@ -201,7 +211,7 @@ export default function ResultsPage() {
           </div>
         )}
         {sortedFlights.length > 0 && (
-          <SortControl
+          <SortControl 
             options={sortOptions}
             value={sortKey}
             onChange={setSortKey}
@@ -209,6 +219,7 @@ export default function ResultsPage() {
         )}
         {sortedFlights.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 rounded-xl bg-white shadow-sm space-y-6">
+            
             <div className="text-center space-y-2">
               <h2 className="text-xl font-semibold text-gray-900">
                 No Flights Found
@@ -218,6 +229,7 @@ export default function ResultsPage() {
                 Try adjusting your search or retrying.
               </p>
             </div>
+
             <div className="flex gap-4">
               <Button
                 onClick={fetchFlights}
@@ -235,7 +247,67 @@ export default function ResultsPage() {
             </div>
           </div>
         ) : (
-          <FlightAccordion flights={sortedFlights} />
+          <Accordion type="single" collapsible className="w-full space-y-4">
+          {sortedFlights.map((flight, idx) => (
+            <AccordionItem
+              key={"flight-"+idx}
+              value={`item-${idx}`}
+              className="border rounded-lg bg-white px-4 shadow-sm"
+            >
+              <AccordionTrigger className="hover:no-underline py-4">
+                <div className="flex justify-between items-center w-full pr-4">
+                  <div className="flex flex-col items-start gap-1">
+                    <span className="font-semibold text-lg text-gray-900">
+                      {flight.legs[0]?.airline || "NA"}
+                    </span>
+                    <span className="text-sm text-gray-500 uppercase">
+                      {flight.cabin}
+                    </span>
+                  </div>
+                  <div className="flex items-center w-fit border-2 border-gray-200 rounded-lg p-1 bg-gray-50 text-right">
+                    {flight.legs.length > 0 ? 
+                    <span className="flex items-center gap-1">
+                      {new Date(flight.total_departure).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                      {flight.legs.length > 2 ?
+                        <div className="flex items-center w-fit border-2 border-gray-200 rounded-lg p-1 bg-gray-200">
+                          {flight.legs.length - 2} stops
+                        </div> :
+                        <ArrowRight className="w-4 h-4"/>
+                      }
+                      {new Date(flight.total_arrival).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+                    </span> : 
+                    <span>No Dates Found</span>
+                    }
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xl font-bold text-green-600">
+                      ${parseFloat(flight.price).toFixed(2)}
+                    </span>
+                    <p className="text-xs text-gray-400">{flight.currency}</p>
+                  </div>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="flex flex-col gap-1 p-1">
+                  {flight.legs.map((leg, jdx) => (
+                    <div key={"leg-"+idx+"-"+jdx} className="w-fit border-2 border-gray-200 rounded-lg p-1 bg-gray-50">
+                      <div className="flex items-center gap-2 text-gray-900 font-medium">
+                        <span className="font-semibold">{leg.origin}</span>
+                        <span>{new Date(leg.departure_time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span>
+                        <ArrowRight className="w-4 h-4" />
+                        <span className="font-semibold">{leg.destination}</span>
+                        <span>{new Date(leg.arrival_time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span>
+                        <span className="ml-2 px-2 py-0.5 bg-gray-200 rounded text-sm font-normal">
+                          {formatDuration(leg.duration)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+          </Accordion>
         )}
       </div>
     </main>
