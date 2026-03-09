@@ -101,7 +101,7 @@ def flightSearch():
         print("----- NO FLIGHTS FOUND -----")
         return jsonify({"error": "No flights found matching criteria"})
 
-    flights = parse_flights(response)
+    flights = parse_flights(inputs["searchid"], response)
 
     return jsonify(flights)
 
