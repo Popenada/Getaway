@@ -41,7 +41,7 @@ function HistoryCard({
 
       <div className="flex flex-col flex-1 min-w-0">
         <span className="text-[14px] font-medium truncate" style={{ color: "#1a1714" }}>
-          {entry.query.origin} → {entry.query.destination}
+          {entry.query.origins.map(ori => ori.code).join(", ")} → {entry.query.destinations.map(des => des.code).join(", ")}
         </span>
 
         <span className="text-[11px]" style={{ color: "#b8b3ad" }}>
@@ -65,7 +65,7 @@ function HistoryCard({
         }}
         title="Search again"
       >
-        <ArrowRight />
+        <ArrowRight size={14} />
       </button>
     </div>
   );
