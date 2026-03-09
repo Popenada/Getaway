@@ -12,10 +12,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { ArrowRight } from "lucide-react";
 import useSavedFlights from "@/hooks/SavedFlights"
 import { sortData } from "@/lib/sortUtils";
-import { Leg, Flight } from "@/lib/types";
 import { useSearchHistory } from "@/hooks/SearchHistory";
 import { de, tr } from "date-fns/locale";
 
+import { Leg, Flight } from "@/lib/types"
+import { SaveButton } from "@/components/ui/bookmark"
 const CACHE_DURATION = 30 * 60 * 1000; // in milliseconds (30 minutes)
 
 export default function ResultsPage() {
@@ -295,15 +296,13 @@ export default function ResultsPage() {
               className="border rounded-lg bg-white px-4 shadow-sm"
               
             >
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (alreadySaved) removeFlights(savedEntry!.id);
-                  else saveFlights({ id: crypto.randomUUID(), ...flight });
+              <SaveButton
+                saved={alreadySaved}
+                onSave={() => saveFlights({ id: crypto.randomUUID(), ...flight })}
+                onRemove={() => {
+                  if (savedEntry) removeFlights(savedEntry.id);
                 }}
-              >
-                {alreadySaved ? "Saved" : "Save"}
-              </Button>
+              />
               <AccordionTrigger className="hover:no-underline py-4">
                 <div className="flex justify-between items-center w-full pr-4">
                   <div className="flex flex-col items-start gap-1">

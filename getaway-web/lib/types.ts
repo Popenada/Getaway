@@ -40,7 +40,7 @@ export type Flight = {
 };
 
 export type SavedFlightEntry ={
-  id:string;
+  id: string;
   legs: Leg[]; 
   price: string; 
   currency: string; 
