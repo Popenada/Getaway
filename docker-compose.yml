@@ -1,8 +1,6 @@
 services:
   #python backend
   backend:
-    # image: getaway-backend-local
-    # Commend out Image if you would like to build a local image.
     build: .
     ports: 
       - "5000:5000"
@@ -17,8 +15,6 @@ services:
       - getaway-network
   
   frontend:
-    # image: getaway-frontend-local
-    # Commend out Image if you would like to build a local image.
     build: ./getaway-web
     ports:
       - "3000:3000"
