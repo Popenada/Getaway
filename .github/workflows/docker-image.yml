@@ -27,11 +27,24 @@ jobs:
         BRANCH=${{ github.head_ref || github.ref_name }}
         echo "tag=${BRANCH//\//-}" >> $GITHUB_OUTPUT
 
-    - name: Build and push
+    - name: Build and push Backend
       uses: docker/build-push-action@v5
       with:
+        context: .
+        file: ./Dockerfile
         push: true
         tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/getaway-dev:latest
-          ${{ secrets.DOCKERHUB_USERNAME }}/getaway-dev:${{ steps.vars.outputs.sha_short }}
-          ${{ secrets.DOCKERHUB_USERNAME }}/getaway-dev:${{ steps.branch_name.outputs.tag }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/getaway-backend:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/getaway-backend:${{ steps.vars.outputs.sha_short }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/getaway-backend:${{ steps.branch_name.outputs.tag }}
+
+    - name: Build and push Frontend
+      uses: docker/build-push-action@v5
+      with:
+        context: ./getaway-web
+        file: ./getaway-web/Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/getaway-frontend:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/getaway-frontend:${{ steps.vars.outputs.sha_short }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/getaway-frontend:${{ steps.branch_name.outputs.tag }}
