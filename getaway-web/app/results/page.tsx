@@ -163,7 +163,7 @@ export default function ResultsPage() {
   const origin = searchParams.get("departureCodes")?.split(",").filter(Boolean) ?? []; //flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].origin : '';
 	const destination = searchParams.get("arrivalCodes")?.split(",").filter(Boolean) ?? []; //flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].destination : '';
 
-  const formattedFlights = flights.map(flight => ({
+  const formattedFlights = (!flights || 'error' in flights || 'Error' in flights) ? [] : flights.map(flight => ({
     ...flight,
     total_departure: flight.legs[0]?.departure_time ?? "",
     total_arrival: flight.legs.at(-1)?.arrival_time ?? "",

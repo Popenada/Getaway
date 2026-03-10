@@ -71,7 +71,7 @@ const fuse = new Fuse(airlinesData, {
 function searchAirlines(query: string) {
   if (query.length < 2) return [];
   const results = fuse.search(query).map(result => ({
-    label: `${result.item.name} (${result.item.id})`,
+    label: `${result.item.name}`,
     code: result.item.id,
     name: result.item.name,
     logo: result.item.logo,
