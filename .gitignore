@@ -2,6 +2,7 @@ venv/
 *.png
 *.pyc
 *.json
+!destinations.json
 **/.venv/
 **/devtools/
 **/devtests/
@@ -9,3 +10,9 @@ venv/
 *.env.local
 None.json
 post_response.json
+
+# Remove testing files
+TEST*.json
+
+**/__pycache__/
+app/__pycache__/

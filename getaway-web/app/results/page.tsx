@@ -1,59 +1,96 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import DateGrid from "@/components/DateGrid";
 import SortControl, { SortOption } from "@/components/SortControl";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ArrowRight } from "lucide-react";
-
 import { sortData } from "@/lib/sortUtils";
+import { Leg, Flight } from "@/lib/types";
+import { useSearchHistory } from "@/hooks/SearchHistory";
+import { de, tr } from "date-fns/locale";
 
-type Leg = {
-	origin: string;
-	destination: string;
-	departure_time: string;
-	arrival_time: string;
-	stops: number;
-	duration: string;
-	airline: string;
-};
-
-type Flight = {
-	legs: Leg[];
-	price: string;
-	currency: string;
-	cabin: string;
-};
+const CACHE_DURATION = 30 * 60 * 1000; // in milliseconds (30 minutes)
 
 export default function ResultsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const cacheKey = `flights-${searchParams.toString()}`;
+  const hasFetched = useRef(false);
+  const { addEntry } = useSearchHistory();
 
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  //const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   // Sorting states
   const [sortKey, setSortKey] = useState("price_asc"); // tracks sort order
   
   const fetchFlights = async () => {
+    // check cache first
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      const isExpired = Date.now() - parsed.timestamp > CACHE_DURATION;
+
+      if (!isExpired) {
+        console.log("USING CACHED DATA");
+        const cachedData = Array.isArray(parsed.data) ? parsed.data : (Array.isArray(parsed) ? parsed : (parsed.data ?? []));
+        setFlights(cachedData);
+        setLoading(false);
+        return;
+      }
+    }
+
+    // check if we already fetched new data for this query in this session to avoid duplicate calls
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+    
     try {
+      console.log("FETCHING NEW DATA");
       setLoading(true);
+
+      const departureLabels = searchParams.get("departureLabels")?.split("|").filter(Boolean) ?? [];
+      const arrivalLabels = searchParams.get("arrivalLabels")?.split("|").filter(Boolean) ?? [];
+      const departureCodes = searchParams.get("departureCodes")?.split(",").filter(Boolean) ?? [];
+      const arrivalCodes = searchParams.get("arrivalCodes")?.split(",").filter(Boolean) ?? [];
+      const departureDate = searchParams.get("departureDate")?.split(",").filter(Boolean) ?? [];
+      const returnDate = searchParams.get("returnDate")?.split(",").filter(Boolean) ?? [];
+      const travelers = Number(searchParams.get("travelers") || 1);
+      const tripLength = Number(searchParams.get("tripLength") || 0);
+      const roundTrip = searchParams.get("roundTrip") === "true";
+      const includedAirline = searchParams.get("includedAirline")?.split(",").filter(Boolean) ?? [];
+      const excludedAirline = searchParams.get("excludedAirline")?.split(",").filter(Boolean) ?? [];
+      const nonstopOnly = searchParams.get("nonstopOnly") === "true";
+      const minPrice = Number(searchParams.get("minPrice") || 0);
+      const maxPrice = Number(searchParams.get("maxPrice") || 0);
+      const departureWindow = Number(searchParams.get("departureWindow") || 0);
+      const returnWindow = Number(searchParams.get("returnWindow") || 0);
 
       const res = await fetch("http://localhost:5000/api/flight-search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          origin: searchParams.get("origin"),
-          destination: searchParams.get("destination"),
-          departure: searchParams.get("departure"),
-          return: searchParams.get("return"),
-          adults: parseInt(searchParams.get("adults") || "1"),
+          searchid: "TEST123",
+
+          departureCodes: departureCodes,
+          arrivalCodes: arrivalCodes,
+          departureDate: departureDate,
+          returnDate: returnDate,
+          travelers: travelers,
+          tripLength: tripLength,
+          roundTrip: String(roundTrip),
+          includedAirline: includedAirline,
+          excludedAirline: excludedAirline,
+          nonstopOnly: String(nonstopOnly),
+          minPrice: minPrice,
+          maxPrice: maxPrice,
+          departureWindow: departureWindow,
+          returnWindow: returnWindow,
         }),
       });
 
@@ -65,7 +102,38 @@ export default function ResultsPage() {
       }
 
       const data = await res.json();
+      
+      console.log("FRONTEND RECEIVED:", data);
       setFlights(data);
+      
+      localStorage.setItem(cacheKey, JSON.stringify({
+        data: data,
+        timestamp: Date.now()
+      }));
+
+      const origins = departureCodes.map((code, idx) => ({ code, label: departureLabels[idx] ?? code }));
+      const destinations = arrivalCodes.map((code, idx) => ({ code, label: arrivalLabels[idx] ?? code }));
+
+      addEntry({
+        query: {
+          origins,
+          destinations,
+          departureDate: searchParams.get("departureDate") ?? "",
+          returnDate: searchParams.get("returnDate") ?? "",
+          passengers: travelers,
+          roundTrip,
+          tripLength,
+          includedAirline,
+          excludedAirline,
+          nonstopOnly,
+          minPrice,
+          maxPrice,
+          departureWindow,
+          returnWindow,
+        },
+        resultCount: Array.isArray(data) ? data.length : 0,
+      })
+      
     } catch (err) {
       console.error("Fetch failed:", err);
       setFlights([]);
@@ -86,26 +154,8 @@ export default function ResultsPage() {
     );
   }
 
-  const origin = flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].origin : '';
-	const destination = flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].destination : '';
-
-  // Old implementation code grouping flights by date, leave in for future refrence
-  // 
-  // const pricesByDate = flights.reduce((acc: { date: string; price: number }[], flight) => {
-	// 	if (!flight.legs || flight.legs.length === 0) return acc;
-	// 	const date = flight.legs[0].departure_time.split('T')[0];
-	// 	const price = parseFloat(flight.price as unknown as string);
-
-	// 	const existingDate = acc.find(item => item.date === date);
-	// 	if (existingDate) {
-	// 		if (price < existingDate.price) {
-	// 			existingDate.price = price;
-	// 		}
-	// 	} else {
-	// 		acc.push({ date, price });
-	// 	}
-	// 	return acc;
-	// }, []);
+  const origin = searchParams.get("departureCodes")?.split(",").filter(Boolean) ?? []; //flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].origin : '';
+	const destination = searchParams.get("arrivalCodes")?.split(",").filter(Boolean) ?? []; //flights.length > 0 && flights[0].legs.length > 0 ? flights[0].legs[0].destination : '';
 
   const formattedFlights = flights.map(flight => ({
     ...flight,
@@ -157,7 +207,8 @@ export default function ResultsPage() {
     <main className="p-6 min-h-screen bg-gray-50">
       <div className="max-w-5xl mx-auto space-y-6">
         <h1 className="flex items-center text-3xl font-bold text-gray-900 mb-6">
-          {origin} {destination && <><ArrowRight className="mx-2 text-gray-400" /> {destination}</>}
+          {origin.join(", ") || "Flight Search"}
+          {destination.length > 0 && <><ArrowRight className="mx-2 text-gray-400" />{destination.join(", ")}</>}
         </h1>
         {sortedFlights.length > 0 && (
           <div className="flex gap-4 mb-4">
@@ -249,7 +300,7 @@ export default function ResultsPage() {
                     <span className="text-xl font-bold text-green-600">
                       ${parseFloat(flight.price).toFixed(2)}
                     </span>
-                    <p className="text-xs text-grey-400">{flight.currency}</p>
+                    <p className="text-xs text-gray-400">{flight.currency}</p>
                   </div>
                 </div>
               </AccordionTrigger>
@@ -269,6 +320,21 @@ export default function ResultsPage() {
                       </div>
                     </div>
                   ))}
+
+                  {/* booking link button, this is temporary, if it conflicts, just remove it */}
+                  {flight.booking_url && (
+                    <a
+                      href={flight.booking_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-2 self-start"
+                    >
+                      <Button variant="outline" className="text-sm">
+                        Book on Google Flights
+                      </Button>
+                  </a>
+                  )}
                 </div>
               </AccordionContent>
             </AccordionItem>
