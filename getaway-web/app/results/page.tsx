@@ -63,8 +63,12 @@ export default function ResultsPage() {
       const travelers = Number(searchParams.get("travelers") || 1);
       const tripLength = Number(searchParams.get("tripLength") || 0);
       const roundTrip = searchParams.get("roundTrip") === "true";
-      const includedAirline = searchParams.get("includedAirline")?.split(",").filter(Boolean) ?? [];
-      const excludedAirline = searchParams.get("excludedAirline")?.split(",").filter(Boolean) ?? [];
+      const includedAirlineCodes = searchParams.get("includedAirlines")?.split(",").filter(Boolean) ?? [];
+      const excludedAirlineCodes = searchParams.get("excludedAirlines")?.split(",").filter(Boolean) ?? [];
+      const includedAirlineNames = searchParams.get("includedAirlineNames")?.split("|").filter(Boolean) ?? [];
+      const excludedAirlineNames = searchParams.get("excludedAirlineNames")?.split("|").filter(Boolean) ?? [];
+      const includedAirlineLogos = searchParams.get("includedAirlineLogos")?.split("|").filter(Boolean) ?? [];
+      const excludedAirlineLogos = searchParams.get("excludedAirlineLogos")?.split("|").filter(Boolean) ?? [];
       const nonstopOnly = searchParams.get("nonstopOnly") === "true";
       const minPrice = Number(searchParams.get("minPrice") || 0);
       const maxPrice = Number(searchParams.get("maxPrice") || 0);
@@ -84,8 +88,8 @@ export default function ResultsPage() {
           travelers: travelers,
           tripLength: tripLength,
           roundTrip: String(roundTrip),
-          includedAirline: includedAirline,
-          excludedAirline: excludedAirline,
+          includedAirline: includedAirlineCodes,
+          excludedAirline: excludedAirlineCodes,
           nonstopOnly: String(nonstopOnly),
           minPrice: minPrice,
           maxPrice: maxPrice,
@@ -111,20 +115,22 @@ export default function ResultsPage() {
         timestamp: Date.now()
       }));
 
-      const origins = departureCodes.map((code, idx) => ({ code, label: departureLabels[idx] ?? code }));
-      const destinations = arrivalCodes.map((code, idx) => ({ code, label: arrivalLabels[idx] ?? code }));
+      const originsForEntry = departureCodes.map((code, idx) => ({ code, label: departureLabels[idx] ?? code }));
+      const destinationsForEntry = arrivalCodes.map((code, idx) => ({ code, label: arrivalLabels[idx] ?? code }));
+      const includedAirlinesForEntry = includedAirlineCodes.map((code, idx) => ({ code, label: includedAirlineNames[idx] ?? code, logo: includedAirlineLogos[idx] ?? "" }));
+      const excludedAirlinesForEntry = excludedAirlineCodes.map((code, idx) => ({ code, label: excludedAirlineNames[idx] ?? code, logo: excludedAirlineLogos[idx] ?? "" }));
 
       addEntry({
         query: {
-          origins,
-          destinations,
+          origins: originsForEntry,
+          destinations: destinationsForEntry,
           departureDate: searchParams.get("departureDate") ?? "",
           returnDate: searchParams.get("returnDate") ?? "",
           passengers: travelers,
           roundTrip,
           tripLength,
-          includedAirline,
-          excludedAirline,
+          includedAirlines: includedAirlinesForEntry,
+          excludedAirlines: excludedAirlinesForEntry,
           nonstopOnly,
           minPrice,
           maxPrice,

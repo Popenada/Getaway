@@ -30,7 +30,7 @@ def get_locations(query: str):
         
         results = [
             {
-                "label": f"{first_letter_upper(loc['name'])} ({loc['iataCode']})",
+                "label": f"{first_letter_upper(loc['name'])}",
                 "code": loc["iataCode"],
                 "city": loc.get("address", {}).get("cityName"),
                 "country": loc.get("address", {}).get("countryName"),
