@@ -27,7 +27,7 @@ export type Leg = {
   departure_time: string; 
   arrival_time: string; 
   stops: number; 
-  duration: string; 
+  duration: string;
   airline: string; 
 };
 

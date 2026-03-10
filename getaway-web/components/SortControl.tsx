@@ -15,7 +15,7 @@ interface SortControlProps {
 
 export default function SortControl({ options, value, onChange }: SortControlProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 mb-2">
       <span className="text-sm font-medium text-gray-500">Sort by:</span>
       <Select 
         value={value} 
