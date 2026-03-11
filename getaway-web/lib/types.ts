@@ -48,3 +48,12 @@ export type Flight = {
   cabin: string; 
   booking_url?: string;
 };
+
+export type SavedFlightEntry ={
+  id: string;
+  legs: Leg[]; 
+  price: string; 
+  currency: string; 
+  cabin: string; 
+  booking_url?: string;
+}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, DM_Sans, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans, Geist_Mono, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -9,6 +9,11 @@ const cormorant = Cormorant_Garamond({
   style: ["normal", "italic"],
 });
 
+const dmSerifDisplay = DM_Serif_Display({
+  variable: "--font-price",
+  subsets: ["latin"],
+  weight: "400",
+});
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   subsets: ["latin"],
