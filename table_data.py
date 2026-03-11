@@ -3,6 +3,8 @@ import urllib.parse
 from typing import List, Dict, Any
 import hashlib
 
+_generated_ids = set()
+
 def load_json_response(file_path: str) -> Dict[str, Any]:
     with open(file_path, 'r') as file:
         return json.load(file)
@@ -36,7 +38,16 @@ def generate_flight_id(offer: Dict, legs: List[Dict], passengers: int) -> str:
         f"{passengers}"
     )
     
-    return hashlib.sha256(key.encode()).hexdigest()
+    flight_id = hashlib.sha256(key.encode()).hexdigest()
+    
+    curr = flight_id
+    counter = 1
+    while curr in _generated_ids:
+        curr = f"{flight_id}_{counter}"
+        counter += 1
+    
+    _generated_ids.add(curr)
+    return curr
 
 def build_google_flights_url(legs: List[Dict], cabin_clss=None, adults=1) -> str:
     first_seg = legs[0]['segments'][0]
