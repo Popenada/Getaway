@@ -9,7 +9,6 @@ import airportsjs from 'airportsjs';
 import { useFlights } from "@/hooks/useFlights";
 import { FlightAccordion } from "@/components/FlightAccordion";
 
-
 export default function ResultsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -51,7 +50,7 @@ export default function ResultsPage() {
             <ArrowRight className="mx-2 text-gray-400" /> 
             {destination.map((code, idx) => {
               return(
-                <span className="flex gap-1 justify-center items-end">
+                <span key={`${code}-${idx}`} className="flex gap-1 justify-center items-end">
                   <span className="font-semibold text-xlg">
                     {airportsjs.lookupByIataCode(code).city}
                   </span>

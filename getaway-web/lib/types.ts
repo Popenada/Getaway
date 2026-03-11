@@ -10,8 +10,8 @@ export type SearchHistoryEntry = {
     passengers: number;
     roundTrip?: boolean;
     tripLength?: number;
-    includedAirline?: string[];
-    excludedAirline?: string[];
+    includedAirlines?: Array<{ label: string; code: string; logo: string }>;
+    excludedAirlines?: Array<{ label: string; code: string; logo: string }>;
     nonstopOnly?: boolean;
     minPrice?: number;
     maxPrice?: number;
@@ -38,3 +38,12 @@ export type Flight = {
   cabin: string; 
   booking_url?: string;
 };
+
+export type SavedFlightEntry ={
+  id: string;
+  legs: Leg[]; 
+  price: string; 
+  currency: string; 
+  cabin: string; 
+  booking_url?: string;
+}

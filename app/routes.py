@@ -45,7 +45,7 @@ def flightSearch():
         "returnDate": tuple(body.get("returnDate")),  # tuple of Return dates, formatted as YYYY-MM-DD
         "adults": int(body.get("travelers", 1)),  # Number of adults, int
         "roundTrip": str(body.get("roundTrip", "true")).lower() in ("true", "1"),  # bool, true = round trip
-        "nonstop": str(body.get("nonStop", "false")).lower() in ("true", "1"),  # bool, whether or not there are connecting flights
+        "nonstop": str(body.get("nonstopOnly", "false")).lower() in ("true", "1"),  # bool, whether or not there are connecting flights
         "included": body.get("includedAirline"),  # list of strings, list contains allowed airline codes
         "excluded": body.get("excludedAirline"),  # list of strings, list contains excluded airline codes
         "maxPrice": int(body.get("maxPrice")),  # int, maximum allowed price
@@ -89,7 +89,7 @@ def flightSearch():
 
 
 @app.route('/api/locations', methods=["GET"])
-def getLocations():
+def autocompleteLocations():
     query = request.args.get("query", "")
     
     return get_locations(query)

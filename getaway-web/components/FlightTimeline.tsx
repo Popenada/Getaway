@@ -10,22 +10,17 @@ export function FlightTimeline({ legs, label }: { legs: Leg[], label: string }) 
 
   return (
     <div className="flex flex-col w-full mb-6">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-2 pl-4 pt-2">
         <PlaneTakeoff 
           className={cn("w-4 h-4", label === "Return" ? "rotate-180" : "")} 
           style={{ color: "#c4714a" }} 
         />
-        <span className="text-sm font-medium uppercase tracking-wide" style={{ color: "#6b6560" }}>
+        <span className="text-base font-medium tracking-wide" style={{ color: "#6b6560" }}>
           {label} Flight
         </span>
       </div>
       <div 
-        className="relative flex items-center px-10 py-12 rounded-2xl overflow-x-auto border border-white/40 shadow-inner"
-        style={{ 
-          background: "rgba(255, 255, 255, 0.35)", 
-          backdropFilter: "blur(20px)",
-          boxShadow: "inset 0 0 20px rgba(255,255,255,0.5)"
-        }}
+        className="relative flex items-center px-10 rounded-2xl"
       >
         <div className="absolute top-1/2 left-16 right-16 h-0.5 bg-gray-300/40 -translate-y-[24px]" />
         

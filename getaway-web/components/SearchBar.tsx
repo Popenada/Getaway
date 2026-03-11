@@ -19,10 +19,11 @@ type SearchBarProps = {
   setTravelers: (t: string) => void;
   roundTrip: boolean;
   setRoundTrip: (v: boolean) => void;
+  tripLength: number;
   departureWindow: number;
   returnWindow: number;
-  includedAirline: string[];
-  excludedAirline: string[];
+  includedAirlines: Array<{ label: string; code: string; logo: string }>;
+  excludedAirlines: Array<{ label: string; code: string; logo: string }>;
   nonstopOnly: boolean;
   minPrice: number;
   maxPrice: number;
@@ -59,9 +60,25 @@ function FieldWrapper({
   );
 }
 
-export default function SearchComponent({ dateRange, setDateRange, departureLocations,
-  setDepartureLocations, arrivalLocations, setArrivalLocations, travelers, setTravelers,
-  roundTrip, setRoundTrip, includedAirline, excludedAirline, nonstopOnly, minPrice, maxPrice
+export default function SearchComponent({
+  dateRange,
+  setDateRange,
+  departureLocations,
+  setDepartureLocations,
+  arrivalLocations,
+  setArrivalLocations,
+  travelers,
+  setTravelers,
+  roundTrip,
+  setRoundTrip,
+  includedAirlines,
+  excludedAirlines,
+  nonstopOnly,
+  minPrice,
+  maxPrice,
+  tripLength,
+  departureWindow,
+  returnWindow
 }: SearchBarProps) {
   const DEBOUNCE_DELAY = 200; 
   const [departureSuggestions, setDepartureSuggestions] = useState<any[]>([]);
@@ -70,8 +87,6 @@ export default function SearchComponent({ dateRange, setDateRange, departureLoca
   const [arrivalInput, setArrivalInput] = useState("");
   const departureTimeout = useRef<NodeJS.Timeout | null>(null);
   const arrivalTimeout = useRef<NodeJS.Timeout | null>(null);
-  const [departureCode, setDepartureCode] = useState<string[]>([]);
-  const [arrivalCode, setArrivalCode] = useState<string[]>([]);
 
   const router = useRouter();
 
@@ -111,15 +126,19 @@ export default function SearchComponent({ dateRange, setDateRange, departureLoca
       departureDate: dateRange?.from?dateRange.from.toISOString().split("T")[0] : "",
       returnDate: dateRange?.to?dateRange.to.toISOString().split("T")[0] : "",
       travelers: travelers || "1",
-      triplength: "",
+      triplength: String(tripLength),
       roundTrip: String(roundTrip),
-      includedAirline: includedAirline.join(","),
-      excludedAirline: excludedAirline.join(","),
+      includedAirlines: includedAirlines.map(a => a.code).join(","),
+      includedAirlineNames: includedAirlines.map(a => a.label).join("|"),
+      includedAirlineLogos: includedAirlines.map(a => a.logo).join("|"),
+      excludedAirlines: excludedAirlines.map(a => a.code).join(","),
+      excludedAirlineNames: excludedAirlines.map(a => a.label).join("|"),
+      excludedAirlineLogos: excludedAirlines.map(a => a.logo).join("|"),
       nonstopOnly: String(nonstopOnly),
       minPrice: String(minPrice),
       maxPrice: String(maxPrice),
-      departureWindow: "0",
-      returnWindow: "0",
+      departureWindow: String(departureWindow),
+      returnWindow: String(returnWindow),
     });
 
     router.push(`/results?${params.toString()}`);
@@ -127,9 +146,7 @@ export default function SearchComponent({ dateRange, setDateRange, departureLoca
 
   return (
   <div className="flex flex-col gap-3 w-full">
-    {/* Row 1: From / Swap / To */}
     <div className="flex gap-2 items-stretch w-full">
-      {/* FROM */}
       <div className="relative flex-1">
         <FieldWrapper label="From">
           <div className="flex flex-wrap gap-1 items-center">

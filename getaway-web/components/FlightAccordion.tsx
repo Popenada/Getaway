@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useRouter } from "next/navigation";
 
-import { PlaneTakeoff, CircleMinus } from 'lucide-react';
+import { PlaneTakeoff, CircleMinus, BookmarkCheck } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -16,9 +16,14 @@ import { FlightTimeline } from "@/components/FlightTimeline";
 import SortControl, { SortOption } from "@/components/SortControl";
 import { sortData } from "@/lib/sortUtils";
 import { Button } from "@/components/ui/button";
+import { SaveButton } from "@/components/ui/bookmark"
+
 import airportsjs from 'airportsjs';
 import { formatDuration, parseDurationToMinutes, formatMinutesToDuration} from "@/lib/utils";
-import { Flight, Leg } from "@/lib/types"; 
+import { Flight, Leg } from "@/lib/types";
+ 
+import useSavedFlights from "@/hooks/SavedFlights"
+
 
 interface FlightAccordionProps {
   flights: Flight[];
@@ -26,6 +31,10 @@ interface FlightAccordionProps {
 }
 
 export function FlightAccordion({ flights, loading }: FlightAccordionProps) {
+  
+
+  const {saved, saveFlights, removeFlights, isSaved } = useSavedFlights();
+
   const [sortKey, setSortKey] = useState("price_asc");
   const router = useRouter();
 
@@ -56,13 +65,20 @@ export function FlightAccordion({ flights, loading }: FlightAccordionProps) {
         ...f,
         departure_time: f.legs[0]?.departure_time || "",
         arrival_time: f.legs[f.legs.length - 1]?.arrival_time || "",
-        numericPrice: parseFloat(f.price)
+        numericPrice: parseFloat(f.price),
+        savedEntry: saved.find((s) =>
+          s.legs[0]?.departure_time === f.legs[0]?.departure_time &&
+          s.legs[0]?.origin === f.legs[0]?.origin &&
+          s.legs[0]?.destination === f.legs[0]?.destination &&
+          s.price === f.price
+        )
       }));
       return sortData(sortableData, activeSortField as any, activeConfig.type as any, activeConfig.order);
     }
     return flights;
-  }, [flights, activeConfig, activeSortField]);
-
+  }, [flights, activeConfig, activeSortField, saved]);
+  
+  // Handles failed searches 
   if (!Array.isArray(flights)) {
     return (
       <div className="flex flex-col justify-center items-center py-20 text-center space-y-4 rounded-3xl border border-white/40" 
@@ -77,13 +93,16 @@ export function FlightAccordion({ flights, loading }: FlightAccordionProps) {
           </p>
         </div>
         <div className="flex flex-row gap-4">
-          <Button variant="outline" className="rounded-full bg-white/50" onClick={() => window.location.reload()}>Reset All Filters</Button>
-          <Button variant="outline" className="rounded-full bg-white/50" onClick={() => router.push("/")}>Back to Search</Button>
+          <Button variant="outline" className="rounded-full bg-white/50" onClick={() => window.location.reload()}>
+            Reset All Filters
+          </Button>
+          <Button variant="outline" className="rounded-full bg-white/50" onClick={() => router.push("/")}>
+            Back to Search
+          </Button>
         </div>
       </div>
     );
   }
-
   return (
     <div 
       className="w-full rounded-3xl p-7 animate-fade-up-4"
@@ -98,6 +117,7 @@ export function FlightAccordion({ flights, loading }: FlightAccordionProps) {
       {flights.length > 0 && <SortControl options={sortOptions} value={sortKey} onChange={setSortKey} />}
       <Accordion type="multiple" className="w-full space-y-3">
         {sortedFlights?.map((flight, idx) => (
+          
           <AccordionItem
             key={"flight-" + idx}
             value={`item-${idx}`}
@@ -107,8 +127,16 @@ export function FlightAccordion({ flights, loading }: FlightAccordionProps) {
               backdropFilter: "blur(25px)",
               border: "1px solid rgba(255, 255, 255, 0.8)"
             }}
-          >
-            <AccordionTrigger className="hover:no-underline px-6 py-4">
+          > 
+          { !! flight.savedEntry && 
+            <div className="absolute top-0 left-3 z-30 pointer-events-none">
+              <div className="bg-[#c4714a] text-white px-1 pb-1 pt-2 rounded-b-md shadow-md flex items-center justify-center transition-all">
+                <BookmarkCheck className="w-5 h-5" />
+              </div>
+            </div>
+          }
+            
+            <AccordionTrigger className="hover:no-underline p-4"> 
               <div className="flex justify-between items-center w-full">
                 <div className="flex flex-col items-center gap-1 border border-gray-200/30 bg-white/50 rounded-xl p-3 w-36 shadow-sm">
                   <span className="font-bold text-lg" style={{ color: "#1a1714" }}>{flight.legs[0]?.airline || "NA"}</span>
@@ -120,43 +148,78 @@ export function FlightAccordion({ flights, loading }: FlightAccordionProps) {
                 </div>
 
                 <div className="text-right border border-gray-200/30 rounded-xl bg-white/50 p-3 w-32 shadow-sm">
-                  <span className="text-xl font-bold" style={{ color: "#c4714a" }}>
+                  <span 
+                    className="text-xl font-bold" 
+                    style={{ color: "#c4714a" }}
+                  >
                     ${parseFloat(flight.price).toFixed(2)}
                   </span>
                   <p className="text-[10px] uppercase font-bold opacity-40">{flight.currency}</p>
                 </div>
               </div>
             </AccordionTrigger>
-
-            <AccordionContent className="px-6 pb-6 pt-2" style={{ background: "rgba(253, 252, 249, 0.3)" }}>
-              <div className="space-y-8">
-                <FlightTimeline 
-                  label="Departure" 
-                  legs={flight.legs.filter(leg => leg.stops === 0 || flight.legs.indexOf(leg) < flight.legs.length / 2)} 
-                />
-                <FlightTimeline 
-                  label="Return" 
-                  legs={flight.legs.filter(leg => flight.legs.indexOf(leg) >= flight.legs.length / 2)} 
-                />
-                {flight.booking_url && (
-                  <div className="pt-6 flex justify-center border-t border-gray-200/30">
-                    <a
-                      href={flight.booking_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="mt-2 self-start"
-                    >
-                      <Button 
-                      className="w-48 rounded-full shadow-md transition-all hover:scale-105"
-                      style={{ background: "#c4714a", color: "white" }}
-                    >
-                      Book This Trip
-                    </Button>
-                    </a>
-                    
+            <AccordionContent 
+              className="px-6 pb-4 pt-2" 
+              style={{ background: "rgba(253, 252, 249, 0.75)" }}
+            >
+              <div className="space-y-2">
+                <div 
+                  className="border rounded-xl border-gray-200 overflow-x-auto shadow-sm"
+                  style={{ 
+                    background: "rgba(255, 243, 221, 0.5)",
+                    backdropFilter: "blur(20px)",
+                  }}
+                >
+                  <FlightTimeline 
+                    label="Departure" 
+                    legs={flight.legs.filter(leg => leg.stops === 0 || flight.legs.indexOf(leg) < flight.legs.length / 2)} 
+                  />
+                </div>
+                <div 
+                  className="border rounded-xl border-gray-200 overflow-x-auto shadow-sm"
+                  style={{ 
+                    background: "rgba(255, 243, 221, 0.5)",
+                    backdropFilter: "blur(20px)",
+                  }}
+                >
+                  <FlightTimeline 
+                    label="Return" 
+                    legs={flight.legs.filter(leg => flight.legs.indexOf(leg) >= flight.legs.length / 2)} 
+                  />
+                </div>
+                
+                <div className="flex flex-row items-center justify-center">
+                  {flight.booking_url && (
+                    <div className="flex justify-center border-t border-gray-200/30">
+                      <a
+                        href={flight.booking_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="self-start"
+                      >
+                        <Button 
+                          className="w-48 rounded-full shadow-md transition-all hover:scale-105"
+                          style={{ background: "#c4714a", color: "white" }}
+                        >
+                          Book This Trip
+                        </Button>
+                      </a>
+                      
+                    </div>
+                  )}
+                  <div className="pl-4">
+                    <SaveButton
+                      saved={!! flight.savedEntry}
+                      onSave={() => saveFlights({
+                        id: crypto.randomUUID(), ...flight 
+                      })}
+                      onRemove={() => {
+                        if (!! flight.savedEntry) removeFlights(flight.savedEntry.id);
+                      }}
+                    />
                   </div>
-                )}
+                </div>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -192,7 +255,9 @@ function LegNode({ legs, compact }: { legs: Leg[], compact: Boolean }) {
           <FlightNode airport={leg.origin} time={leg.departure_time} compact={false}/>
           <div className="flex flex-col items-center justify-center gap-1 min-w-[140px]">
             <PlaneTakeoff className="w-4 h-4 opacity-30" />
-            <span className="text-[11px] font-medium" style={{ color: "#6b6560" }}>{formatDuration(leg.duration)}</span>
+            <span className="text-[11px] font-medium" style={{ color: "#6b6560" }}>
+              {formatDuration(leg.duration)}
+            </span>
             {compact && leg.stops > 0 &&
               <Badge variant="outline" className="rounded-full bg-white/60 border-gray-200/50 text-[10px] px-2 py-0" style={{ color: "#6b6560" }}>
                 <CircleMinus className="w-3 h-3 mr-1" style={{ color: "#c4714a" }} />
