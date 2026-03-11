@@ -27,7 +27,7 @@ export function FlightTimeline({ legs, label }: { legs: Leg[], label: string }) 
           boxShadow: "inset 0 0 20px rgba(255,255,255,0.5)"
         }}
       >
-        <div className="absolute top-1/2 left-16 right-16 h-0.5 bg-gray-300/40 -translate-y-[22px]" />
+        <div className="absolute top-1/2 left-16 right-16 h-0.5 bg-gray-300/40 -translate-y-[24px]" />
         
         <div className="flex justify-between w-full min-w-[500px]">
           {legs.map((leg, idx) => (
@@ -39,19 +39,19 @@ export function FlightTimeline({ legs, label }: { legs: Leg[], label: string }) 
                   className="w-11 h-11 rounded-full bg-white border-2 flex items-center justify-center shadow-sm" 
                   style={{ borderColor: "#c4714a" }}
                 >
-                  <span className="text-xs font-bold" style={{ color: "#1a1714" }}>{leg.origin}</span>
+                  <span className="text-sm font-bold" style={{ color: "#1a1714" }}>{leg.origin}</span>
                 </div>
-                <span className="text-[10px] mt-2 font-semibold" style={{ color: "#1a1714" }}>
+                <span className="text-sm mt-2 font-semibold" style={{ color: "#1a1714" }}>
                   {new Date(leg.departure_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
 
               {/* airline and duration info */}
               <div className="flex-1 flex flex-col items-center px-2 pb-8">
-                <span className="text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-white/80 border border-white/50 mb-1 shadow-sm" style={{ color: "#c4714a" }}>
+                <span className="text-xs font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-white/80 border border-white/50 mb-1 shadow-sm" style={{ color: "#c4714a" }}>
                   {leg.airline}
                 </span>
-                <span className="text-[10px] font-medium opacity-60" style={{ color: "#6b6560" }}>
+                <span className="text-xs font-medium opacity-60" style={{ color: "#6b6560" }}>
                   {formatDuration(leg.duration)}
                 </span>
               </div>
@@ -61,9 +61,9 @@ export function FlightTimeline({ legs, label }: { legs: Leg[], label: string }) 
                     className="w-11 h-11 rounded-full flex items-center justify-center shadow-md transition-transform hover:scale-105" 
                     style={{ background: "#c4714a" }}
                   >
-                    <span className="text-xs font-bold text-white">{leg.destination}</span>
+                    <span className="text-sm font-bold text-white">{leg.destination}</span>
                   </div>
-                  <span className="text-[10px] mt-2 font-semibold" style={{ color: "#1a1714" }}>
+                  <span className="text-xs mt-2 font-semibold" style={{ color: "#1a1714" }}>
                     {new Date(leg.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
