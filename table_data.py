@@ -101,7 +101,8 @@ def parse_flights(searchid: str, adults: int, response_data: Dict[str, Any]) -> 
     
     return flights
 
-
+'''
 if __name__ == '__main__':
     data = load_json_response('TEST123.json')
     parse_flights('TEST123', 2, data)
+'''
