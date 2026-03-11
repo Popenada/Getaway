@@ -1,6 +1,7 @@
 import json
 import urllib.parse
 from typing import List, Dict, Any
+import hashlib
 
 def load_json_response(file_path: str) -> Dict[str, Any]:
     with open(file_path, 'r') as file:
@@ -17,6 +18,25 @@ def get_stop_count(segments: List[Dict]) -> int:
     connections = len(segments) - 1
     technical = sum(s['numberOfStops'] for s in segments)
     return connections + technical
+
+def generate_flight_id(offer: Dict, legs: List[Dict], passengers: int) -> str:
+    first_seg = legs[0]['segments'][0]
+    last_seg = legs[-1]['segments'][-1]
+    
+    key = (
+        f"{offer['id']}"
+        f"{first_seg['origin']}"
+        f"{last_seg['destination']}"
+        f"{first_seg['departure_time']}"
+        f"{last_seg['arrival_time']}"
+        f"{offer['price']['total']}"
+        f"{offer['price']['currency']}"
+        f"{'_'.join(seg['flight_number'] for leg in legs for seg in leg['segments'])}"
+        f"{offer['travelerPricings'][0]['fareDetailsBySegment'][0]['cabin']}"
+        f"{passengers}"
+    )
+    
+    return hashlib.sha256(key.encode()).hexdigest()
 
 def build_google_flights_url(legs: List[Dict], cabin_clss=None, adults=1) -> str:
     first_seg = legs[0]['segments'][0]
@@ -79,6 +99,7 @@ def parse_flights(searchid: str, passengers: int, response_data: Dict[str, Any],
             })
         
         flight_obj = {
+            'id': generate_flight_id(offer, legs, passengers),
             'trip_type': get_trip_type(itineraries),
             'legs': legs_temp, # old
             'departure_leg': legs[0],
@@ -105,5 +126,5 @@ def parse_flights(searchid: str, passengers: int, response_data: Dict[str, Any],
 '''
 if __name__ == '__main__':
     data = load_json_response('TEST123.json')
-    parse_flights('TEST123', 1, data)
+    parse_flights('TEST123', 1, data, True)
 '''
