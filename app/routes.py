@@ -52,7 +52,7 @@ def flightSearch():
         "roundTrip": str(body.get("roundTrip", request.args.get("roundTrip", "True"))).lower()
         in ("true", "1"
         ),  # bool, true = round trip
-        "nonstop": str(body.get("nonStop", request.args.get("nonStop", "False"))).lower()
+        "nonstop": str(body.get("nonStopOnly", request.args.get("nonStopOnly", "False"))).lower()
         in ("true", "1"
         ),  # bool, whether or not there are connecting flights
         "included": body.get(
