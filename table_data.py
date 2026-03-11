@@ -8,7 +8,7 @@ def load_json_response(file_path: str) -> Dict[str, Any]:
 
 def get_trip_type(itineraries: List[Dict]) -> str:
     if len(itineraries) == 1:
-        return "one-way"
+        return "one_way"
     first_origin = itineraries[0]['segments'][0]['departure']['iataCode']
     last_dest = itineraries[-1]['segments'][-1]['arrival']['iataCode']
     return 'round_trip' if first_origin == last_dest else 'multi_city'

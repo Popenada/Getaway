@@ -39,7 +39,7 @@ export type Segment = {
 }
 
 export type Flight = { 
-  trip_type?: string;
+  trip_type?: string; // one_way, round_trip, multi_city
   legs: Leg[]; 
   departure_leg: Segment;
   return_leg: Segment | null;
