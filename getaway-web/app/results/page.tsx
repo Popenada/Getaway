@@ -116,6 +116,11 @@ export default function ResultsPage() {
       const data = await res.json();
       
       console.log("FRONTEND RECEIVED:", data);
+
+      if ('error' in data) {
+        throw new Error(data);
+      }
+
       setFlights(data);
       
       localStorage.setItem(cacheKey, JSON.stringify({
