@@ -2,6 +2,9 @@ from datetime import datetime, date, timedelta
 
 #takes date pair and two ints and outputs a list of date int pairs
 def getRange(date):
+    
+    if date == None:
+        return [None]
     formatString = "%Y-%m-%d"
     
     
