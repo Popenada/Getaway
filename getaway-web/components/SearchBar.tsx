@@ -146,9 +146,7 @@ export default function SearchComponent({
 
   return (
   <div className="flex flex-col gap-3 w-full">
-    {/* Row 1: From / Swap / To */}
     <div className="flex gap-2 items-stretch w-full">
-      {/* FROM */}
       <div className="relative flex-1">
         <FieldWrapper label="From">
           <div className="flex flex-wrap gap-1 items-center">
