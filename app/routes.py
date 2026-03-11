@@ -105,7 +105,7 @@ def flightSearch():
     return jsonify(flights)
 
 @app.route('/api/locations', methods=["GET"])
-def getLocations():
+def autocompleteLocations():
     query = request.args.get("query", "")
     
     return get_locations(query)
