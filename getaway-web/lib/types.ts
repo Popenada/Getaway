@@ -10,8 +10,8 @@ export type SearchHistoryEntry = {
     passengers: number;
     roundTrip?: boolean;
     tripLength?: number;
-    includedAirline?: string[];
-    excludedAirline?: string[];
+    includedAirlines?: Array<{ label: string; code: string; logo: string }>;
+    excludedAirlines?: Array<{ label: string; code: string; logo: string }>;
     nonstopOnly?: boolean;
     minPrice?: number;
     maxPrice?: number;

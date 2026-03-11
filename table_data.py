@@ -37,7 +37,7 @@ def build_google_flights_url(legs: List[Dict], cabin_clss=None, adults=1) -> str
     
     return f"https://www.google.com/flights?q={encoded_query}"
 
-def parse_flights(searchid: str, adults: int, response_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+def parse_flights(searchid: str, response_data: Dict[str, Any], write_to_file=False) -> List[Dict[str, Any]]:
     flights = []
     data = response_data.get('data', [])
     carriers = response_data.get('dictionaries', {}).get('carriers', {})
@@ -95,9 +95,10 @@ def parse_flights(searchid: str, adults: int, response_data: Dict[str, Any]) -> 
         
         flights.append(flight_obj)
     
-    f = "%s-parsed.json" %searchid
-    with open(f, "w") as file:
-        file.write(json.dumps(flights, indent=2))
+    if (write_to_file):
+        f = "%s-parsed.json" %searchid
+        with open(f, "w") as file:
+            file.write(json.dumps(flights, indent=2))
     
     return flights
 

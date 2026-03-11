@@ -26,8 +26,8 @@ export default function SearchTab() {
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [departureWindow, setDepartureWindow] = useState<number>(0);
   const [returnWindow, setReturnWindow] = useState<number>(0);
-  const [includedAirline, setIncludedAirline] = useState<string[]>([]);
-  const [excludedAirline, setExcludedAirline] = useState<string[]>([]);
+  const [includedAirlines, setIncludedAirlines] = useState<Array<{ label: string; code: string; logo: string }>>([]);
+  const [excludedAirlines, setExcludedAirlines] = useState<Array<{ label: string; code: string; logo: string }>>([]);
   const [tripLength, setTripLength] = useState<number>(0);
 
   const { history, addEntry, clearHistory } = useSearchHistory();
@@ -42,8 +42,8 @@ export default function SearchTab() {
     setTravelers(String(query.passengers));
     setRoundTrip(Boolean(query.roundTrip));
     setTripLength(query.tripLength || 0);
-    setIncludedAirline(query.includedAirline || []);
-    setExcludedAirline(query.excludedAirline || []);
+    setIncludedAirlines(query.includedAirlines || []);
+    setExcludedAirlines(query.excludedAirlines || []);
     setNonStopOnly(Boolean(query.nonstopOnly));
     setMinPrice(query.minPrice || DEFAULT_MIN_PRICE);
     setMaxPrice(query.maxPrice || DEFAULT_MAX_PRICE);
@@ -129,10 +129,11 @@ export default function SearchTab() {
                 setTravelers={setTravelers}
                 roundTrip={roundTrip}
                 setRoundTrip={setRoundTrip}
+                tripLength={tripLength}
                 departureWindow={departureWindow}
                 returnWindow={returnWindow}
-                includedAirline={includedAirline}
-                excludedAirline={excludedAirline}
+                includedAirlines={includedAirlines}
+                excludedAirlines={excludedAirlines}
                 nonstopOnly={nonstopOnly}
                 minPrice={minPrice}
                 maxPrice={maxPrice}
@@ -144,10 +145,10 @@ export default function SearchTab() {
               <AdvancedOptionsComponent
                 advancedOpen={advancedOpen}
                 setAdvancedOpen={setAdvancedOpen}
-                includedAirline={includedAirline}
-                setIncludedAirline={setIncludedAirline}
-                excludedAirline={excludedAirline}
-                setExcludedAirline={setExcludedAirline}
+                includedAirlines={includedAirlines}
+                setIncludedAirlines={setIncludedAirlines}
+                excludedAirlines={excludedAirlines}
+                setExcludedAirlines={setExcludedAirlines}
                 minPrice={minPrice}
                 setMinPrice={setMinPrice}
                 maxPrice={maxPrice}
