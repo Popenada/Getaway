@@ -29,10 +29,20 @@ export type Leg = {
   stops: number; 
   duration: string; 
   airline: string; 
+  flight_number: string;
 };
 
+export type Segment = {
+  segments?: Leg[];
+  total_stops?: number;
+  duration?: string;
+}
+
 export type Flight = { 
+  trip_type?: string;
   legs: Leg[]; 
+  departure_leg: Segment;
+  return_leg: Segment | null;
   price: string; 
   currency: string; 
   cabin: string; 
