@@ -36,8 +36,7 @@ export default function ResultsPage() {
   // Initialization of hook for saved flights
   const {saved, saveFlights, removeFlights, isSaved } = useSavedFlights();
 
-  
-  const fetchFlights = async () => {
+  const checkCache = async () => {
     // check cache first
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
@@ -52,7 +51,9 @@ export default function ResultsPage() {
         return;
       }
     }
-
+  }
+  
+  const fetchFlights = async () => {
     // check if we already fetched new data for this query in this session to avoid duplicate calls
     if (hasFetched.current) return;
     hasFetched.current = true;
@@ -156,6 +157,7 @@ export default function ResultsPage() {
   };
 
   useEffect(() => {
+    checkCache();
     fetchFlights();
   }, [searchParams]);
 
