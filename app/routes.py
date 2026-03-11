@@ -3,6 +3,8 @@ from flask import request
 from get_tickets import ticket_query
 from flask import jsonify
 from table_data import parse_flights
+from datetime import datetime, timedelta
+from random import randrange
 from autocomplete import get_locations
 from amadeus import Client
 from getaway_request import getaway
@@ -28,55 +30,36 @@ def flightSearch():
 
     # read JSON body for POST requests first, fall back to query params
     body = request.get_json(silent=True) or {}
+    
+    default = defaultDates()
+    
+    print('BODY:', body)
 
-    print("BODY:", body)
 
     # user input test
     inputs = {
-        "searchid": body.get("searchid", request.args.get("searchid", "TEST-ID")),
-        "origins": body.get(
-            "departureCodes", request.args.get("departureCodes")
-        ),  # list of Origin Airport codes "ABC"
-        "destinations": body.get(
-            "arrivalCodes", request.args.get("arrivalCodes")
-        ),  # list of Destination Airport codes "XYZ"
-        "departureDate": tuple(
-            body.get("departureDate", request.args.get("departureDate"))
-        ),  # tuple of Departure dates, formatted as YYYY-MM-DD
-        "returnDate": tuple(
-            body.get("returnDate", request.args.get("returnDate"))
-        ),  # tuple of Return dates, formatted as YYYY-MM-DD
-        "adults": int(
-            body.get("travelers", request.args.get("travelers", 1))
-        ),  # Number of adults, int
-        "roundTrip": str(body.get("roundTrip", request.args.get("roundTrip", "True"))).lower()
-        in ("true", "1"
-        ),  # bool, true = round trip
-        "nonstop": str(body.get("nonStop", request.args.get("nonStop", "False"))).lower()
-        in ("true", "1"
-        ),  # bool, whether or not there are connecting flights
-        "included": body.get(
-            "includedAirline", request.args.get("includedAirline")
-        ),  # list of strings, list contains allowed airline codes
-        "excluded": body.get(
-            "excludedAirline", request.args.get("excludedAirline")
-        ),  # list of strings, list contains excluded airline codes
-        "maxPrice": int(
-            body.get("maxPrice", request.args.get("maxPrice", 999999))
-        ),  # int, maximum allowed price
-        "tripLength": int(
-            body.get("tripLength", request.args.get("tripLength", 0))
-        ),  # int, max number of days between departure and arrival
-        "departureWindow": int(
-            body.get("departureWindow", request.args.get("departureWindow", 0))
-        ),  # int, range of dates near selected departure, max 3
-        "returnWindow": int(
-            body.get("returnWindow", request.args.get("returnWindow", 0))
-        ),  # int, range of dates near selected arrival, max 3
+        "searchid": body.get("searchid", "TEST-ID"),
+        "origins": body.get("departureCodes"),  # list of Origin Airport codes "ABC"
+        "destinations": body.get("arrivalCodes"),  # list of Destination Airport codes "XYZ"
+        "departureDate": tuple(body.get("departureDate")),  # tuple of Departure dates, formatted as YYYY-MM-DD
+        "returnDate": tuple(body.get("returnDate")),  # tuple of Return dates, formatted as YYYY-MM-DD
+        "adults": int(body.get("travelers", 1)),  # Number of adults, int
+        "roundTrip": str(body.get("roundTrip", "true")).lower() in ("true", "1"),  # bool, true = round trip
+        "nonstop": str(body.get("nonStop", "false")).lower() in ("true", "1"),  # bool, whether or not there are connecting flights
+        "included": body.get("includedAirline"),  # list of strings, list contains allowed airline codes
+        "excluded": body.get("excludedAirline"),  # list of strings, list contains excluded airline codes
+        "maxPrice": int(body.get("maxPrice")),  # int, maximum allowed price
+        "tripLength": int(body.get("tripLength", 0)),  # int, max number of days between departure and arrival NOT IMPLEMENTED
+        "departureWindow": int(body.get("departureWindow", 0)),  # int, range of dates near selected departure, max 3
+        "returnWindow": int(body.get("returnWindow", 0)),  # int, range of dates near selected arrival, max 3
     }
 
+    
+    if len(inputs["departureDate"]) == 0:
+        default = defaultDates(departureDate=None)
+        inputs["departureDate"] = default[0],
+        inputs["returnDate"] = default[1],
     # minPrice = int(body.get("minPrice", 0))
-
     # print(inputs)
     print(
         inputs["origins"],
@@ -104,6 +87,7 @@ def flightSearch():
 
     return jsonify(flights)
 
+
 @app.route('/api/locations', methods=["GET"])
 def getLocations():
     query = request.args.get("query", "")
@@ -124,7 +108,6 @@ def getawaySearch():
     longitude = float(body.get("longitude"))
     latitude = float(body.get("latitude"))
     rate_limit = int(body.get("rateLimit", -1))
-    print(type(latitude), type(longitude))
 
     if not isinstance(longitude, float):
         print("Error: Bad longitude input")
@@ -159,3 +142,17 @@ def getawaySearch():
       
     return jsonify(getaways)
 
+#generate default dates
+def defaultDates(departureDate=None):
+    dateFormat = "%Y-%m-%d"
+    departure = departureDate
+    
+    if departure is None:
+        today = datetime.today().date()
+        departure = today + timedelta(days=randrange(4,7))
+    else:
+        departure = datetime.strptime(departure, dateFormat)
+    returnDate = departure + timedelta(days=randrange(3,10))
+    
+    #return tuple of dates, 0 is departure 1 is return
+    return (str(departure), str(returnDate))
