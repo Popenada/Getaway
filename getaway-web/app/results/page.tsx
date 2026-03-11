@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Calendar, Users, Plane, DollarSign, User } from "lucide-react";
+import { ArrowRight, Calendar, Users, Plane, DollarSign } from "lucide-react";
 import airportsjs from 'airportsjs';
 
 import { useFlights } from "@/hooks/useFlights";
@@ -23,24 +21,24 @@ export default function ResultsPage() {
 
   if (loading) {
     return (
-      <main className="p-6 min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500 font-medium">Searching for flights...</p>
+      <main className="getaway-bg relative min-h-screen flex items-center justify-center">
+        <p className="animate-pulse font-medium" style={{ color: "#6b6560" }}>Searching for your escape...</p>
       </main>
     );
   }
-  console.log(searchParams)
+  // console.log(searchParams)
   const origin = searchParams.get("departureCodes")?.split(",").filter(Boolean) ?? [];
 	const destination = searchParams.get("arrivalCodes")?.split(",").filter(Boolean) ?? [];
 
   return (
-    <main className="p-6 min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto space-y-6">
+    <main className="getaway-bg relative min-h-screen p-6 font-sans">
+      <div className="relative z-10 max-w-5xl mx-auto space-y-6">
         <h1 className="flex items-center text-3xl font-bold text-gray-900 mb-2">
           {/* Flight Location Display */}
-          <div className="flex flex-row items-end">
+          <div className="flex flex-row items-center">
             {origin.map((code, idx) => {
               return(
-                <span className="flex gap-1 justify-center items-end">
+                <span key={idx} className="flex gap-1 justify-center items-end">
                   <span className="font-semibold text-xlg">
                     {airportsjs.lookupByIataCode(code).city}
                   </span>
@@ -67,20 +65,20 @@ export default function ResultsPage() {
         </h1>
         {/* Search Parameter Display */}
         <div className="flex flex-row gap-2 mb-2">
-          <Badge variant="secondary" className="rounded-full px-3 py-1 font-medium flex gap-1.5 items-center">
+          <Badge variant="outline" className="rounded-full bg-white/50 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" style={{ color: "#6b6560" }}>
             <Calendar className="w-3.5 h-3.5" />
             {searchParams.get("departureDate")} - {searchParams.get("returnDate")}
           </Badge>
-          <Badge variant="secondary" className="rounded-full px-3 py-1 font-medium flex gap-1.5 items-center">
+          <Badge variant="outline" className="rounded-full bg-white/50 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" style={{ color: "#6b6560" }}>
             <Users className="w-3.5 h-3.5" />
             {searchParams.get("travelers")} {Number(searchParams.get("travelers")) > 1 ? "Travelers" : "Traveler"}
           </Badge>
-          <Badge variant="secondary" className="rounded-full px-3 py-1 font-medium flex gap-1.5 items-center">
+          <Badge variant="outline" className="rounded-full bg-white/50 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" style={{ color: "#6b6560" }}>
             <Plane className="w-3.5 h-3.5" />
             {searchParams.get("roundTrip") === "true" ? "Round Trip" : "One Way"}
           </Badge>
           {searchParams.get("maxPrice") && searchParams.get("maxPrice") !== "10000" && (
-            <Badge variant="secondary" className="rounded-full px-3 py-1 font-medium flex gap-1.5 items-center">
+            <Badge variant="outline" className="rounded-full bg-white/50 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" style={{ color: "#6b6560" }}>
               <DollarSign className="w-3.5 h-3.5" />
               Under ${searchParams.get("maxPrice")}
             </Badge>

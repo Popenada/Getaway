@@ -14,8 +14,8 @@ export const formatDuration = (isoDuration: string) => {
 } 
 
 export const parseDurationToMinutes = (dur: string): number => {
-  const hours = parseInt(dur.match(/(\d+)h/)?.[1] || "0");
-  const mins = parseInt(dur.match(/(\d+)m/)?.[1] || "0");
+  const hours = parseInt(dur.match(/(\d+)H/)?.[1] || "0");
+  const mins = parseInt(dur.match(/(\d+)M/)?.[1] || "0");
   return (hours * 60) + mins;
 };
 
