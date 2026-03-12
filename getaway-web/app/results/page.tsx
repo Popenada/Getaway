@@ -8,6 +8,8 @@ import airportsjs from 'airportsjs';
 
 import { useFlights } from "@/hooks/useFlights";
 import { FlightAccordion } from "@/components/FlightAccordion";
+import FlightLoader from "@/components/FlightLoader";
+import Header from "@/components/Header"
 
 export default function ResultsPage() {
   const searchParams = useSearchParams();
@@ -21,7 +23,7 @@ export default function ResultsPage() {
   if (loading) {
     return (
       <main className="getaway-bg relative min-h-screen flex items-center justify-center">
-        <p className="animate-pulse font-medium" style={{ color: "#6b6560" }}>Searching for your escape...</p>
+        <FlightLoader message="Finding your escape" />
       </main>
     );
   }
@@ -32,6 +34,7 @@ export default function ResultsPage() {
   return (
     <main className="getaway-bg relative min-h-screen p-6 font-sans">
       <div className="relative z-10 max-w-5xl mx-auto space-y-6">
+        <Header />
         <h1 className="flex items-center text-3xl font-bold text-gray-900 mb-2">
           {/* Flight Location Display */}
           <div className="flex flex-row items-center">
@@ -63,26 +66,7 @@ export default function ResultsPage() {
           </div>
         </h1>
         {/* Search Parameter Display */}
-        <div className="flex flex-row gap-2 mb-2">
-          <Badge variant="outline" className="rounded-full bg-white/50 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" style={{ color: "#6b6560" }}>
-            <Calendar className="w-3.5 h-3.5" />
-            {searchParams.get("departureDate")} - {searchParams.get("returnDate")}
-          </Badge>
-          <Badge variant="outline" className="rounded-full bg-white/50 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" style={{ color: "#6b6560" }}>
-            <Users className="w-3.5 h-3.5" />
-            {searchParams.get("travelers")} {Number(searchParams.get("travelers")) > 1 ? "Travelers" : "Traveler"}
-          </Badge>
-          <Badge variant="outline" className="rounded-full bg-white/50 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" style={{ color: "#6b6560" }}>
-            <Plane className="w-3.5 h-3.5" />
-            {searchParams.get("roundTrip") === "true" ? "Round Trip" : "One Way"}
-          </Badge>
-          {searchParams.get("maxPrice") && searchParams.get("maxPrice") !== "10000" && (
-            <Badge variant="outline" className="rounded-full bg-white/50 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" style={{ color: "#6b6560" }}>
-              <DollarSign className="w-3.5 h-3.5" />
-              Under ${searchParams.get("maxPrice")}
-            </Badge>
-          )}
-        </div>
+        <QueryDisplay />
         {/* Flight Accordion Display */}
         <FlightAccordion 
           flights={flights} 
@@ -91,4 +75,45 @@ export default function ResultsPage() {
       </div>
     </main>
   );
+
+  function QueryDisplay() {
+    return (
+      <div className="flex flex-row gap-2 mb-2">
+        <Badge 
+          variant="outline" 
+          className="rounded-full bg-white/70 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" 
+          style={{ color: "#6b6560" }}
+        >
+          <Calendar className="w-3.5 h-3.5" />
+          {searchParams.get("departureDate")} - {searchParams.get("returnDate")}
+        </Badge>
+        <Badge 
+          variant="outline" 
+          className="rounded-full bg-white/70 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" 
+          style={{ color: "#6b6560" }}
+        >
+          <Users className="w-3.5 h-3.5" />
+          {searchParams.get("travelers")} {Number(searchParams.get("travelers")) > 1 ? "Travelers" : "Traveler"}
+        </Badge>
+        <Badge 
+          variant="outline" 
+          className="rounded-full bg-white/70 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" 
+          style={{ color: "#6b6560" }}
+        >
+          <Plane className="w-3.5 h-3.5" />
+          {searchParams.get("roundTrip") === "true" ? "Round Trip" : "One Way"}
+        </Badge>
+        {searchParams.get("maxPrice") && searchParams.get("maxPrice") !== "10000" && (
+          <Badge 
+            variant="outline" 
+            className="rounded-full bg-white/70 border-gray-200/50 px-4 py-1.5 font-medium flex gap-2 items-center" 
+            style={{ color: "#6b6560" }}
+          >
+            <DollarSign className="w-3.5 h-3.5" />
+            Under ${searchParams.get("maxPrice")}
+          </Badge>
+        )}
+      </div>
+    )
+  }
 }

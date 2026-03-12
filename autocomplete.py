@@ -4,8 +4,8 @@ from flask import Flask, Blueprint, request, jsonify
 from amadeus import Client, ResponseError
 
 amadeus = Client(
-    client_id = os.environ.get("AMADEUS_API_KEY"),
-    client_secret = os.environ.get("AMADEUS_API_SECRET")
+    client_id="6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt",
+    client_secret="nKCQ8UrGPVORjjIa"
 )
 
 cache = {}

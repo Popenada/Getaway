@@ -3,63 +3,22 @@
 import { usePathname } from "next/navigation";
 import { useMemo, useEffect } from "react";
 
-import { Button } from "@/components/ui/button"
+import { useGetaway } from "@/hooks/useGetaway";
 import { FlightAccordion } from "@/components/FlightAccordion";
-
 import { useFlights } from "@/hooks/useFlights";
-
 import { MOCK_FLIGHTS } from "@/lib/data/mockData";
+import FlightLoader from "@/components/FlightLoader";
+import Header from "@/components/Header"
+
+const LA_COORDS = { lat: 34.0522, lng: -118.2437 };
 
 export default function DiscoveryPage() {
-  const pathname = usePathname();
+  const { data, loading } = useGetaway(LA_COORDS);
 
-  const testParams = useMemo(() => ({
-    departureLabels: "Los Angeles Intl (LAX)",
-    arrivalLabels: "John F Kennedy Intl (JFK)",
-    departureCodes: "LAX",
-    arrivalCodes: "JFK",
-    
-    departureDate: "2027-01-15",
-    returnDate: "2027-01-17",
-    travelers: "1",
-    
-    triplength: "",
-    roundTrip: "true",
-    includedAirline: "",
-    excludedAirline: "",
-    nonstopOnly: "true",
-
-    minPrice: "0",
-    maxPrice: "10000",
-    departureWindow: "0",
-    returnWindow: "0"
-  }), []);
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-    params.set("departureCodes", "LAX");
-    params.set("arrivalCodes", "JFK");
-    params.set("departureDate", "2027-01-15");
-    params.set("travelers", "1");
-    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
-  }, [pathname]);
-
-  const { flights, loading } = useFlights(testParams);
-
-  useEffect(() => {
-    const params = new URLSearchParams(testParams);
-    window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
-  }, [pathname, testParams]);
-    
   return (
     <main className="getaway-bg relative min-h-screen px-10 pt-8 pb-16 font-sans">
       <div className="max-w-5xl mx-auto space-y-6">
-        <p
-          className="text-base font-medium tracking-[0.18em] uppercase mb-4 animate-fade-up-1"
-          style={{ color: "#c4714a" }}
-        >
-          Discovery
-        </p>
+        <Header />
         <h1 
           className="text-center leading-[0.92] mb-12 animate-fade-up-2"
           style={{
@@ -74,12 +33,10 @@ export default function DiscoveryPage() {
         </h1>
         <div className="space-y-6">
           {loading ? (
-            <div className="py-20 text-center text-gray-400 animate-pulse">
-              Fetching latest prices...
-            </div>
+            <FlightLoader />
           ) : (
             <FlightAccordion 
-              flights={MOCK_FLIGHTS} 
+              flights={data}
               loading={loading}
             />
           )}
