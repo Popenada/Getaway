@@ -26,18 +26,20 @@ import { Button } from "@/components/ui/button";
 import { SaveButton } from "@/components/ui/bookmark"
 
 import airportsjs from 'airportsjs';
-import { formatDuration, parseDurationToMinutes, formatMinutesToDuration} from "@/lib/utils";
-import { Flight, Leg, Segment } from "@/lib/types";
+import { formatDuration } from "@/lib/utils";
+import { Flight, Segment } from "@/lib/types";
  
 import useSavedFlights from "@/hooks/SavedFlights"
+import { MOCK_FLIGHTS } from '@/lib/data/mockData';
 
 
 interface FlightAccordionProps {
   flights: Flight[];
   loading: boolean;
+  mockdata?: boolean
 }
 
-export function FlightAccordion({ flights, loading }: FlightAccordionProps) {
+export function FlightAccordion({ flights, loading, mockdata = false }: FlightAccordionProps) {
   
 
   const {saved, saveFlights, removeFlights, isSaved } = useSavedFlights();
@@ -68,7 +70,7 @@ export function FlightAccordion({ flights, loading }: FlightAccordionProps) {
 
   const sortedFlights = useMemo(() => {
     if (Array.isArray(flights)) {
-      const sortableData = flights.map(f => ({
+      const sortableData = (mockdata ? MOCK_FLIGHTS : flights).map(f => ({
         ...f,
         departure_time: f.legs[0]?.departure_time || "",
         arrival_time: f.legs[f.legs.length - 1]?.arrival_time || "",

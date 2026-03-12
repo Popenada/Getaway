@@ -128,7 +128,7 @@ def getawaySearch():
         return jsonify("Error: No results returned")
     
     for i in range(len(getaways)):
-        getaways[i] = sorted(parse_flights(searchId, getaways[i]), key=lambda x: x["price"])
+        getaways[i] = sorted(parse_flights(searchId, 1, getaways[i]), key=lambda x: x["price"])
         
         #limit number of objects in each list
         if rate_limit >= 0:

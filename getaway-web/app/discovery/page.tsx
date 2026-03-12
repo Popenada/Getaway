@@ -41,11 +41,12 @@ export default function DiscoveryPage() {
           <em style={{ color: "#c4714a" }}>Discover</em> your Getaway.
         </h1>
         <div className="space-y-6">
+          {/* set false to ignore wait time for testing data */}
           {loading ? (
             <FlightLoader />
           ) : (
             <FlightAccordion
-              // replace data with MOCK_FLIGHTS for test data
+              // mockdata
               flights={data}
               loading={loading}
             />

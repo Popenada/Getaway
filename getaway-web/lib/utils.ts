@@ -12,15 +12,3 @@ export const formatDuration = (isoDuration: string) => {
     .replace('M','m')
     .toLowerCase();
 } 
-
-export const parseDurationToMinutes = (dur: string): number => {
-  const hours = parseInt(dur.match(/(\d+)H/)?.[1] || "0");
-  const mins = parseInt(dur.match(/(\d+)M/)?.[1] || "0");
-  return (hours * 60) + mins;
-};
-
-export const formatMinutesToDuration = (totalMinutes: number): string => {
-  const h = Math.floor(totalMinutes / 60);
-  const m = totalMinutes % 60;
-  return `${h}h ${m}m`;
-};

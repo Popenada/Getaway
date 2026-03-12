@@ -13,7 +13,6 @@ import Header from "@/components/Header"
 
 export default function ResultsPage() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const {
     flights,
     loading,
@@ -68,7 +67,8 @@ export default function ResultsPage() {
         {/* Search Parameter Display */}
         <QueryDisplay />
         {/* Flight Accordion Display */}
-        <FlightAccordion 
+        <FlightAccordion
+          // mockdata 
           flights={flights} 
           loading={loading} 
         />

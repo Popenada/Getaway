@@ -1,5 +1,7 @@
 import { Flight } from "@/lib/types";
 
+export const MOCK_LOADING = false;
+
 export const MOCK_FLIGHTS: Flight[] = [
   {
     id: "1",
