@@ -1,19 +1,28 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { useMemo, useEffect } from "react";
+import { useState } from "react";
 
 import { useGetaway } from "@/hooks/useGetaway";
 import { FlightAccordion } from "@/components/FlightAccordion";
-import { useFlights } from "@/hooks/useFlights";
 import { MOCK_FLIGHTS } from "@/lib/data/mockData";
 import FlightLoader from "@/components/FlightLoader";
 import Header from "@/components/Header"
+import LocationPrompt from "@/components/LocationPrompt";
 
 const LA_COORDS = { lat: 34.0522, lng: -118.2437 };
 
 export default function DiscoveryPage() {
-  const { data, loading } = useGetaway(LA_COORDS);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  
+  const { data, loading } = useGetaway(coords || undefined);
+
+  if (!coords) {
+    return (
+      <main className="getaway-bg min-h-screen">
+        <LocationPrompt onSelect={setCoords} />
+      </main>
+    );
+  }
 
   return (
     <main className="getaway-bg relative min-h-screen px-10 pt-8 pb-16 font-sans">
@@ -35,7 +44,8 @@ export default function DiscoveryPage() {
           {loading ? (
             <FlightLoader />
           ) : (
-            <FlightAccordion 
+            <FlightAccordion
+              // replace data with MOCK_FLIGHTS for test data
               flights={data}
               loading={loading}
             />

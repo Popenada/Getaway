@@ -8,6 +8,7 @@ interface GetawayParams {
 }
 
 export function useGetaway(params?: GetawayParams) {
+  console.log("Cordinates: ", params)
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const hasFetched = useRef(false);
