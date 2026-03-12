@@ -61,7 +61,7 @@ export default function Header() {
                 className="text-[13px] font-medium px-4 py-1.5 rounded-full transition-all duration-200"
                 style={
                   active
-                    ? { background: "linear-gradient(135deg, #c4714a, #a85a38)", color: "#fdfcf9" }
+                    ? { background: "#1a1714", color: "#fdfcf9" }
                     : { color: "#6b6560" }
                 }
               >
