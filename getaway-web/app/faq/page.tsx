@@ -1,12 +1,12 @@
 "use client";
 
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-
+import Header from "@/components/Header"
 export default function FAQPage() {
   return (
     <main className="getaway-bg p-6 min-h-screen">
-      <div className="relative z-10 flex flex-col min-h-screen items-center px-10 pt-12 pb-16">
-    
+        <Header/>
+      <div className="relative z-10 flex flex-col min-h-screen items-center px-10 pt-12 pb-16"> 
         <h1
         className="text-center leading-[0.92] mb-6 animate-fade-up-2"
         style={{
