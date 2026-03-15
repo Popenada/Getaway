@@ -26,49 +26,59 @@ import { Button } from "@/components/ui/button";
 import { SaveButton } from "@/components/ui/bookmark"
 
 import airportsjs from 'airportsjs';
-import { formatDuration } from "@/lib/utils";
-import { Flight, Segment } from "@/lib/types";
+import { formatDuration, formatTime } from "@/lib/utils";
+import { Flight, ProcessedFlight, Segment } from "@/lib/types";
  
 import useSavedFlights from "@/hooks/SavedFlights"
 import { MOCK_FLIGHTS } from '@/lib/data/mockData';
+import GroupControl, { GroupOption } from './GroupControl';
+import { groupData } from '@/lib/groupUtils';
 
 
 interface FlightAccordionProps {
   flights: Flight[];
   loading: boolean;
+  group?: boolean
   mockdata?: boolean
 }
 
-export function FlightAccordion({ flights, loading, mockdata = false }: FlightAccordionProps) {
-  
-
+export function FlightAccordion({ flights, loading, group = false, mockdata = false }: FlightAccordionProps) {
   const {saved, saveFlights, removeFlights, isSaved } = useSavedFlights();
 
   const [sortKey, setSortKey] = useState("price_asc");
+  const [groupKey, setGroupKey] = useState("price")
+
   const router = useRouter();
 
   const sortOptions: SortOption[] = [
-    { label: "Price (Lowest)", value: "price_asc" },
-    { label: "Price (Highest)", value: "price_dsc" },
-    { label: "Departure (Earliest)", value: "date_dep_asc" },
-    { label: "Departure (Latest)", value: "date_dep_dsc" },
-    { label: "Arrival (Earliest)", value: "date_arr_asc" },
-    { label: "Arrival (Latest)", value: "date_arr_dsc" },
+    { label: "Price (Lowest)",      value: "price_asc"    },
+    { label: "Price (Highest)",     value: "price_dsc"    },
+    { label: "Departure (Earliest)",value: "date_dep_asc" },
+    { label: "Departure (Latest)",  value: "date_dep_dsc" },
+    { label: "Arrival (Earliest)",  value: "date_arr_asc" },
+    { label: "Arrival (Latest)",    value: "date_arr_dsc" },
+  ];
+  const groupOptions: GroupOption[] = [
+    { label: "Date", value: "date", classname: "bg-emerald-500/10 text-emerald-700 border-emerald-200/50 hover:bg-emerald-500/20" },
+    { label: "Destination", value: "dest", classname: "bg-rose-500/10 text-rose-700 border-rose-200/50 hover:bg-rose-500/20" },
+    { label: "Price", value: "price", classname: "bg-sky-500/10 text-sky-700 border-sky-200/50 hover:bg-sky-500/20" },
   ];
 
   const sortConfig = {
-    price_asc: { key: "price", type: "number", order: "asc" },
-    price_dsc: { key: "price", type: "number", order: "dsc" },
-    date_dep_asc: { key: "date_dep", type: "date", order: "asc" },
-    date_dep_dsc: { key: "date_dep", type: "date", order: "dsc" },
-    date_arr_asc: { key: "date_arr", type: "date", order: "asc" },
-    date_arr_dsc: { key: "date_arr", type: "date", order: "dsc" },
+    price_asc:    { key: "price",    type: "number", order: "asc" },
+    price_dsc:    { key: "price",    type: "number", order: "dsc" },
+    date_dep_asc: { key: "date_dep", type: "date",   order: "asc" },
+    date_dep_dsc: { key: "date_dep", type: "date",   order: "dsc" },
+    date_arr_asc: { key: "date_arr", type: "date",   order: "asc" },
+    date_arr_dsc: { key: "date_arr", type: "date",   order: "dsc" },
   } as const;
 
   const activeConfig = sortConfig[sortKey as keyof typeof sortConfig] || sortConfig.price_asc;
   const activeSortField = activeConfig.key === "date_dep" ? "departure_time" : activeConfig.key === "date_arr" ? "arrival_time" : "price";
+  
+  const activeGroupField = groupKey;
 
-  const sortedFlights = useMemo(() => {
+  const processedData = useMemo(() => {
     if (Array.isArray(flights)) {
       const sortableData = (mockdata ? MOCK_FLIGHTS : flights).map(f => ({
         ...f,
@@ -82,10 +92,10 @@ export function FlightAccordion({ flights, loading, mockdata = false }: FlightAc
           s.price === f.price
         )
       }));
-      return sortData(sortableData, activeSortField as any, activeConfig.type as any, activeConfig.order);
+      return groupData(sortData(sortableData, activeSortField as any, activeConfig.type as any, activeConfig.order), activeGroupField as any);
     }
     return flights;
-  }, [flights, activeConfig, activeSortField, saved]);
+  }, [flights, activeConfig, activeSortField, saved, activeGroupField]); 
   
   // Handles failed searches 
   if (!Array.isArray(flights)) {
@@ -113,165 +123,193 @@ export function FlightAccordion({ flights, loading, mockdata = false }: FlightAc
     );
   }
   return (
-    <div 
-      className="w-full rounded-3xl p-7 pt-3 animate-fade-up-4"
-      style={{
-        background: "rgba(253,252,249,0.75)",
-        border: "1px solid rgba(255,255,255,0.85)",
-        backdropFilter: "blur(20px)",
-        boxShadow: "0 4px 40px rgba(26,23,20,0.10)",
-      }}
-    >
+  <div
+    className="w-full rounded-3xl p-7 pt-3 animate-fade-up-4"
+    style={{
+      background: "rgba(253,252,249,0.75)",
+      border: "1px solid rgba(255,255,255,0.85)",
+      backdropFilter: "blur(20px)",
+      boxShadow: "0 4px 40px rgba(26,23,20,0.10)",
+    }}
+  >
     <div className="space-y-1">
-      <div className="flex flex-row items-center justify-between w-full">
-        {flights.length > 0 && 
-          <SortControl options={sortOptions} value={sortKey} onChange={setSortKey} 
-        />}
-        <Button
-          onClick={() => window.location.reload()}
-          className="group relative flex justify-center items-center gap-2 px-6 rounded-2xl transition-all duration-300 hover:shadow-md hover:scale-105 active:scale-95"
-          style={{ 
-            background: "rgba(255, 255, 255, 0.6)", 
-            backdropFilter: "blur(10px)",
-            border: "1px solid rgba(196, 113, 114, 0.3)",
-            color: "black"
-          }}
-        >
-          <RefreshCw 
-            className="w-4 h-4 transition-transform duration-500 group-hover:rotate-180"
-            style={{ color: "#c4714a"}}
-          />
-          <span className="leading-none tracking-wide text-sm">
-            Retry Search
-          </span>
-        </Button>
-      </div>
-      
-      <Accordion type="multiple" className="w-full space-y-3">
-        {sortedFlights?.map((flight, idx) => (
-          
-          <AccordionItem
-            key={"flight-" + idx}
-            value={`item-${idx}`}
-            className="border-none rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl"
-            style={{ 
-              background: "rgba(255, 255, 255, 0.75)", 
-              backdropFilter: "blur(25px)",
-              border: "1px solid rgba(255, 255, 255, 0.8)"
+      {flights.length > 0 && (
+        <div className="flex flex-row items-center justify-center w-full mb-4 gap-8">
+          <SortControl options={sortOptions} value={sortKey} onChange={setSortKey} />
+          <GroupControl options={groupOptions} value={groupKey} onChange={setGroupKey} />
+          <Button
+            onClick={() => window.location.reload()}
+            className="group relative flex justify-center items-center gap-2 px-6 rounded-2xl transition-all duration-300 hover:shadow-md hover:scale-105 active:scale-95"
+            style={{
+              background: "rgba(255, 255, 255, 0.6)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(196, 113, 114, 0.3)",
+              color: "black",
             }}
-          > 
-          { !! flight.savedEntry && 
-            <div className="absolute top-0 left-3 z-30 pointer-events-none">
-              <div className="bg-[#c4714a] text-white px-1 pb-1 pt-2 rounded-b-md shadow-md flex items-center justify-center transition-all">
-                <BookmarkCheck className="w-5 h-5" />
-              </div>
-            </div>
-          }
-            
-            <AccordionTrigger className="hover:no-underline p-4"> 
-              <div className="flex flex-row justify-between items-center w-full">
-                <div 
-                  className="flex flex-col items-center gap-1 border border-gray-200/30 rounded-xl p-3 w-36 shadow-sm divide-y-2 divide-grey-700"
-                  style={{ background: "rgba(255, 243, 233, 0.8)" }}
-                >
-                  <span className="font-bold text-lg" style={{ color: "#1a1714" }}>
-                    {flight.legs[0]?.airline || "NA"}
-                  </span>
-                  <span className="text-xs uppercase tracking-wider opacity-60">
-                    {flight.cabin}
-                  </span>
-                </div>
-
-                <div className="flex flex-col w-fit divide-y-2 divide-grey-700">
-                  <LegNode seg={flight.departure_leg} />
-                  {flight.return_leg &&
-                    <LegNode seg={flight.return_leg} landing/>
-                  }
-                </div>
-                <div 
-                  className="text-right border border-gray-200/30 rounded-xl p-3 w-32 shadow-sm"
-                  style={{ background: "rgba(255, 243, 233, 0.8)" }}
-                >
-                  <span 
-                    className="text-xl font-bold" 
-                    style={{ color: "#c4714a" }}
-                  >
-                    ${parseFloat(flight.price).toFixed(2)}
-                  </span>
-                  <p className="text-[10px] uppercase font-bold opacity-40">
-                    {flight.currency}
-                  </p>
-                </div>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent 
-              className="px-6 pb-4 pt-2" 
-              style={{ background: "rgba(253, 252, 249, 0.75)" }}
-            >
-              <div className="space-y-2">
-                <div 
-                  className="border rounded-xl border-gray-200 overflow-x-auto shadow-sm"
+          >
+            <RefreshCw
+              className="w-4 h-4 transition-transform duration-500 group-hover:rotate-180"
+              style={{ color: "#c4714a" }}
+            />
+            <span className="leading-none tracking-wide text-sm">Retry Search</span>
+          </Button>
+        </div>
+      )}
+      <Accordion 
+        type="multiple" 
+        className="w-full space-y-4" 
+        defaultValue={processedData?.map(group => group.label)}
+      >
+        {processedData?.map((group) => (
+          <AccordionItem 
+            key={group.label} 
+            value={group.label} 
+            className="border-none"
+          >
+            <AccordionTrigger className="hover:no-underline p-0 opacity-80 hover:opacity-100 transition-opacity justify-center">
+              <div className="relative flex py-2 items-center w-full">
+                <div style={{ borderColor: "rgba(252, 173, 108, 0.6)" }}className="flex-grow border-t border-2 border-black/10"></div>
+                <Badge 
+                  variant="outline"
+                  className="border-6"
                   style={{ 
-                    background: "rgba(255, 243, 233, 0.8)",
-                    backdropFilter: "blur(20px)"
+                    background: "rgba(253, 196, 130, 0.66)",
+                    borderColor: "rgba(252, 173, 108, 0.6)",
                   }}
                 >
-                  <FlightTimeline 
-                    label="Departure" 
-                    seg={flight.departure_leg}
-                  />
-                </div>
-                {flight.return_leg &&
-                  <div 
-                    className="border rounded-xl border-gray-200 overflow-x-auto shadow-sm"
-                    style={{ 
-                      background: "rgba(255, 243, 233, 0.8)",
-                      backdropFilter: "blur(20px)"
+                  <span className="flex-shrink mx-4 text-sm font-md uppercase tracking-widest">
+                    {group.label} ({group.flights.length})
+                  </span>
+                </Badge>
+                <div style={{ borderColor: "rgba(252, 173, 108, 0.6)" }} className="flex-grow border-t border-2 border-black/10"></div>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pt-2 space-y-4">
+              <Accordion type="single" collapsible className="w-full space-y-3">
+                {group.flights.map((flight, idx) => (
+                  <AccordionItem
+                    key={`${group.label}-flight-${idx}`}
+                    value={`item-${idx}`}
+                    className="border-none rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl relative"
+                    style={{
+                      background: "rgba(255, 255, 255, 0.75)",
+                      backdropFilter: "blur(25px)",
+                      border: "1px solid rgba(255, 255, 255, 0.8)",
                     }}
                   >
-                    <FlightTimeline 
-                      label="Return" 
-                      seg={flight.return_leg}
-                    />
-                  </div>
-                }
-                <div className="flex flex-row items-center justify-center">
-                  {flight.booking_url && (
-                    <div className="flex justify-center border-t border-gray-200/30">
-                      <a
-                        href={flight.booking_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="self-start"
-                      >
-                        <Button 
-                          className="w-48 rounded-full shadow-md transition-all hover:scale-105"
-                          style={{ background: "#c4714a", color: "white" }}
+                    {!!flight.savedEntry && (
+                      <div className="absolute top-0 left-3 z-30 pointer-events-none">
+                        <div className="bg-[#c4714a] text-white px-1 pb-1 pt-2 rounded-b-md shadow-md flex items-center justify-center transition-all">
+                          <BookmarkCheck className="w-5 h-5" />
+                        </div>
+                      </div>
+                    )}
+                    <AccordionTrigger className="hover:no-underline p-4">
+                      <div className="flex flex-row justify-between items-center w-full">
+                        <div
+                          className="flex flex-col items-center gap-1 border border-gray-200/30 rounded-xl p-3 w-36 shadow-sm divide-y-2 divide-grey-700"
+                          style={{ background: "rgba(255, 243, 233, 0.8)" }}
                         >
-                          Book This Trip
-                        </Button>
-                      </a>
-                    </div>
-                  )}
-                  <div className="pl-4">
-                    <SaveButton
-                      saved={!! flight.savedEntry}
-                      onSave={() => saveFlights({...flight})}
-                      onRemove={() => {
-                        if (!! flight.savedEntry) removeFlights(flight.savedEntry.id);
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+                          <span className="font-bold text-lg" style={{ color: "#1a1714" }}>
+                            {flight.legs[0]?.airline || "NA"}
+                          </span>
+                          <span className="text-xs uppercase tracking-wider opacity-60">
+                            {flight.cabin}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-col w-fit divide-y-2 divide-grey-700">
+                          <LegNode seg={flight.departure_leg} />
+                          {flight.return_leg && <LegNode seg={flight.return_leg} landing />}
+                        </div>
+
+                        <div
+                          className="text-right border border-gray-200/30 rounded-xl p-3 w-32 shadow-sm"
+                          style={{ background: "rgba(255, 243, 233, 0.8)" }}
+                        >
+                          <span className="text-xl font-bold" style={{ color: "#c4714a" }}>
+                            ${parseFloat(flight.price).toFixed(2)}
+                          </span>
+                          <p className="text-[10px] uppercase font-bold opacity-40">
+                            {flight.currency}
+                          </p>
+                        </div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent
+                      className="px-6 pb-4 pt-2"
+                      style={{ background: "rgba(253, 252, 249, 0.75)" }}
+                    >
+                      {/* contains the accordion timelines */}
+                      <FlightTimelineContent 
+                        flight={flight} 
+                        saveFlights={saveFlights} 
+                        removeFlights={removeFlights}
+                      />
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>
     </div>
+  </div>
+);
+}
+
+function FlightTimelineContent({ flight, saveFlights, removeFlights }: { flight: ProcessedFlight; saveFlights: (flight: Flight) => void; removeFlights: (id: string) => void; }) {
+  return(
+    <div className="space-y-2">
+      <div
+        className="border rounded-xl border-gray-200 overflow-x-auto shadow-sm"
+        style={{
+          background: "rgba(255, 243, 233, 0.8)",
+          backdropFilter: "blur(20px)",
+        }}
+      >
+        <FlightTimeline label="Departure" seg={flight.departure_leg} />
+      </div>
+      {flight.return_leg && (
+        <div
+          className="border rounded-xl border-gray-200 overflow-x-auto shadow-sm"
+          style={{
+            background: "rgba(255, 243, 233, 0.8)",
+            backdropFilter: "blur(20px)",
+          }}
+        >
+          <FlightTimeline label="Return" seg={flight.return_leg} />
+        </div>
+      )}
+      <div className="flex flex-row items-center justify-center pt-2">
+        {flight.booking_url && (
+          <a
+            href={flight.booking_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Button
+              className="w-48 rounded-full shadow-md transition-all hover:scale-105"
+              style={{ background: "#c4714a", color: "white" }}
+            >
+              Book This Trip
+            </Button>
+          </a>
+        )}
+        <div className="pl-4">
+          <SaveButton
+            saved={!!flight.savedEntry}
+            onSave={() => saveFlights({ ...flight })}
+            onRemove={() => {
+              if (flight.savedEntry) removeFlights(flight.savedEntry.id);
+            }}
+          />
+        </div>
+      </div>
     </div>
-  );
+  )
 }
 
 function LegNode({ seg, landing }: { seg: Segment, landing?: boolean}) {
@@ -364,7 +402,7 @@ function FlightNode({ airport, time, compact }: { airport: string; time: string;
           variant="outline" 
           className="rounded-sm bg-gray-300/10 border-1 border-gray-300 px-1 font-medium flex gap-2 items-center" 
         >
-          {new Date(time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+          {formatTime(time)}
         </Badge>
       </span>
     </div>

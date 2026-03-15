@@ -47,8 +47,9 @@ export default function DiscoveryPage() {
           ) : (
             <FlightAccordion
               // mockdata
-              flights={data}
+              flights={data.flat()}
               loading={loading}
+              group
             />
           )}
         </div>

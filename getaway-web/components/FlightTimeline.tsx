@@ -2,7 +2,7 @@
 
 import { Leg, Segment } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
-import { formatDuration } from "@/lib/utils";
+import { formatDuration, formatTime } from "@/lib/utils";
 import { PlaneTakeoff } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -44,7 +44,7 @@ export function FlightTimeline({ seg, label }: { seg: Segment, label: string }) 
                     variant="outline" 
                     className="rounded-sm bg-gray-300/10 border-1 border-gray-300 px-1 font-medium flex gap-2 items-center" 
                   >
-                    {new Date(leg.departure_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {formatTime(leg.departure_time)}
                   </Badge>
                 </span>
               </div>
@@ -76,7 +76,7 @@ export function FlightTimeline({ seg, label }: { seg: Segment, label: string }) 
                       variant="outline" 
                       className="rounded-sm bg-gray-300/10 border-1 border-gray-300 px-1 font-medium flex gap-2 items-center" 
                     >
-                      {new Date(leg.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {formatTime(leg.arrival_time)}
                     </Badge>
                     
                   </span>

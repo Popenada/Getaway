@@ -50,6 +50,8 @@ export type Flight = {
   booking_url?: string;
 };
 
+export type ProcessedFlight = Flight & { savedEntry?: SavedFlightEntry };
+
 export type SavedFlightEntry ={
   id: string;
   legs: Leg[]; 
