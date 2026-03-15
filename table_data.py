@@ -2,6 +2,7 @@ import json
 import urllib.parse
 from typing import List, Dict, Any
 import hashlib
+from datetime import datetime
 
 _generated_ids = set()
 
@@ -88,7 +89,7 @@ def parse_flights(searchid: str, passengers: int, response_data: Dict[str, Any],
                     'departure_time': segment['departure']['at'],
                     'arrival_time': segment['arrival']['at'],
                     'stops': get_stop_count([segment]),
-                    'duration': segment['duration'],
+                    'duration': segment.get('duration', calculate_duration(segment['departure']['at'],segment['arrival']['at'])),
                     'airline': carriers.get(airline_code, airline_code),
                     'flight_number': f"{airline_code}{segment['number']}"
                 })
@@ -99,7 +100,7 @@ def parse_flights(searchid: str, passengers: int, response_data: Dict[str, Any],
                     'departure_time': segment['departure']['at'],
                     'arrival_time': segment['arrival']['at'],
                     'stops': get_stop_count([segment]),
-                    'duration': segment['duration'],
+                    'duration': segment.get('duration', calculate_duration(segment['departure']['at'],segment['arrival']['at'])),
                     'airline': carriers.get(airline_code, airline_code),
                     'flight_number': f"{airline_code}{segment['number']}"
                 }) # -----
@@ -133,6 +134,18 @@ def parse_flights(searchid: str, passengers: int, response_data: Dict[str, Any],
             file.write(json.dumps(flights, indent=2))
     
     return flights
+
+def calculate_duration(departure_str: str, arrival_str: str) -> str:
+    fmt = "%Y-%m-%dT%H:%M:%S"
+    try:
+        dep = datetime.strptime(departure_str, fmt)
+        arr = datetime.strptime(arrival_str, fmt)
+        diff = arr - dep
+        hours, remainder = divmod(diff.total_seconds(), 3600)
+        minutes, _ = divmod(remainder, 60)
+        return f"PT{int(hours)}H{int(minutes)}M"
+    except (ValueError, TypeError):
+        return "N/A"
 
 '''
 if __name__ == '__main__':

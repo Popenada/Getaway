@@ -27,15 +27,15 @@ export type Leg = {
   departure_time: string; 
   arrival_time: string; 
   stops: number; 
-  duration: string; 
+  duration: string;
   airline: string; 
   flight_number: string;
 };
 
 export type Segment = {
-  segments?: Leg[];
-  total_stops?: number;
-  duration?: string;
+  segments: Leg[];
+  total_stops: number;
+  duration: string;
 }
 
 export type Flight = { 
@@ -49,6 +49,8 @@ export type Flight = {
   cabin: string; 
   booking_url?: string;
 };
+
+export type ProcessedFlight = Flight & { savedEntry?: SavedFlightEntry };
 
 export type SavedFlightEntry ={
   id: string;
