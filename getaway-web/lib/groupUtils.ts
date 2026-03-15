@@ -1,9 +1,7 @@
 import { ProcessedFlight } from "./types";
 
-// export const groupDate =
-// 1. Add explicit return type and change [] to {}
 export const groupPrice = (data: ProcessedFlight[]): Record<string, ProcessedFlight[]> => {
-  if (data.length === 0) return {}; // Marker: Changed from []
+  if (data.length === 0) return {};
   
   const sortedPrices = data.map(f => parseFloat(f.price)).sort((a, b) => a - b);
   const numBuckets = 5;
@@ -27,9 +25,8 @@ export const groupPrice = (data: ProcessedFlight[]): Record<string, ProcessedFli
   }, {} as Record<string, ProcessedFlight[]>);
 };
 
-// 2. Add explicit return type here as well
 export const groupDate = (data: ProcessedFlight[]): Record<string, ProcessedFlight[]> => {
-  if (data.length === 0) return {}; // Marker: Added early return {}
+  if (data.length === 0) return {};
   const now = new Date();
   now.setHours(0, 0, 0, 0);
 
@@ -60,7 +57,6 @@ export function groupData(
   data: ProcessedFlight[],
   mode: 'price' | 'date' | 'dest'
 ): Array<{ label: string; flights: ProcessedFlight[] }> {
-  // Initialize as an empty object to avoid the 'never[]' error
   let groupedObj: Record<string, ProcessedFlight[]> = {};
 
   if (data.length === 0) return [];
@@ -71,7 +67,6 @@ export function groupData(
     groupedObj = groupDate(data);
   } else {
     groupedObj = data.reduce((acc, f) => {
-      // Access the destination of the final leg in the departure segment
       const lastLeg = f.departure_leg.segments[f.departure_leg.segments.length - 1];
       const key = lastLeg?.destination || "Unknown";
       
