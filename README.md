@@ -10,7 +10,7 @@ Users are able to bookmark flights from their search for viewing later in the 't
 
 Getaway also offers a discovery flight algorithm, where we take your location and provide a list of potential vacation destinations at the best prices.
 
-<img src="gifs/Flight-Search.gif" width="600" height="400"/>
+<img src="gifs/Flight-Search-New.gif" width="600" height="400"/>
 <img src="gifs/Saved-Flights.gif" width="600" height="400"/>
 <img src="gifs/Discover-Search.gif" width="600" height="400"/>
 
