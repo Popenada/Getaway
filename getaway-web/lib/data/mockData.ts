@@ -64,7 +64,7 @@ export const MOCK_FLIGHTS: Flight[] = [
     return_leg: null
   },
   {
-    id: "5",gik
+    id: "5",
     trip_type: "one_way",
     price: "220.00",
     currency: "USD",
