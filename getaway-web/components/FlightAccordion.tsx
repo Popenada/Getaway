@@ -29,6 +29,9 @@ export function FlightAccordion({ flights, loading, group = false, mockdata = fa
   const { saved, saveFlights, removeFlights } = useSavedFlights();
   const [sortKey, setSortKey] = useState("price_asc");
   const [groupKey, setGroupKey] = useState("price");
+
+  const [mockData, setMockData] = useState(false);
+
   const router = useRouter();
 
   const sortOptions: SortOption[] = [
@@ -60,7 +63,7 @@ export function FlightAccordion({ flights, loading, group = false, mockdata = fa
 
   const processedData = useMemo(() => {
     if (!Array.isArray(flights)) return flights;
-    const sortableData = (mockdata ? MOCK_FLIGHTS : flights).map(f => ({
+    const sortableData = (mockData ? MOCK_FLIGHTS : flights).map(f => ({
       ...f,
       departure_time: f.legs[0]?.departure_time || "",
       arrival_time: f.legs[f.legs.length - 1]?.arrival_time || "",
@@ -73,7 +76,7 @@ export function FlightAccordion({ flights, loading, group = false, mockdata = fa
       )
     }));
     return groupData(sortData(sortableData, activeSortField as any, activeConfig.type as any, activeConfig.order), groupKey as any);
-  }, [flights, activeConfig, activeSortField, saved, groupKey, mockdata]);
+  }, [flights, activeConfig, activeSortField, saved, groupKey, mockData]);
 
   if (!Array.isArray(flights)) {
     return (
@@ -112,6 +115,9 @@ export function FlightAccordion({ flights, loading, group = false, mockdata = fa
               style={{ background: "rgba(255, 255, 255, 0.6)", backdropFilter: "blur(10px)", border: "1px solid rgba(196, 113, 114, 0.3)", color: "black" }}>
               <RefreshCw className="w-4 h-4 transition-transform duration-500 group-hover:rotate-180" style={{ color: "#c4714a" }} />
               <span className="leading-none tracking-wide text-sm">Retry Search</span>
+            </Button>
+            <Button variant="secondary" onClick={() => mockData ? setMockData(false) : setMockData(true)}>
+
             </Button>
           </div>
         )}
