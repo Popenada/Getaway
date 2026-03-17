@@ -57,20 +57,20 @@ Amadeus API - Access Flight Data
 
 ## Known Issues
 
-* There is no user input field to enable date range searches\
-* Retry search fetches the cached search results, does not make a new search\
-* Use current location button on Discover Search does not stand out\
-* Logo on top left does not route to search page\
-* When using a city as origin/destination, error in fetching search details\
-* On Saving a flight, marks all flights with identical details as saved\
-* Minimum Price parameter does not do anything\
-* Trip Length parameter does not do anything\
-* On search page load, Nonstop only is true, but reset to default button sets it to false\
-* Taskbar is the wrong size on FAQ page\
-* No input on Discover Search is not properly handled\
-* Connecting Flights on saved trips are incorrectly marked as return flights\
-* MaxPrice is capped at 2000\
-* Discover Flight destination pool is too narrow\
+* There is no user input field to enable date range searches
+* Retry search fetches the cached search results, does not make a new search
+* Use current location button on Discover Search does not stand out
+* Logo on top left does not route to search page
+* When using a city as origin/destination, error in fetching search details
+* On Saving a flight, marks all flights with identical details as saved
+* Minimum Price parameter does not do anything
+* Trip Length parameter does not do anything
+* On search page load, Nonstop only is true, but reset to default button sets it to false
+* Taskbar is the wrong size on FAQ page
+* No input on Discover Search is not properly handled
+* Connecting Flights on saved trips are incorrectly marked as return flights
+* MaxPrice is capped at 2000
+* Discover Flight destination pool is too narrow
 * Retry Search on Discover Search leads to start of search
 
 ## Lessons Learned
@@ -79,19 +79,19 @@ This project was our introduction to the professional AGILE flow of project deve
 
 ### What Worked
 
-* Making full use of our scrum times to discuss issues we were having with our tasks and brainstorm a solution\
-* Creating new branches and working in seperate modules to avoid messy merge errors\
-* Peer reviewing pull requests to enforce correctness\
-* Documenting expected input/output structure of functions\
-* Being precise and descriptive with variable names\
-* Having dedicated time each week to work in the same space\
+* Making full use of our scrum times to discuss issues we were having with our tasks and brainstorm a solution
+* Creating new branches and working in seperate modules to avoid messy merge errors
+* Peer reviewing pull requests to enforce correctness
+* Documenting expected input/output structure of functions
+* Being precise and descriptive with variable names
+* Having dedicated time each week to work in the same space
 * Being quick to reach out and respond to bugs
 
 ### What didn't work
 
-* Pushing updates directly to main\
-* Assigning stories to individuals rather than tasks\
-* Modfying essential modules without updating the team\
-* Assuming that a 3rd party module will always work\
-* Using the first available solution without researching its viability\
+* Pushing updates directly to main
+* Assigning stories to individuals rather than tasks
+* Modfying essential modules without updating the team
+* Assuming that a 3rd party module will always work
+* Using the first available solution without researching its viability
 * Not being proactive in getting a PR reviewed and merged
