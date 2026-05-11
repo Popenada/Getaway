@@ -1,0 +1,32 @@
+services:
+  #python backend
+  backend:
+    build: .
+    ports: 
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_APP=run.py
+      - FLASK_DEBUG=1
+    env_file:
+      - .env.local
+    networks:
+      - getaway-network
+  
+  frontend:
+    build: ./getaway-web
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./getaway-web:/app
+      - /app/node_modules
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:5000
+    depends_on:
+      - backend
+    networks:
+      - getaway-network
+networks:
+  getaway-network:
+    driver: bridge

@@ -1,0 +1,16 @@
+venv/
+*.png
+*.pyc
+*.json
+**/.venv/
+**/devtools/
+**/devtests/
+*.env
+*.env.local
+None.json
+post_response.json
+
+# Remove testing files
+TEST*.json
+
+**/__pycache__/
