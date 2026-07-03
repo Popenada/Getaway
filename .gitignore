@@ -16,3 +16,6 @@ TEST*.json
 
 **/__pycache__/
 app/__pycache__/
+
+CLAUDE.md
+TECHNICAL_CHALLENGES.md
