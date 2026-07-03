@@ -1,12 +1,9 @@
 import os
 import time
 from flask import Flask, Blueprint, request, jsonify
-from amadeus import Client, ResponseError
+from requests import HTTPError
+from duffel_client import get_place_suggestions
 
-amadeus = Client(
-    client_id="6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt",
-    client_secret="nKCQ8UrGPVORjjIa"
-)
 
 cache = {}
 CACHE_DURATION = 5 * 60 # 5 minutes
@@ -22,27 +19,23 @@ def get_locations(query: str):
         return jsonify(cached["data"])
     
     try:
-        response = amadeus.reference_data.locations.get(
-            keyword = query,
-            subType = "AIRPORT,CITY",
-            page = {"limit": 10},
-        )
+        places = get_place_suggestions(query)
         
         results = [
             {
-                "label": f"{first_letter_upper(loc['name'])}",
-                "code": loc["iataCode"],
-                "city": loc.get("address", {}).get("cityName"),
-                "country": loc.get("address", {}).get("countryName"),
-                "type": loc["subType"],
+                "label": first_letter_upper(place["name"]),
+                "code": place["iata_code"],
+                "city": place.get("city_name"),
+                "country": place.get("iata_country_code"),
+                "type": place["type"],
             }
-            for loc in response.data
+            for place in places
         ]
         
         cache[query] = {"data": results, "timestamp": time.time()}
         return jsonify(results)
     
-    except ResponseError as e:
+    except HTTPError as e:
         if e.response.status_code == 429:
-            return jsonify({"error": "Amadeus API rate limit exceeded"}), 429
+            return jsonify({"error": "Duffel API rate limit exceeded"}), 429
         return jsonify({"error": "Failed to fetch locations"}), 500
