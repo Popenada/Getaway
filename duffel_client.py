@@ -10,10 +10,16 @@ def _headers():
         "Accept": "application/json",
     }
 
-def get_place_suggestions(query):
+def get_place_suggestions(query=None, lat=None, lng=None, rad=None):
+    params = {}
+    if query is not None: params["query"] = query
+    if lat is not None: params["lat"] = lat
+    if lng is not None: params["lng"] = lng
+    if rad is not None: params["rad"] = rad
+
     response = requests.get(
         f"{BASE_URL}/places/suggestions",
-        params={"query": query},
+        params=params,
         headers=_headers(),
     )
     response.raise_for_status()

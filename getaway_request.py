@@ -70,7 +70,6 @@ def getaway(amadeus, lat, long):
         except ResponseError as error:
             return "getFlights", error
     
-    #return results
     return results
 '''
 amadeus = Client(
