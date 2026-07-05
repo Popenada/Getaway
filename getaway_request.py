@@ -2,6 +2,8 @@ from amadeus import Client, Location, ResponseError
 from datetime import datetime, timedelta
 from random import sample, choice
 from get_tickets import ticket_query
+from duffel_client import get_place_suggestions
+from requests import HTTPError
 import json
 
 
@@ -14,11 +16,13 @@ def getaway(amadeus, lat, long):
     airport = None
     
     try:
-        response = amadeus.reference_data.locations.airports.get(latitude = lat, longitude = long)
-        airport = response.data[0]["iataCode"] # get first closest airport object and extract 3 letter code
+        places = get_place_suggestions(lat=lat, lng=long, rad=50000)
+        if not places:
+            return "getAirport", "No airport found nearby"
+        airport = places[0]["iata_code"] # get first closest airport object and extract 3 letter code
         print(airport) #see result for nearest airport
     
-    except ResponseError as error:
+    except HTTPError as error:
         return "getAirport", error
     
     '''
