@@ -2,8 +2,9 @@ import json
 from amadeus import Client, Location, ResponseError
 from datetime import datetime, date, timedelta
 from generate_range import getRange
-
-def ticket_query(amadeus, data):
+from requests import HTTPError
+from duffel_client import create_offer_request
+def ticket_query(data):
   searchid = data.get("searchid")
   origins = data.get("origins")
   destinations = data.get("destinations")
@@ -11,154 +12,52 @@ def ticket_query(amadeus, data):
   rDate = data.get("returnDate")
   numAdults = data.get("adults")
   roundTrip = data.get("roundTrip")
-  isRange = data.get("range")
   maxPrice = data.get("maxPrice")
   nonstop = data.get("nonstop")
   included = data.get("included")
   excluded = data.get("excluded")
-  tripLength = data.get("tripLength")
-  departureWindow = data.get("departureWindow", 0)
-  returnWindow = data.get("returnWindow", 0)
-  maxResults = data.get("maxResults")
-    
+
+  passengers = [{"type": "adult"} for _ in range(numAdults)]
+
     # origin & dest = "XYZ" airport codes.
     # Departure date formatted as "YYYY-MM-DD"
     # numAdults is int formatted as string "X"
     
-  parameters = {
-    "currencyCode": "USD",
-    "originDestinations": [ {
-      "id": 1, 
-      "originLocationCode": origins[0],
-      "destinationLocationCode": destinations[0], 
-      "alternativeOriginsCodes": origins[1:],
-      "alternativeDestinationsCodes": destinations[1:],
-      "departureDateTimeRange": {
-        "date": dDate,
-      } }],
-      "travelers": [], 
-      "sources": ["GDS"],
-      "searchCriteria": {  
-        "excludeAllotments": True,
-        "maxFlightOffers": 50,
-        "allowAlternativeFareOptions": True,
-        "oneFlightOfferPerDay": False, 
-        "additionalInformation": { 
-          "chargeableCheckedBags": False, 
-          "brandedFares": True, 
-          "fareRules": False 
-        },
-        "pricingOptions": { 
-          "includedCheckedBagsOnly": True 
-        }, 
-        "flightFilters": { 
-          "crossBorderAllowed": True,
-          "moreOvernightsAllowed": True,
-          "returnToDepartureAirport": roundTrip,
-          "railSegmentAllowed": True,
-          "busSegmentAllowed": True,
-          "cabinRestrictions": [ { 
-            "cabin": "ECONOMY",
-            "coverage": "MOST_SEGMENTS",
-            "originDestinationIds": [1] 
-          }, ],
-          "carrierRestrictions" : {},
-          "connectionRestriction": { 
-            "airportChangeAllowed": True,
-            "technicalStopsAllowed": True
-  } } } }
-    
-    #set maximum allowed price
-  if maxPrice:
-    parameters["searchCriteria"]["maxPrice"] = maxPrice
-    
-    #allow nonstop flights
-  if nonstop:
-    parameters["searchCriteria"]["flightFilters"]["connectionRestriction"]["maximumNumberOfConnections"] = 0
-    
-    #exclude selected airlines
-  if excluded:
-    parameters["searchCriteria"]["flightFilters"]["carrierRestrictions"]["excludedAirlineCodes"] = excluded
-    
-  if included:
-    parameters["searchCriteria"]["flightFilters"]["carrierRestrictions"]["includedAirlineCodes"] = included
-    
-    #add return leg to round trips
-  if roundTrip:
-    returnTrip = {
-      "id": 2,
-      "originLocationCode": destinations[0],
-      "destinationLocationCode": origins[0],
-      "alternativeOriginsCodes": destinations[1:],
-      "alternativeDestinationsCodes": origins[1:],
-      "departureDateTimeRange": { 
-        "date": rDate, 
-    } }
-    returnCabin = { 
-      "cabin": "ECONOMY",
-      "coverage": "MOST_SEGMENTS",
-      "originDestinationIds": [2] 
-    }
-        
-    parameters["originDestinations"].append(returnTrip)
-    parameters["searchCriteria"]["flightFilters"]["cabinRestrictions"].append(returnCabin)
-    
-    #for modify parameters for range of dates
-  if departureWindow:
-    parameters["originDestinations"][0]["departureDateTimeRange"]["dateWindow"] = "I%dD" % departureWindow
-        
-  if returnWindow:
-    parameters["originDestinations"][1]["departureDateTimeRange"]["dateWindow"] = "I%dD" % returnWindow
-      
-  if maxResults:
-    parameters["searchCriteria"]["maxFlightOffers"] = maxResults
-        
-    
-    #add numAdults to request
-  for i in range(numAdults):
-    traveler = {
-      "id": i + 1,
-      "travelerType": "ADULT"
-    }
-    parameters["travelers"].append(traveler)
-    
-  #print(parameters)
-    
-  response = {
-    "meta": {
-      "errors": [],
-      "count": 0
-    },
-    "data": []
-  }
-    
-  departureRange = getRange(dDate)
-  returnRange = getRange(rDate)
+  slices = [{
+    "origin": origins[0],
+    "destinations": destinations[0],
+    "departure_date": dDate[0]
+  }]
   
-  for departure in departureRange:
-    for _return in returnRange:
-        
-      #print(departure, _return)
-        
-      parameters["originDestinations"][0]["departureDateTimeRange"]["date"] = departure[0]
-        
-      if departure[1] > 0:
-        parameters["originDestinations"][0]["departureDateTimeRange"]["dateWindow"] = "I%dD" % departure[1]
-              
-      if roundTrip:
-        parameters["originDestinations"][1]["departureDateTimeRange"]["date"] = _return[0]
-        if _return[1] > 0:
-            parameters["originDestinations"][1]["departureDateTimeRange"]["dateWindow"] = "I%dD" % _return[1]
-          
-          
-      try:
-        query = amadeus.shopping.flight_offers_search.post(parameters)
-        response["data"] = response["data"] + query.result["data"]
-        response["meta"]["count"] = len(response["data"])
-        #print(response)
-          
-      except ResponseError as error:
-        response["meta"]["errors"].append(error.description())
+  if roundTrip:
+    slices.append({
+      "origin": destinations[0],
+      "destination": origins[0],
+      "departure_date": rDate[0]
+    })
+
+  response = {"meta": {"errors": [], "count": 0}, "data": []}
+ 
+
+  try:
+    result = create_offer_request(
+      slies=slices,
+      passengers=passengers, 
+      max_connections=0 if nonstop else None,
+    )
+    offers = result.get("offers", [])
+
+    if included:
+        offers = [o for o in offers if o["owner"]["iata_code"] in included]
+    if excluded:
+        offers = [o for o in offers if o["owner"]["iata_code"] not in excluded]
+    if maxPrice:
+        offers = [o for o in offers if float(o["total_amount"]) <= maxPrice]
+    response["data"] = offers
+    response["meta"]["count"] = len(offers)
+  except HTTPError as error:
+    response["meta"]["errors"].append(str(error))
+
         
         
     #print(response)
