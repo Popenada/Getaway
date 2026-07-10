@@ -25,7 +25,7 @@ def ticket_query(data):
     
   slices = [{
     "origin": origins[0],
-    "destinations": destinations[0],
+    "destination": destinations[0],
     "departure_date": dDate[0]
   }]
   
@@ -41,7 +41,7 @@ def ticket_query(data):
 
   try:
     result = create_offer_request(
-      slies=slices,
+      slices=slices,
       passengers=passengers, 
       max_connections=0 if nonstop else None,
     )
@@ -57,15 +57,12 @@ def ticket_query(data):
     response["meta"]["count"] = len(offers)
   except HTTPError as error:
     response["meta"]["errors"].append(str(error))
-
-        
-        
     #print(response)
-    f = "%s.json" %searchid
-    with open(f, "w") as file:
-      file.write(json.dumps(response, indent=2))
+  f = "%s.json" %searchid
+  with open(f, "w") as file:
+    file.write(json.dumps(response, indent=2))
     
-    return response
+  return response
 
 
 #debug
