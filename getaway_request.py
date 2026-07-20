@@ -1,4 +1,3 @@
-from amadeus import Client, Location, ResponseError
 from datetime import datetime, timedelta
 from random import sample, choice
 from get_tickets import ticket_query
@@ -8,7 +7,7 @@ import json
 
 
 #takes two ints and outputs a list of recommended flight object
-def getaway(amadeus, lat, long):
+def getaway(lat, long):
     
     '''
     Fetching nearest airport
@@ -55,31 +54,22 @@ def getaway(amadeus, lat, long):
         
         print(departure, returnDate)
         
-        try:
-            params = {
-                "searchid" : "Getaway"+airport,
-                "origins": [airport],
-                "destinations": [destination],
-                "departureDate": (str(departure),),
-                "returnDate": (str(returnDate),),
-                "roundTrip": True,
-                "adults" : 1,
-                "departureWindow": 3,
-                "returnWindow": 3,
-                "maxResults": 50
-                }
-            response = ticket_query(amadeus, params)
-            results.append(response)
-            
-        except ResponseError as error:
-            return "getFlights", error
-    
+        params = {
+            "searchid" : "Getaway"+airport,
+            "origins": [airport],
+            "destinations": [destination],
+            "departureDate": (str(departure),),
+            "returnDate": (str(returnDate),),
+            "roundTrip": True,
+            "adults" : 1,
+            "departureWindow": 3,
+            "returnWindow": 3,
+            "maxResults": 50
+            }
+        response = ticket_query(params)
+        results.append(response)
+
     return results
 '''
-amadeus = Client(
-    client_id='6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt',
-    client_secret='nKCQ8UrGPVORjjIa'
-)
-
-print(getaway(amadeus, 34.0549, -118.2426)) #coordinates for LA
+print(getaway(34.0549, -118.2426)) #coordinates for LA
 '''

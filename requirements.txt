@@ -1,4 +1,3 @@
-amadeus
 flask
 flask-cors
 requests

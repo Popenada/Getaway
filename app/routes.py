@@ -6,13 +6,8 @@ from table_data import parse_flights
 from datetime import datetime, timedelta
 from random import randrange
 from autocomplete import get_locations
-from amadeus import Client
 from getaway_request import getaway
 from json import dumps
-
-amadeus = Client(
-    client_id="6s3NH6Rsqy4y8hjxuK5VPp3G9twyUTWt", client_secret="nKCQ8UrGPVORjjIa"
-)
 
 
 @app.route("/")
@@ -71,7 +66,7 @@ def flightSearch():
     try:
         print("----- API QUERIED -----")
 
-        response = ticket_query(amadeus, inputs)
+        response = ticket_query(inputs)
     except:
         return "500"
 
@@ -117,7 +112,7 @@ def getawaySearch():
         print("Error: Bad latitude Input")
         return jsonify("Error: Bad latitude input")
     
-    getaways = getaway(amadeus, latitude, longitude)
+    getaways = getaway(latitude, longitude)
     
     if not isinstance(getaways, list):
         print("Error: bad structure")
